@@ -35,7 +35,7 @@ const AdminHeader: React.FC = ()=>{
             <nav id="sidebar" className="sidebar-wrapper">
                 <div className="sidebar-content">
                     <div className="sidebar-brand">
-                        <a href="#">JinPost</a>
+                        <Link href="/admin/users"><a>JinPost</a></Link>
                         <div onClick={handleToggle} id="close-sidebar">
                             <i className="fas fa-times"></i>
                         </div>

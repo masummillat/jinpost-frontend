@@ -1,75 +1,288 @@
 import Link from 'next/link';
 import Head from '../components/head';
 import Nav from '../components/nav';
+import DefaultLayout from "../components/layouts/default";
+import result from "postcss/lib/result";
+import BlogCard from "../components/blogs/BlogCard";
 
-export default () => (
-  <div>
-    <Head title="Home" />
-    <Nav />
-    <div className="hero">
-      <h1 className="title">Welcome to create-next-app-cli (Create Next.js App building tools)</h1>
-      <p className="description">To get started, edit <code>pages/index.js</code> and save to reload.</p>
-      <div className="row">
-        <Link href="https://nextjs.org/docs/">
-          <a className="card">
-            <h3>Getting Started &rarr;</h3>
-            <p>Learn more about Next.js on official website</p>
-          </a>
-        </Link>
-        <Link href="https://github.com/themodernjavascript/create-next-app-cli">
-          <a className="card">
-            <h3>Create Next App CLI &rarr;</h3>
-            <p>Was this tools helpful?</p>
-          </a>
-        </Link>
-      </div>
-    </div>
+export function createMarkup(blogString: any) {
+    return {__html: blogString};
+}
 
-    <style jsx>{`
-      .hero {
-        width: 100%;
-        color: #333;
-      }
-      .title {
-        margin: 0;
-        width: 100%;
-        padding-top: 80px;
-        padding-bottom: 12px;
-        line-height: 1.15;
-        font-size: 37px;
-      }
-      .title, .description {
-        text-align: center;
-      }
-      .row {
-        max-width: 587px;
-        margin: 80px auto 40px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-      }
-      .card {
-        padding: 18px 18px 24px;
-        width: 220px;
-        text-align: left;
-        text-decoration: none;
-        color: #434343;
-        border: 1px solid #9B9B9B;
-      }
-      .card:hover {
-        border-color: #067df7;
-      }
-      .card h3 {
-        margin: 0;
-        color: #067df7;
-        font-size: 18px;
-      }
-      .card p {
-        margin: 0;
-        padding: 12px 0 0;
-        font-size: 13px;
-        color: #333;
-      }
-    `}</style>
-  </div>
-);
+const Home = ({blogs}: any) => {
+    console.log(blogs)
+    return (
+        <div>
+            <Head title="Home"/>
+            <div className="container">
+                <div className="row">
+                    <div className="col-12">
+                        <div className="section-title">
+                            <h1 className="pt-2">Popular</h1>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-lg-6">
+                        <div className="article-preview-left">
+                            {
+                                blogs.length > 0 && (
+                                    <div className="card">
+                                        <img src={blogs && blogs[0].featuredImg} className="card-img-top" alt="..."/>
+                                        <div className="card-body">
+                                            <Link href={`/blogs/${blogs && blogs[0].id}`}>
+                                                <a className="article-preview-title">{blogs && blogs[0].title}</a>
+                                            </Link>
+                                            <div className="article-preview-desc">
+                                                <div dangerouslySetInnerHTML={createMarkup(blogs && blogs[0].body)}/>
+                                            </div>
+                                            <a href="#" className="article-preview-author">
+                                                <img src="/static/img/profile.jpg"/>Sicong Long
+                                            </a>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </div>
+                    </div>
+                    <div className="col-lg-6">
+                        <div className="row">
+                            {blogs && blogs.map((blog: { id: string | number | null | undefined; }) => <BlogCard
+                                blog={blog} key={blog.id}/>)}
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="join-us">
+                            <div>
+                                <h1>Join us</h1>
+                                <p>Stay tuned with the latest developments of companies and industries in China.</p>
+                                <button className="btn btn-white">Get Started</button>
+                            </div>
+                            <div className="join-us-bg">
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="section-title">
+                            <h1>Articles</h1>
+                            <a href="#" className="all">All</a>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-4" style={{marginBottom: '16px'}}>
+                        <div className="article-item">
+                            <div className="card">
+                                <a href="#" className="article-preview-author">
+                                    <img src="/static/img/profile.jpg"/>Sicong Long
+                                </a>
+                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
+                                <small>11 Nov, 2020</small>
+                                <div className="card-body">
+                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
+                                        used since interested</a></p>
+                                    <p className="article-preview-desc">It is a long established fact that a reader will
+                                        be distracted by the readable content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-4">
+                        <div className="article-item">
+                            <div className="card">
+                                <a href="#" className="article-preview-author">
+                                    <img src="/static/img/profile.jpg"/>Sicong Long
+                                </a>
+                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
+                                <small>11 Nov, 2020</small>
+                                <div className="card-body">
+                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
+                                        used since interested</a></p>
+                                    <p className="article-preview-desc">It is a long established fact that a reader will
+                                        be distracted by the readable content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-4 col-sm-4">
+                        <div className="article-item">
+                            <div className="card">
+                                <a href="#" className="article-preview-author">
+                                    <img src="/static/img/profile.jpg"/>Sicong Long
+                                </a>
+                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
+                                <small>11 Nov, 2020</small>
+                                <div className="card-body">
+                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
+                                        used since interested</a></p>
+                                    <p className="article-preview-desc">It is a long established fact that a reader will
+                                        be distracted by the readable content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-4 col-sm-4">
+                        <div className="article-item">
+                            <div className="card">
+                                <a href="#" className="article-preview-author">
+                                    <img src="/static/img/profile.jpg"/>Sicong Long
+                                </a>
+                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
+                                <small>11 Nov, 2020</small>
+                                <div className="card-body">
+                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
+                                        used since interested</a></p>
+                                    <p className="article-preview-desc">It is a long established fact that a reader will
+                                        be distracted by the readable content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-4 col-sm-4">
+                        <div className="article-item">
+                            <div className="card">
+                                <a href="#" className="article-preview-author">
+                                    <img src="/static/img/profile.jpg"/>Sicong Long
+                                </a>
+                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
+                                <small>11 Nov, 2020</small>
+                                <div className="card-body">
+                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
+                                        used since interested</a></p>
+                                    <p className="article-preview-desc">It is a long established fact that a reader will
+                                        be distracted by the readable content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-4 col-sm-4">
+                        <div className="article-item">
+                            <div className="card">
+                                <a href="#" className="article-preview-author">
+                                    <img src="/static/img/profile.jpg"/>Sicong Long
+                                </a>
+                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
+                                <small>11 Nov, 2020</small>
+                                <div className="card-body">
+                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
+                                        used since interested</a></p>
+                                    <p className="article-preview-desc">It is a long established fact that a reader will
+                                        be distracted by the readable content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-4 col-sm-4">
+                        <div className="article-item">
+                            <div className="card">
+                                <a href="#" className="article-preview-author">
+                                    <img src="/static/img/profile.jpg"/>Sicong Long
+                                </a>
+                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
+                                <small>11 Nov, 2020</small>
+                                <div className="card-body">
+                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
+                                        used since interested</a></p>
+                                    <p className="article-preview-desc">It is a long established fact that a reader will
+                                        be distracted by the readable content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-4 col-sm-4">
+                        <div className="article-item">
+                            <div className="card">
+                                <a href="#" className="article-preview-author">
+                                    <img src="/static/img/profile.jpg"/>Sicong Long
+                                </a>
+                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
+                                <small>11 Nov, 2020</small>
+                                <div className="card-body">
+                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
+                                        used since interested</a></p>
+                                    <p className="article-preview-desc">It is a long established fact that a reader will
+                                        be distracted by the readable content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="section-title mt-5">
+                            <h1>Popular Topics</h1>
+                        </div>
+                    </div>
+                    <div className="col-12">
+                        <div className="popular-topics">
+                            <ul>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                            </ul>
+                            <ul>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                            </ul>
+                            <ul>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                            </ul>
+                            <ul>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                                <li><a href="#">Lorem Ipsum</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="discover-tag">
+                            <div className="left">
+                                <p>China Business intelligence</p>
+                                <h1>Discover the popular companies or individuals on our platform</h1>
+                                <a href="#" className="btn btn-white">Discover now</a>
+                            </div>
+                            <div className="tag-list">
+                                <a href="#" className="btn-tag">Lorem Ipsum</a>
+                                <a href="#" className="btn-tag">Ipsum</a>
+                                <a href="#" className="btn-tag">Lorem Ipsum</a>
+                                <a href="#" className="btn-tag">Lorem Ipsum</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+};
+
+export async function getStaticProps(context: any) {
+
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs`)
+    const data = await res.json()
+
+    if (!data) {
+        return {
+            notFound: true,
+            blogs: [],
+        }
+    }
+
+    return {
+        props: {
+            blogs: data
+        }, // will be passed to the page component as props
+    }
+}
+
+Home.Layout = DefaultLayout;
+export default Home;
+
+

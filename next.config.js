@@ -3,12 +3,15 @@ module.exports = {
   //   loader: 'imgix',
   //   domains: ['http://localhost:3000'],
   // },
+  env: {
+    BACKEND_BASE_URL: 'http://localhost:3000',
+  },
   async redirects() {
     return [
       {
         source: '/admin',
         destination: '/admin/users',
-        permanent: false,
+        permanent: true,
       },
     ]
   },

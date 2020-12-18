@@ -1,9 +1,10 @@
 import React from 'react';
 import AdminLayout from "../../components/layouts/admin";
 import Head from "../../components/head";
+import httpClient from "../../utils/api";
 
-const UsersComponent = () => {
-
+const UsersComponent = ({users, err, notFound}: {users: any[], err: any, notFound: boolean}) => {
+    console.log(users)
     return (
         <div>
             <Head/>
@@ -26,46 +27,18 @@ const UsersComponent = () => {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td>
-                                                    <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                    Hossain Samrat, Data Scientist
-                                                </td>
-                                                <td>Data Science, Natural Language Processing & Speech</td>
-                                                <td>
-                                                    <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                    Hossain Samrat, Data Scientist
-                                                </td>
-                                                <td>Data Science, Computer Science, Electronics</td>
-                                                <td>
-                                                    <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                    Hossain Samrat, Data Scientist
-                                                </td>
-                                                <td>Data Science, Computer Science, Electronics</td>
-                                                <td>
-                                                    <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                    Hossain Samrat, Data Scientist
-                                                </td>
-                                                <td>Data Science, Computer Science, Electronics</td>
-                                                <td>
-                                                    <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                </td>
-                                            </tr>
+                                            {users.map((user: { id: number, name: string })=>(
+                                                <tr key={user.id}>
+                                                    <td>
+                                                        <img src="/static/img/profile.jpg" className="author-list-img"/>
+                                                        <span className="ml-2">{user.name}</span>
+                                                    </td>
+                                                    <td>Data Science, Natural Language Processing & Speech</td>
+                                                    <td>
+                                                        <a href="#"><i className="far fa-trash-alt"></i></a>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                             </tbody>
                                         </table>
                                     </div>
@@ -77,6 +50,23 @@ const UsersComponent = () => {
             </main>
         </div>
     )
+}
+
+
+export async function getStaticProps(context: any) {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users`)
+    const data = await res.json()
+    if (!data) {
+        return {
+            notFound: true,
+        }
+    }
+
+    return {
+        props: {
+            users: data
+        }, // will be passed to the page component as props
+    }
 }
 
 UsersComponent.Layout = AdminLayout;

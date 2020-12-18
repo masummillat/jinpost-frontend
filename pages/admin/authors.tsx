@@ -2,8 +2,8 @@ import React from "react";
 import Head from "../../components/head";
 import AdminLayout from "../../components/layouts/admin";
 
-const Authors = () => {
-
+const Authors = ({authors}:{authors: any[]}) => {
+    console.log(authors)
     return (
         <div>
             <Head/>
@@ -27,50 +27,18 @@ const Authors = () => {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td>
-                                                    <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                    Hossain Samrat, Data Scientist
-                                                </td>
-                                                <td>Data Science, Computer Science, Electronics</td>
-                                                <td>
-                                                    <a href="#"><i className="far fa-trash-alt"></i> Remove as
-                                                        author</a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                    Hossain Samrat, Data Scientist
-                                                </td>
-                                                <td>Data Science, Computer Science, Electronics</td>
-                                                <td>
-                                                    <a href="#"><i className="far fa-trash-alt"></i> Remove as
-                                                        author</a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                    Hossain Samrat, Data Scientist
-                                                </td>
-                                                <td>Data Science, Computer Science, Electronics</td>
-                                                <td>
-                                                    <a href="#"><i className="far fa-trash-alt"></i> Remove as
-                                                        author</a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                    Hossain Samrat, Data Scientist
-                                                </td>
-                                                <td>Data Science, Computer Science, Electronics</td>
-                                                <td>
-                                                    <a href="#"><i className="far fa-trash-alt"></i> Remove as
-                                                        author</a>
-                                                </td>
-                                            </tr>
+                                            {authors.map((user: { id: number, name: string })=>(
+                                                <tr key={user.id}>
+                                                    <td>
+                                                        <img src="/static/img/profile.jpg" className="author-list-img"/>
+                                                        <span className="ml-2">{user.name}</span>
+                                                    </td>
+                                                    <td>Data Science, Natural Language Processing & Speech</td>
+                                                    <td>
+                                                        <a href="#"><i className="far fa-trash-alt"></i></a>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                             </tbody>
                                         </table>
                                     </div>
@@ -86,4 +54,19 @@ const Authors = () => {
 
 Authors.Layout = AdminLayout;
 
+export async function getStaticProps(context: any) {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users`)
+    const data = await res.json()
+    if (!data) {
+        return {
+            notFound: true,
+        }
+    }
+
+    return {
+        props: {
+            authors: data
+        }, // will be passed to the page component as props
+    }
+}
 export default Authors;

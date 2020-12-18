@@ -3,8 +3,8 @@ import AdminLayout from "../../components/layouts/admin";
 import Head from "../../components/head";
 
 
-const Post = () => {
-
+const Post = ({blogs}:{blogs: any[]}) => {
+    console.log(blogs)
     return (
         <div>
             <Head />
@@ -31,58 +31,23 @@ const Post = () => {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td>Ensonic Technology closes RMB 60 mln Series A led by Vertex Ventures</td>
-                                                <td>Ensonic Technology, an acoustic monitoring solution provider in the
-                                                    industrial field, recently announced the completion of its Series A round
-                                                </td>
-                                                <td>John Doe</td>
-                                                <td>05-12-2020, 05:05 AM</td>
-                                                <td>Hello</td>
-                                                <td>
-                                                    <a href="new-post.php"><i className="far fa-edit"></i></a>
-                                                    <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Ensonic Technology closes RMB 60 mln Series A led by Vertex Ventures</td>
-                                                <td>Ensonic Technology, an acoustic monitoring solution provider in the
-                                                    industrial field, recently announced the completion of its Series A round
-                                                </td>
-                                                <td>John Doe</td>
-                                                <td>05-12-2020, 05:05 AM</td>
-                                                <td>Hello</td>
-                                                <td>
-                                                    <a href="new-post.php"><i className="far fa-edit"></i></a>
-                                                    <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Ensonic Technology closes RMB 60 mln Series A led by Vertex Ventures</td>
-                                                <td>Ensonic Technology, an acoustic monitoring solution provider in the
-                                                    industrial field, recently announced the completion of its Series A round
-                                                </td>
-                                                <td>John Doe</td>
-                                                <td>05-12-2020, 05:05 AM</td>
-                                                <td>Hello</td>
-                                                <td>
-                                                    <a href="new-post.php"><i className="far fa-edit"></i></a>
-                                                    <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Ensonic Technology closes RMB 60 mln Series A led by Vertex Ventures</td>
-                                                <td>Ensonic Technology, an acoustic monitoring solution provider in the
-                                                    industrial field, recently announced the completion of its Series A round
-                                                </td>
-                                                <td>John Doe</td>
-                                                <td>05-12-2020, 05:05 AM</td>
-                                                <td>Hello</td>
-                                                <td>
-                                                    <a href="new-post.php"><i className="far fa-edit"></i></a>
-                                                    <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                </td>
-                                            </tr>
+                                            {
+                                                blogs.map((blog:{id:number, title: string})=>(
+                                                    <tr key={blog.id}>
+                                                        <td>{blog.title}</td>
+                                                        <td>Ensonic Technology, an acoustic monitoring solution provider in the
+                                                            industrial field, recently announced the completion of its Series A round
+                                                        </td>
+                                                        <td>John Doe</td>
+                                                        <td>05-12-2020, 05:05 AM</td>
+                                                        <td>Hello</td>
+                                                        <td>
+                                                            <a href="new-post.php"><i className="far fa-edit"></i></a>
+                                                            <a href="#"><i className="far fa-trash-alt"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            }
                                             </tbody>
                                         </table>
                                     </div>
@@ -97,4 +62,20 @@ const Post = () => {
 }
 
 Post.Layout = AdminLayout;
+
+export async function getStaticProps(context: any) {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs`)
+    const data = await res.json()
+    if (!data) {
+        return {
+            notFound: true,
+        }
+    }
+
+    return {
+        props: {
+            blogs: data
+        }, // will be passed to the page component as props
+    }
+}
 export default Post;

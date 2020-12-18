@@ -1,9 +1,12 @@
 import React from 'react';
+import UserHeader from "../header/userHeader";
+import UserFooter from "../header/UserFooter";
 
 const DefaultLayout = ({ children }: {children: React.Component}) => (
     <>
-        <h1>Default layout</h1>
+        <UserHeader/>
         <div>{children}</div>
+        <UserFooter/>
     </>
 );
 
