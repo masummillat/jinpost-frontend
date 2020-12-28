@@ -990,7 +990,13 @@ footer p {
     margin-top: 1.5rem;
 }
 .profile-photo-change-preview img {
+    cursor: pointer;
     border-radius: 10px;
+    width: 120px;
+    height: 120px;
+    background-image: url("../img/businessman.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 /*----------- New Post -----------*/

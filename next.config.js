@@ -1,3 +1,4 @@
+const path = require('path');
 module.exports = {
   // images: {
   //   loader: 'imgix',
@@ -14,6 +15,9 @@ module.exports = {
         permanent: true,
       },
     ]
+  },
+  sassOptions: {
+    includePaths: [path.join(__dirname, 'styles')],
   },
   webpack: (config) => {
     config.node = {

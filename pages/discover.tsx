@@ -2,7 +2,7 @@ import React from "react";
 import AuthorCard from "../components/authors/AuthorCard";
 import DefaultLayout from "../components/layouts/default";
 
-const DiscoverPage = () => {
+const DiscoverPage = ({authors, notFound}:{authors: any[], notFound: boolean}) => {
 
     return(
         <div className="container">
@@ -45,7 +45,9 @@ const DiscoverPage = () => {
                 <div className="offset-lg-1 col-lg-4" style={{padding: 0}}>
                     <div className="popular-authors">
                         <h2>Popular authors</h2>
-                        <AuthorCard/>
+                            {
+                                authors.map((author)=><AuthorCard key={author.id} author={author}/>)
+                            }
                     </div>
                 </div>
             </div>
@@ -54,4 +56,20 @@ const DiscoverPage = () => {
 }
 
 DiscoverPage.Layout = DefaultLayout;
+
+export async function getStaticProps(context: any) {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users`)
+    const data = await res.json()
+    if (!data) {
+        return {
+            notFound: true,
+        }
+    }
+
+    return {
+        props: {
+            authors: data
+        }, // will be passed to the page component as props
+    }
+}
 export default DiscoverPage;

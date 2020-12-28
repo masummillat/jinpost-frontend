@@ -9,7 +9,6 @@ const SingleBlogPage = ({blog, suggestions})=>{
     console.log(blog)
     console.log(suggestions)
     // @ts-ignore
-    // @ts-ignore
     return(
         <div className="container">
             <div className="row">
@@ -79,7 +78,7 @@ const SingleBlogPage = ({blog, suggestions})=>{
                         <h1>More from China SDG</h1>
                     </div>
                 </div>
-                { suggestions && suggestions.map((blog: { id: string | number | null | undefined; })=><SuggestionBlogCard key={blog.id} blog={blog}/>)}
+                { suggestions && suggestions.map((blog: { id:  number ; })=><SuggestionBlogCard key={blog.id} blog={blog}/>)}
             </div>
         </div>
     );
@@ -88,10 +87,10 @@ const SingleBlogPage = ({blog, suggestions})=>{
 
 export async function getServerSideProps(context: any) {
     console.log(context.params)
-    const res = await fetch(`http://localhost:3000/blogs/${context.params.id}`)
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/${context.params.id}`)
     const data = await res.json()
 
-    const suggestedRes = await  fetch('http://localhost:3000/blogs');
+    const suggestedRes = await  fetch(`${process.env.BACKEND_BASE_URL}/blogs`);
     const suggestions: any[] = await suggestedRes.json()
 
     return {

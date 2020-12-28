@@ -1,10 +1,14 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { Modal } from 'reactstrap';
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import httpClient from "../../utils/api";
 import { useRouter } from 'next/router'
+import {ProfileContext} from "../../context/ProfileContext";
 const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>void}) => {
+    const profileCtx = useContext(ProfileContext);
+    // @ts-ignore
+    const {user, isLoggedIn, handleLogin, handleLogout} = profileCtx;
     const router = useRouter()
     const loginSchema = Yup.object().shape({
         email: Yup.string().email('Invalid email').required('Required'),
@@ -20,20 +24,9 @@ const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>vo
             password: ''
         },
         onSubmit: values => {
-
-            httpClient.post('/auth/login', values)
-                .then(res=>{
-                    console.log(res.data)
-                    if (typeof window !== "undefined") {
-                        localStorage.setItem('access_token', res.data.access_token);
-                        toggle();
-                        // router.push('/');
-                    }
-                })
-                .catch(err=>{
-                    console.log({err});
-                })
-            console.log(JSON.stringify(values, null, 2));
+            handleLogin(values).then(()=>{
+                toggle();
+            })
         },
         validationSchema: loginSchema
     });

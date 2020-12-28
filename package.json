@@ -22,9 +22,11 @@
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
     "formik": "^2.2.6",
+    "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
     "next": "^10.0.3",
     "react": "^17.0.1",
+    "react-bootstrap": "^1.4.0",
     "react-calendar": "^3.2.1",
     "react-dnd": "^7.6.2",
     "react-dnd-html5-backend": "^7.6.2",
@@ -32,7 +34,10 @@
     "react-icons": "^4.1.0",
     "react-select": "^3.1.1",
     "react-tag-input": "^6.4.6",
+    "react-toastify": "^6.2.0",
     "reactstrap": "^8.7.1",
+    "sass": "^1.30.0",
+    "unstated-next": "^1.1.0",
     "yup": "^0.32.8"
   },
   "devDependencies": {

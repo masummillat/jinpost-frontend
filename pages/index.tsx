@@ -4,6 +4,7 @@ import Nav from '../components/nav';
 import DefaultLayout from "../components/layouts/default";
 import result from "postcss/lib/result";
 import BlogCard from "../components/blogs/BlogCard";
+import SampleBlogCard from "../components/blogs/SampleBlogCard";
 
 export function createMarkup(blogString: any) {
     return {__html: blogString};
@@ -73,142 +74,7 @@ const Home = ({blogs}: any) => {
                             <a href="#" className="all">All</a>
                         </div>
                     </div>
-                    <div className="col-lg-3 col-md-4" style={{marginBottom: '16px'}}>
-                        <div className="article-item">
-                            <div className="card">
-                                <a href="#" className="article-preview-author">
-                                    <img src="/static/img/profile.jpg"/>Sicong Long
-                                </a>
-                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
-                                <small>11 Nov, 2020</small>
-                                <div className="card-body">
-                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
-                                        used since interested</a></p>
-                                    <p className="article-preview-desc">It is a long established fact that a reader will
-                                        be distracted by the readable content.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-4">
-                        <div className="article-item">
-                            <div className="card">
-                                <a href="#" className="article-preview-author">
-                                    <img src="/static/img/profile.jpg"/>Sicong Long
-                                </a>
-                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
-                                <small>11 Nov, 2020</small>
-                                <div className="card-body">
-                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
-                                        used since interested</a></p>
-                                    <p className="article-preview-desc">It is a long established fact that a reader will
-                                        be distracted by the readable content.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-4 col-sm-4">
-                        <div className="article-item">
-                            <div className="card">
-                                <a href="#" className="article-preview-author">
-                                    <img src="/static/img/profile.jpg"/>Sicong Long
-                                </a>
-                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
-                                <small>11 Nov, 2020</small>
-                                <div className="card-body">
-                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
-                                        used since interested</a></p>
-                                    <p className="article-preview-desc">It is a long established fact that a reader will
-                                        be distracted by the readable content.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-4 col-sm-4">
-                        <div className="article-item">
-                            <div className="card">
-                                <a href="#" className="article-preview-author">
-                                    <img src="/static/img/profile.jpg"/>Sicong Long
-                                </a>
-                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
-                                <small>11 Nov, 2020</small>
-                                <div className="card-body">
-                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
-                                        used since interested</a></p>
-                                    <p className="article-preview-desc">It is a long established fact that a reader will
-                                        be distracted by the readable content.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-4 col-sm-4">
-                        <div className="article-item">
-                            <div className="card">
-                                <a href="#" className="article-preview-author">
-                                    <img src="/static/img/profile.jpg"/>Sicong Long
-                                </a>
-                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
-                                <small>11 Nov, 2020</small>
-                                <div className="card-body">
-                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
-                                        used since interested</a></p>
-                                    <p className="article-preview-desc">It is a long established fact that a reader will
-                                        be distracted by the readable content.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-4 col-sm-4">
-                        <div className="article-item">
-                            <div className="card">
-                                <a href="#" className="article-preview-author">
-                                    <img src="/static/img/profile.jpg"/>Sicong Long
-                                </a>
-                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
-                                <small>11 Nov, 2020</small>
-                                <div className="card-body">
-                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
-                                        used since interested</a></p>
-                                    <p className="article-preview-desc">It is a long established fact that a reader will
-                                        be distracted by the readable content.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-4 col-sm-4">
-                        <div className="article-item">
-                            <div className="card">
-                                <a href="#" className="article-preview-author">
-                                    <img src="/static/img/profile.jpg"/>Sicong Long
-                                </a>
-                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
-                                <small>11 Nov, 2020</small>
-                                <div className="card-body">
-                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
-                                        used since interested</a></p>
-                                    <p className="article-preview-desc">It is a long established fact that a reader will
-                                        be distracted by the readable content.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-4 col-sm-4">
-                        <div className="article-item">
-                            <div className="card">
-                                <a href="#" className="article-preview-author">
-                                    <img src="/static/img/profile.jpg"/>Sicong Long
-                                </a>
-                                <img src="/static/img/pic.jpg" className="card-img-top" alt="..."/>
-                                <small>11 Nov, 2020</small>
-                                <div className="card-body">
-                                    <p className="article-preview-title"><a href="#">The standard chunk of Lorem Ipsum
-                                        used since interested</a></p>
-                                    <p className="article-preview-desc">It is a long established fact that a reader will
-                                        be distracted by the readable content.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {blogs.map((blog: any, i: any)=><SampleBlogCard key={i} blog={blog}/>)}
                 </div>
                 <div className="row">
                     <div className="col-12">

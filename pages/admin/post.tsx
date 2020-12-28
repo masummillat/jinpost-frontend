@@ -1,9 +1,14 @@
 import React from "react";
+import moment from "moment";
 import AdminLayout from "../../components/layouts/admin";
 import Head from "../../components/head";
+import {Blog} from "../../types";
 
+interface IPost {
+    blogs: Blog[]
+}
 
-const Post = ({blogs}:{blogs: any[]}) => {
+const Post: React.FC<IPost> = ({blogs}) => {
     console.log(blogs)
     return (
         <div>
@@ -32,14 +37,14 @@ const Post = ({blogs}:{blogs: any[]}) => {
                                             </thead>
                                             <tbody>
                                             {
-                                                blogs.map((blog:{id:number, title: string})=>(
+                                                blogs.map((blog)=>(
                                                     <tr key={blog.id}>
                                                         <td>{blog.title}</td>
                                                         <td>Ensonic Technology, an acoustic monitoring solution provider in the
                                                             industrial field, recently announced the completion of its Series A round
                                                         </td>
-                                                        <td>John Doe</td>
-                                                        <td>05-12-2020, 05:05 AM</td>
+                                                        <td>{blog.author && blog.author.name}</td>
+                                                        <td>{moment(blog.publishedDate).format('LLL')}</td>
                                                         <td>Hello</td>
                                                         <td>
                                                             <a href="new-post.php"><i className="far fa-edit"></i></a>
@@ -61,6 +66,7 @@ const Post = ({blogs}:{blogs: any[]}) => {
     )
 }
 
+// @ts-ignore
 Post.Layout = AdminLayout;
 
 export async function getStaticProps(context: any) {
