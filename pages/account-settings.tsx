@@ -7,6 +7,7 @@ import {userInfo} from "os";
 import httpClient from "../utils/api";
 import {ProfileContext} from "../context/ProfileContext";
 import {AiOutlineUser} from "react-icons/ai";
+import {ToasterError, ToasterSuccess} from "../utils/statusMessage";
 
 const AccountSettings = ({userInfo}: { userInfo: any }) => {
     // @ts-ignore
@@ -36,7 +37,7 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
     }
     const handleUpdateUser = async (userInfo: IBasicInfo) => {
         const {email, ...payload} = userInfo;
-        if(profileImg){
+        if (profileImg) {
             var imageFormData = new FormData();
             // @ts-ignore
             await imageFormData.append('file', profileImg)
@@ -49,21 +50,24 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
                 },
                 body: imageFormData,
                 method: 'post',
-            }).then(res=>res.json())
-                .then(r=>{
+            }).then(res => res.json())
+                .then(r => {
                     httpClient.put(`/users/${user.id}`, {...payload, profileImage: r.url})
                         .then(res => {
-                            console.log(res)
+                            console.log(res);
+                            ToasterSuccess("Successfully updated")
                         })
                         .catch(err => {
-                            console.log(err)
+                            console.error(err.response.data)
+                            ToasterError(err.response.data.message)
                         })
                 })
 
-        }else {
+        } else {
             httpClient.put(`/users/${user.id}`, payload)
                 .then(res => {
                     console.log(res)
+                    ToasterSuccess('Successfully Updated');
                 })
                 .catch(err => {
                     console.log(err)
@@ -116,7 +120,7 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
                                                 }
                                             </Tab.Pane>
                                             <Tab.Pane eventKey="change-password">
-                                                <PasswordChangeForm/>
+                                                <PasswordChangeForm id={user.id}/>
                                             </Tab.Pane>
                                             <Tab.Pane eventKey="delete-account">
                                                 <p>If you delete account you will not be logged in again without

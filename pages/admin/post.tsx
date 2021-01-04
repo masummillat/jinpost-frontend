@@ -40,9 +40,7 @@ const Post: React.FC<IPost> = ({blogs}) => {
                                                 blogs.map((blog)=>(
                                                     <tr key={blog.id}>
                                                         <td>{blog.title}</td>
-                                                        <td>Ensonic Technology, an acoustic monitoring solution provider in the
-                                                            industrial field, recently announced the completion of its Series A round
-                                                        </td>
+                                                        <td>{blog.description}</td>
                                                         <td>{blog.author && blog.author.name}</td>
                                                         <td>{moment(blog.publishedDate).format('LLL')}</td>
                                                         <td>Hello</td>

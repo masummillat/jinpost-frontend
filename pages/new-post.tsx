@@ -9,11 +9,11 @@ import Head from "../components/head";
 import TinyEditor from "../components/editor/TinyEditor";
 import NewStoryComponent from "../components/editor/NewStoryComponent";
 
-interface Icategories {
+export interface Icategories {
     id: number;
     name: string;
 }
-interface INewPostPage {
+export interface INewPostPage {
     categories: Icategories[]
 }
 const NewPostPage: React.FC<INewPostPage> = ({categories}) => {

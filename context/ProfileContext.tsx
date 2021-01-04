@@ -1,10 +1,11 @@
 import React, {useEffect} from "react";
 import jwt_decode from "jwt-decode";
-import { toast } from 'react-toastify';
+
 import isAuthenticated from "../utils/isAuthenticated";
-import MainLayout from "../components/layouts/main";
 import {useState} from "react";
 import httpClient from "../utils/api";
+import {ToasterError, ToasterSuccess} from "../utils/statusMessage";
+import {useRouter} from "next/router";
 
 interface IUser {
     name: string;
@@ -25,12 +26,14 @@ export const ProfileContext = React.createContext<IProfile | null>({isLoggedIn: 
 export const ProfileProvider = ({children}: any) =>{
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const router = useRouter();
 
+    console.log(router)
     console.log(user)
     useEffect(()=>{
         setIsLoggedIn(isAuthenticated())
         if(isAuthenticated()){
-            getCurrentUser()
+            getCurrentUser();
         }
     },[])
 
@@ -69,35 +72,21 @@ export const ProfileProvider = ({children}: any) =>{
                         localStorage.setItem('access_token', res.data.access_token);
                         setIsLoggedIn(true)
                         getCurrentUser();
-                        toast.success('Successfully logged in', {
-                            position: "top-right",
-                            autoClose: 5000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                        });
+                        if(router.pathname === '/registration') router.push('/')
+                        ToasterSuccess('Successfully logged in');
+
+
                     }
                 })
                 .catch(err=>{
                     console.log(err.response.data);
                     const { message, statusCode} = err.response.data;
-                    toast.error(message, {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    });
+                    ToasterError(message)
                 });
             return Promise.resolve();
         }catch (e) {
            return Promise.reject();
         }
-        console.log(JSON.stringify(values, null, 2));
         return Promise.reject()
     }
     const handleLogout = async (): Promise<any> => {

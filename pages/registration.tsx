@@ -1,15 +1,24 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import { useRouter } from 'next/router'
 import Link from "next/link";
 import UserLoginComponent from "../components/login/userLoginComponent";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import httpClient from "../utils/api";
+import {ToasterError, ToasterSuccess} from "../utils/statusMessage";
+import isAuthenticated from "../utils/isAuthenticated";
 
-const Registration = () => {
+const Registration: React.FC = () => {
     const [visible, setVisible] = useState(false);
-
+    const router = useRouter();
     const toggle: () => void = () => setVisible(!visible);
 
+
+    useEffect(()=>{
+        if(isAuthenticated()){
+            router.push('/')
+        }
+    },[])
     const registrationSchema = Yup.object().shape({
         name: Yup.string().required('Required'),
         email: Yup.string().email('Invalid email').required('Required'),
@@ -28,12 +37,14 @@ const Registration = () => {
         onSubmit: values => {
             httpClient.post('http://localhost:3000/auth/signup', values)
                 .then(res=>{
-                    console.log(res)
+                    formik.resetForm();
+                    ToasterSuccess('Successfully signed up')
+                    router.push('/')
+
                 })
                 .catch(err=>{
-                    console.log(err);
+                    ToasterError(err.response.data.message)
                 })
-            alert(JSON.stringify(values, null, 2));
         },
         validationSchema: registrationSchema
     });

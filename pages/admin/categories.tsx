@@ -6,6 +6,7 @@ import httpClient from "../../utils/api";
 import {CategoryEntry} from "../../types";
 import {Button, Modal} from "react-bootstrap";
 import {toast} from "react-toastify";
+import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 
 interface ICategoriesProps {
     categories: CategoryEntry[]
@@ -16,11 +17,23 @@ const Categories: React.FC<ICategoriesProps> = ({categories}) =>{
     const [categoryState, setCategoryState] = useState<CategoryEntry[]>([]);
     const handleClose = () => setShow(false);
 
+    const handleDelete = (id: number | undefined) =>{
+       if(id){
+           httpClient.delete(`/categories/${id}`)
+               .then(res=>{
+                  ToasterSuccess('Successfully deleted');
+                   getCategories();
+               })
+               .catch(err=>{
+                   ToasterError(err.response.statusText);
+               })
+       }
+    }
     useEffect(()=>{
         setCategoryState(categories)
-    },[categories])
-    console.log(categories)
-    console.log(categoryState )
+    },[categories]);
+
+
     const formik = useFormik({
         initialValues: {
             name:'',
@@ -29,28 +42,12 @@ const Categories: React.FC<ICategoriesProps> = ({categories}) =>{
             console.log(JSON.stringify(values, null, 2));
             httpClient.post('/categories',values).then((res)=>{
                 console.log(res);
-                toast.success(res.statusText, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
+                ToasterSuccess('Successfully created');
                 getCategories();
                 formik.setFieldValue('name', '');
             }).catch(err=>{
                 console.log(err)
-                toast.error(err.response.statusText, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
+                ToasterError(err.response.statusText);
                 formik.setFieldValue('name', '');
             })
         },
@@ -63,27 +60,11 @@ const Categories: React.FC<ICategoriesProps> = ({categories}) =>{
             console.log(JSON.stringify(values, null, 2));
           if (category){
               httpClient.put(`/categories/${category.id}`,values).then((res)=>{
-                  toast.success(res.statusText, {
-                      position: "top-right",
-                      autoClose: 5000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                  });
+                  ToasterSuccess('Successfully updated');
                   getCategories();
               }).catch(err=>{
                   console.log(err)
-                  toast.error(err.response.statusText, {
-                      position: "top-right",
-                      autoClose: 5000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                  });
+                  ToasterError(err.response.statusText);
               })
               handleClose();
           }
@@ -96,15 +77,7 @@ const Categories: React.FC<ICategoriesProps> = ({categories}) =>{
                 setCategoryState(res.data);
             })
             .catch(err=>{
-                toast.error(err.response.statusText, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
+                ToasterError(err.response.statusText);
             })
     }
 
@@ -139,8 +112,12 @@ const Categories: React.FC<ICategoriesProps> = ({categories}) =>{
                                                                 setCategory(category);
                                                                 setShow(true)
                                                                 categoryUpdateForm.setFieldValue('name',category.name)
-                                                            }} className="far fa-edit"/>
-                                                            <a href="#"><i className="far fa-trash-alt"/></a>
+                                                            }} style={{cursor: 'pointer'}} className="far fa-edit"/>
+                                                            <i onClick={()=>{
+                                                                handleDelete(category.id)
+                                                            }}
+                                                               className="far fa-trash-alt"
+                                                               style={{cursor: 'pointer'}}/>
                                                         </td>
                                                     </tr>
                                                 ))
@@ -197,14 +174,11 @@ const Categories: React.FC<ICategoriesProps> = ({categories}) =>{
 // @ts-ignore
 Categories.Layout = AdminLayout;
 export async function getStaticProps() {
-
-    // fetch(`${process.env.BACKEND_BASE_URL}/categories`)
-    //     .then(res => res.json())
-    //     .then(res => console.log(res))
-    //     .catch(err => console.log(err));
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
+    const data = await res.json()
     return {
         props: {
-            categories: [],
+            categories: data.statusCode === 401 ? [] : data,
         },
     }
 }

@@ -1,7 +1,14 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import Link from 'next/link';
+import {ProfileContext} from "../../context/ProfileContext";
+import {Dropdown, DropdownMenu, DropdownItem, DropdownToggle} from "reactstrap";
 const AdminHeader: React.FC = ()=>{
-
+    const profileCtx = useContext(ProfileContext);
+    const [toolbarOpen, setToolbarOpen] = useState(false);
+    const toggleToolbar = () => setToolbarOpen(prevState => !prevState);
+    // @ts-ignore
+    const { user, handleLogout } = profileCtx;
+    console.log(user);
     const handleToggle = (event: any): void =>{
         // @ts-ignore
         document.getElementById('page-wrapper').classList.toggle('toggled')
@@ -37,7 +44,7 @@ const AdminHeader: React.FC = ()=>{
                     <div className="sidebar-brand">
                         <Link href="/admin/users"><a>JinPost</a></Link>
                         <div onClick={handleToggle} id="close-sidebar">
-                            <i className="fas fa-times"></i>
+                            <i className="fas fa-times"/>
                         </div>
                     </div>
 
@@ -45,7 +52,7 @@ const AdminHeader: React.FC = ()=>{
                         <ul>
                             <li id="postDropdown" className="sidebar-dropdown">
                                 <a onClick={handlePostToggle} href="#">
-                                    <i className="fas fa-paste"></i>
+                                    <i className="fas fa-paste"/>
                                     <span>Posts</span>
                                 </a>
                                 <div id="postSubMenu" className="sidebar-submenu">
@@ -70,7 +77,7 @@ const AdminHeader: React.FC = ()=>{
                             </li>
                             <li id="userDropdown" className="sidebar-dropdown">
                                 <a onClick={handleUserToggle} href="#">
-                                    <i className="fas fa-users"></i>
+                                    <i className="fas fa-users"/>
                                     <span>Users</span>
                                 </a>
                                 <div id="userSubMenu" className="sidebar-submenu">
@@ -103,18 +110,27 @@ const AdminHeader: React.FC = ()=>{
                         <div className="col-12">
                             <div className="header-right">
                                 <div className="navbar-profile">
-                                    <div className="dropdown">
-                                        <a href="#" className="dropdown-toggle" id="dropdownMenuButton"
-                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            John Doe
-                                        </a>
-                                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a className="dropdown-item" href="profile-edit.php">My Profile</a>
-                                            <a className="dropdown-item" href="change-password.php">Chnage Password</a>
-                                            <a className="dropdown-item" href="#">Logout</a>
-                                        </div>
-                                    </div>
-                                    <img className="profile-pic" src="/static/img/profile.jpg" alt="profile pic" />
+                                    <Dropdown isOpen={toolbarOpen} toggle={toggleToolbar}>
+                                        <DropdownToggle nav >
+                                           <span className="mr-2"> {user?user.name : ''}</span>
+                                            <img
+                                                style={{width: 40,height: 40, borderRadius: '50%'}}
+                                                src={user && user.profileImage}
+                                                alt={user && user.name}
+                                            />
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            <DropdownItem>
+                                                <Link href="/admin/profile-edit"><a>Profile</a></Link>
+                                            </DropdownItem>
+                                            <DropdownItem>
+                                                <Link href="/admin/change-password"><a>Change password</a></Link>
+                                            </DropdownItem>
+                                            <DropdownItem>
+                                                <div onClick={handleLogout} className="font-weight-bold">Log Out</div>
+                                            </DropdownItem>
+                                        </DropdownMenu>
+                                    </Dropdown>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +138,7 @@ const AdminHeader: React.FC = ()=>{
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default AdminHeader;

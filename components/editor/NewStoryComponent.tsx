@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
 import {WithContext as ReactTags} from 'react-tag-input';
 import {useFormik} from 'formik';
 import Calendar from 'react-calendar';
@@ -6,20 +6,35 @@ import 'react-calendar/dist/Calendar.css';
 import Select from "react-select";
 import Head from "../head";
 import TinyEditor from "./TinyEditor";
+import * as Yup from "yup";
+import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
+import httpClient from "../../utils/api";
 
 interface Icategories {
     id: number;
     name: string;
 }
 interface INewStoryComponent {
-    categories: Icategories[]
+    categories: Icategories[];
+    blog?: any;
+    isEdit?: boolean;
 
 }
+const storySchema = Yup.object().shape({
+    title: Yup.string()
+        .min(2, 'Title should be more than 2 characters')
+        .max(300, 'Title should be less than 50 characters')
+        .required('Title is required'),
+    categories: Yup.array().required('Category is required'),
+    // featuredImg: Yup.string().required('Feature image is required'),
+    body: Yup.string().required('Blog content is required'),
+    publishedDate: Yup.date().required('required'),
+});
 // @ts-ignore
-const NewStoryComponent: React.FC<INewStoryComponent> = ({categories=[]}) => {
+const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categories=[]}) => {
+    console.log(blog)
     const [image, setImage] = useState(null);
     const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
-    console.log(categories)
     useEffect(() => {
         setCategoryOptions([])
         setCategoryOptions(categories.map((cat: { id: number; name: string; }) => ({
@@ -32,51 +47,100 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({categories=[]}) => {
         initialValues: {
             title: '',
             categories: [],
-            featuredImg: null,
+            featuredImg: '',
             body: '',
-            tags: [],
+            // tags: [],
             publishedDate: new Date()
         },
+        validationSchema: storySchema,
         onSubmit: async values => {
+            let imageFormData;
             console.log(values)
-            var imageFormData = new FormData();
-            // @ts-ignore
-            await imageFormData.append('file', image)
-            console.log(imageFormData.get('file'))
-            await fetch('http://localhost:3000/blogs/image/upload', {
-                headers: {
-                    'Accept': 'application/json',
-                    // 'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                },
-                body: imageFormData,
-                method: 'post',
-            }).then(res=>res.json())
-                .then( result=>{
-                    formik.setFieldValue('featuredImg', result.url)
-                    fetch('http://localhost:3000/blogs', {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                        },
-                        method: 'post',
-                        body: JSON.stringify({...values, featuredImg: result.url}),
-                    }).then(res=>res.json())
-                        .then(r=>{
-                            console.log(r)
-                        })
-                        .catch(err=>{
-                            console.log(err)
-                        })
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
+            console.log(isEdit)
+            if (isEdit){
+                if (image){
+                    // @ts-ignore
+                    delete values.tags;
+                    imageFormData = new FormData();
+                    // @ts-ignore
+                    await imageFormData.append('file', image)
+                    // httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
+                    //     .then((res)=>{
+                    //         console.log(res)
+                    //         // @ts-ignore
+                    //         formik.setFieldValue('featuredImg', res.data.url)
+                    //         httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {...values, featuredImg: res.data.url})
+                    //             .then(r=>{
+                    //                 console.log(r)
+                    //             })
+                    //             .catch(er=>{
+                    //                 console.log(er)
+                    //             })
+                    //     })
+                    //     .catch(err=>{
+                    //         console.log(err);
+                    //     })
+                }
+            }else {
+                imageFormData = new FormData();
+                // @ts-ignore
+                await imageFormData.append('file', image)
+                await fetch('http://localhost:3000/blogs/image/upload', {
+                    headers: {
+                        'Accept': 'application/json',
+                        // 'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    },
+                    body: imageFormData,
+                    method: 'post',
+                }).then(res=>res.json())
+                    .then( result=>{
+                        formik.setFieldValue('featuredImg', result.url)
+                        fetch('http://localhost:3000/blogs', {
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                            },
+                            method: 'post',
+                            body: JSON.stringify({...values, featuredImg: result.url}),
+                        }).then(res=>res.json())
+                            .then(r=>{
+                                console.log(r)
+                                ToasterSuccess('successfully created');
+                                formik.resetForm();
+                            })
+                            .catch(err=>{
+                                console.log(err)
+                                ToasterError(err.response.data.message);
+                            })
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                    })
+            }
+
 
 
         },
     });
+
+    useEffect(()=>{
+        if(blog){
+            console.log()
+            formik.setFieldValue('title', blog.title)
+            formik.setFieldValue('body', blog.body)
+            formik.setFieldValue('categories', blog.categories.map((cat: { id: any; name: any; })=>{
+                return{
+                    id: cat.id,
+                    label: cat.name,
+                    value: cat.id
+                }
+            }))
+            formik.setFieldValue('featuredImg', blog.featuredImg)
+
+        }
+    },[isEdit, blog])
     const [tagsState, setTagState] = useState({
         tags: [
             {id: "Thailand", text: "Thailand"},
@@ -132,7 +196,29 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({categories=[]}) => {
         });
     }
 
+    const [imagePreviewUrl, setImagePreviewUrl] = useState<string>('');
+    const imageInputRef = useRef(null);
+    const handleProfileImg = (event: ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault();
+        // @ts-ignore
+        let file = event.currentTarget.files[0];
+        // @ts-ignore
+        setImage(file);
+        let reader = new FileReader();
+        reader.onloadend = () => {
+            console.log(reader.result)
+            // @ts-ignore
+            setImagePreviewUrl(reader.result)
+            // @ts-ignore
+
+        }
+
+        reader.readAsDataURL(file)
+
+    }
+    console.log(formik.values.categories)
     const {tags, suggestions} = tagsState;
+    // @ts-ignore
     return (
         <div>
             <main className="page-content">
@@ -140,7 +226,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({categories=[]}) => {
                     <form onSubmit={formik.handleSubmit} className="row">
                         <div className="col-12">
                             <div className="page-title">
-                                <h1>Add New Post</h1>
+                                <h1>{isEdit ? 'Update blog': 'Add New Post'}</h1>
                             </div>
                             <div className="row">
                                 <div className="col-lg-8">
@@ -153,6 +239,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({categories=[]}) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.title}
                                         />
+                                        <p className="small text-danger">{formik.touched.title && formik.errors && formik.errors.title}</p>
                                         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                             <li className="nav-item" role="presentation">
                                                 <a className="nav-link active" id="pills-content-tab"
@@ -172,6 +259,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({categories=[]}) => {
                                         </ul>
                                         <div className="tab-content" id="pills-tabContent">
                                             <TinyEditor formik={formik}/>
+                                            <p className="small text-danger">{formik.touched.title && formik.errors.body}</p>
                                             <div className="tab-pane" id="pills-original" role="tabpanel"
                                                  aria-labelledby="pills-original-tab">
                                                     <textarea className="form-control note"
@@ -194,30 +282,41 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({categories=[]}) => {
                                             <Select
                                                 id="categorySelect"
                                                 isMulti
+                                                value={formik.values.categories}
                                                 options={categoryOptions}
                                                 onChange={(categories) => {
                                                     formik.setFieldValue('categories', categories && categories.map((cat: { id: number; label: string; }) => {
                                                         return {
                                                             id: cat.id,
-                                                            // name: cat.label,
+                                                            name: cat.label,
+                                                            value: cat.id,
+                                                            label: cat.label
                                                         }
                                                     }))
                                                 }}
                                             />
+                                            <p className="small text-danger">{formik.errors.categories}</p>
                                         </div>
                                         <div className="featured-img">
                                             <p>Featured Image</p>
+                                            <div style={{width: '100%', minHeight: 250, border: '1px solid black'}} onClick={
+                                                ()=>{// @ts-ignore
+                                                    imageInputRef.current.click()}
+                                            }>
+                                                {
+                                                    imagePreviewUrl ? <img src={imagePreviewUrl} className="img-fluid" alt=""/> : isEdit ? <img className="img-fluid" src={formik.values.featuredImg} alt=""/> :
+                                                         'Upload Image'
+                                                }
+                                            </div>
                                             <input
+                                                style={{visibility: 'hidden'}}
+                                                ref={imageInputRef}
                                                 name="featuredImg"
                                                 type="file"
                                                 accept="image/*"
-                                                onChange={event => {
-                                                    // @ts-ignore
-                                                    setImage(event.currentTarget.files[0]);
-                                                    // imageFormData.append('file', event.currentTarget.files[0]);
-
-                                                }}
+                                                onChange={handleProfileImg}
                                             />
+                                            <p className="small text-danger">{image === null ? 'Featured image is required': ''}</p>
                                         </div>
                                         <div className="date">
                                             <label>Date</label>
@@ -227,6 +326,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({categories=[]}) => {
                                                 }}
                                                 value={formik.values.publishedDate}
                                             />
+                                            <p className="small text-danger">{formik.errors.publishedDate}</p>
                                         </div>
                                         <div className="tags">
                                             <label>Tags</label>

@@ -9,7 +9,7 @@ const TinyEditor = ({formik}: any) =>{
     return(
         <Editor
             id="blogPost"
-            initialValue="<p>This is the initial content of the editor</p>"
+            initialValue=""
             init={{
                 height: 500,
                 menubar: true,
@@ -25,6 +25,7 @@ const TinyEditor = ({formik}: any) =>{
                 image_title: true,
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             }}
+            value={formik.values.body}
             onEditorChange={handleEditorChange}
         />
     );

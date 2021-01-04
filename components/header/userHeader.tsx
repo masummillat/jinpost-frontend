@@ -19,16 +19,17 @@ const UserHeader = () => {
     const [wriVisible, setWriVisible] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [toolbarOpen, setToolbarOpen] = useState(false);
-    const toggle  = ()  => setVisible(!visible);
-    const toggleWriVisible= () => setWriVisible(!wriVisible);
+    const toggle = () => setVisible(!visible);
+    const toggleWriVisible = () => setWriVisible(!wriVisible);
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
     const toggleToolbar = () => setToolbarOpen(prevState => !prevState);
 
-    useEffect(()=>{
-        httpClient.get('/categories').then(res=>{
+    useEffect(() => {
+        httpClient.get('/categories').then(res => {
             setCategories(res.data);
-        }).catch(err=>{});
-    },[setCategories]);
+        }).catch(err => {
+        });
+    }, [setCategories]);
 
     return (
         <header>
@@ -58,7 +59,7 @@ const UserHeader = () => {
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     {
-                                        categories.map((category: CategoryEntry)=>(
+                                        categories.map((category: CategoryEntry) => (
                                             <Link key={category.id} href={`/categories/${category.id}`}>
                                                 <a className="dropdown-item">{category.name} </a>
                                             </Link>
@@ -98,11 +99,14 @@ const UserHeader = () => {
                                     <IoMdNotificationsOutline style={{fontSize: 24}}/>
                                 </a>
 
-                                <a onClick={toggleWriVisible} className="be-writter"><GiBookmarklet  style={{fontSize: 24}} className=" pr-2 "/> Become a writter</a>
+                                <a onClick={toggleWriVisible} className="be-writter"><GiBookmarklet
+                                    style={{fontSize: 24}} className=" pr-2 "/> Become a writter</a>
 
                                 <Dropdown isOpen={toolbarOpen} toggle={toggleToolbar}>
-                                    <DropdownToggle nav >
-                                        <img style={{width: 40, borderRadius: 7}} src={user && user.profileImage}/>
+                                    <DropdownToggle nav>
+                                        {user && user.profileImage ?
+                                            <img style={{width: 40, borderRadius: 7}} src={user.profileImage}/> :
+                                            <img style={{width: 50, borderRadius: 7}} src="/static/img/profile.jpg"/>}
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         <DropdownItem>

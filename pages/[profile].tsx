@@ -1,4 +1,5 @@
 import React, {useContext, useState} from 'react';
+import {useRouter} from 'next/router'
 import {FaUserEdit} from 'react-icons/fa';
 import DefaultLayout from "../components/layouts/default";
 import PublishBlogCard from "../components/blogs/PublishBlogCard";
@@ -7,6 +8,9 @@ import Link from "next/link";
 import {ProfileContext} from "../context/ProfileContext";
 
 const ProfilePage = () => {
+
+      const router = useRouter();
+      console.log(router)
     // @ts-ignore
     const {user} = useContext(ProfileContext);
     return(
