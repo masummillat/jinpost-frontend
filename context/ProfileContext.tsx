@@ -93,6 +93,7 @@ export const ProfileProvider = ({children}: any) =>{
         if (typeof window !== 'undefined'){
             setIsLoggedIn(false)
             await localStorage.removeItem('access_token');
+            router.push('/')
         }
         return Promise.resolve();
     }

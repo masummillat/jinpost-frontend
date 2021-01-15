@@ -4,7 +4,7 @@ import Link from "next/link";
 const BlogCard = ({blog}) => {
 
     return(
-        <div className="col-lg-6">
+        <div className="col-lg-6 mb-3">
             <div className="article-preview-right">
                 <div className="card">
                     <img src={blog.featuredImg} className="card-img-top" alt={blog.title}/>
@@ -16,9 +16,11 @@ const BlogCard = ({blog}) => {
                                 </a>
                             </Link>
                         </p>
-                        <a href="#" className="article-preview-author">
+                        <Link  href={`/${blog.author.domain}`}>
+                        <a className="article-preview-author">
                             <img src="/static/img/profile.jpg"/>{blog.author.name}
                         </a>
+                        </Link>
                     </div>
                 </div>
             </div>

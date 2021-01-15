@@ -65,19 +65,6 @@ const UserHeader = () => {
                                             </Link>
                                         ))
                                     }
-                                    <a className="dropdown-item" href="category-page.php">5G</a>
-                                    <a className="dropdown-item" href="category-page.php">AI</a>
-                                    <a className="dropdown-item" href="category-page.php">Automobile</a>
-                                    <a className="dropdown-item" href="category-page.php">Autonomous Driving</a>
-                                    <a className="dropdown-item" href="category-page.php">Big Data</a>
-                                    <a className="dropdown-item" href="category-page.php">Biotech</a>
-                                    <a className="dropdown-item" href="category-page.php">Blockchain</a>
-                                    <a className="dropdown-item" href="category-page.php">Cloud Computing</a>
-                                    <a className="dropdown-item" href="category-page.php">Ecommerce</a>
-                                    <a className="dropdown-item" href="category-page.php">Finance</a>
-                                    <a className="dropdown-item" href="category-page.php">FinTech</a>
-                                    <a className="dropdown-item" href="category-page.php">Internet of Things</a>
-                                    <a className="dropdown-item" href="category-page.php">Logistics</a>
                                 </DropdownMenu>
                             </Dropdown>
                         </li>
@@ -99,8 +86,12 @@ const UserHeader = () => {
                                     <IoMdNotificationsOutline style={{fontSize: 24}}/>
                                 </a>
 
-                                <a onClick={toggleWriVisible} className="be-writter"><GiBookmarklet
-                                    style={{fontSize: 24}} className=" pr-2 "/> Become a writter</a>
+                                <a onClick={toggleWriVisible} className="be-writter">
+                                    <GiBookmarklet
+                                        style={{fontSize: 24}} 
+                                        className=" pr-2 "/>
+                                        {user && user.role === 'author' ? 'Write' : 'Become a writter'}
+                                </a>
 
                                 <Dropdown isOpen={toolbarOpen} toggle={toggleToolbar}>
                                     <DropdownToggle nav>
@@ -116,7 +107,7 @@ const UserHeader = () => {
                                             <Link href="/new-post"><a>Write</a></Link>
                                         </DropdownItem>
                                         <DropdownItem>
-                                            <Link href="/profile"><a>Profile</a></Link>
+                                            {user && (<Link href={`/${user.domain}`}><a>Profile</a></Link>)}
                                         </DropdownItem>
                                         <DropdownItem>
                                             <Link href="/account-settings"><a>Account Settings</a></Link>

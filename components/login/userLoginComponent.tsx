@@ -26,6 +26,7 @@ const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>vo
         onSubmit: values => {
             handleLogin(values).then(()=>{
                 toggle();
+                router.push('/')
             })
         },
         validationSchema: loginSchema

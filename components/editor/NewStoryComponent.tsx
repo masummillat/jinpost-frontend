@@ -9,6 +9,7 @@ import TinyEditor from "./TinyEditor";
 import * as Yup from "yup";
 import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 import httpClient from "../../utils/api";
+import {UserDto} from "../../types";
 
 interface Icategories {
     id: number;
@@ -23,16 +24,19 @@ interface INewStoryComponent {
 const storySchema = Yup.object().shape({
     title: Yup.string()
         .min(2, 'Title should be more than 2 characters')
-        .max(300, 'Title should be less than 50 characters')
+        .max(200, 'Title should be less than 200 characters')
         .required('Title is required'),
     categories: Yup.array().required('Category is required'),
+    description: Yup.string()
+    .min(2, 'Title should be more than 2 characters')
+    .max(300, 'Title should be less than 300 characters')
+    ,
     // featuredImg: Yup.string().required('Feature image is required'),
     body: Yup.string().required('Blog content is required'),
     publishedDate: Yup.date().required('required'),
 });
 // @ts-ignore
 const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categories=[]}) => {
-    console.log(blog)
     const [image, setImage] = useState(null);
     const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
     useEffect(() => {
@@ -43,9 +47,24 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
             value: cat.id,
         })))
     }, [categories])
+
+
+    const updateBlog = (values: any) => {
+        httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {id: blog.id, ...values})
+            .then(r=>{
+                console.log(r)
+                ToasterSuccess('Successfully updated')
+            })
+            .catch(er=>{
+                ToasterError(er.response.data.message);
+                console.log(er)
+            })
+
+    }
     const formik = useFormik({
         initialValues: {
             title: '',
+            description: '',
             categories: [],
             featuredImg: '',
             body: '',
@@ -56,30 +75,24 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         onSubmit: async values => {
             let imageFormData;
             console.log(values)
-            console.log(isEdit)
             if (isEdit){
+                //TODO CHECK IF IT HAS NEW IMAGE TO UPLOAD
                 if (image){
-                    // @ts-ignore
-                    delete values.tags;
                     imageFormData = new FormData();
                     // @ts-ignore
                     await imageFormData.append('file', image)
-                    // httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
-                    //     .then((res)=>{
-                    //         console.log(res)
-                    //         // @ts-ignore
-                    //         formik.setFieldValue('featuredImg', res.data.url)
-                    //         httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {...values, featuredImg: res.data.url})
-                    //             .then(r=>{
-                    //                 console.log(r)
-                    //             })
-                    //             .catch(er=>{
-                    //                 console.log(er)
-                    //             })
-                    //     })
-                    //     .catch(err=>{
-                    //         console.log(err);
-                    //     })
+                    httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
+                        .then((res)=>{
+                            console.log(res)
+                            // @ts-ignore
+                            formik.setFieldValue('featuredImg', res.data.url)
+                            updateBlog({...values, featuredImg: res.data.url});
+                        })
+                        .catch(err=>{
+                            console.log(err);
+                        })
+                }else{
+                    updateBlog(values);
                 }
             }else {
                 imageFormData = new FormData();
@@ -216,11 +229,11 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         reader.readAsDataURL(file)
 
     }
-    console.log(formik.values.categories)
     const {tags, suggestions} = tagsState;
     // @ts-ignore
     return (
         <div>
+            <Head title={blog && blog.title} />
             <main className="page-content">
                 <div className="container-fluid">
                     <form onSubmit={formik.handleSubmit} className="row">
@@ -240,7 +253,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                             value={formik.values.title}
                                         />
                                         <p className="small text-danger">{formik.touched.title && formik.errors && formik.errors.title}</p>
-                                        <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                        {/* <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                             <li className="nav-item" role="presentation">
                                                 <a className="nav-link active" id="pills-content-tab"
                                                    data-bs-toggle="pill" href="#pills-content" role="tab"
@@ -256,7 +269,18 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                                    href="#pills-note" role="tab" aria-controls="pills-note"
                                                    aria-selected="false">Note</a>
                                             </li>
-                                        </ul>
+                                        </ul> */}
+                                        <div>
+                                        <input
+                                            type="text"
+                                            name="description"
+                                            className="form-control post-title"
+                                            placeholder="Enter description here"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.description}
+                                        />
+                                        <p className="small text-danger">{formik.touched.description && formik.errors && formik.errors.description}</p>
+                                        </div>
                                         <div className="tab-content" id="pills-tabContent">
                                             <TinyEditor formik={formik}/>
                                             <p className="small text-danger">{formik.touched.title && formik.errors.body}</p>
@@ -300,7 +324,8 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                         <div className="featured-img">
                                             <p>Featured Image</p>
                                             <div style={{width: '100%', minHeight: 250, border: '1px solid black'}} onClick={
-                                                ()=>{// @ts-ignore
+                                                ()=>{
+                                                    // @ts-ignore
                                                     imageInputRef.current.click()}
                                             }>
                                                 {

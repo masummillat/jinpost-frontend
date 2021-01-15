@@ -7,14 +7,15 @@ export enum UserRole {
 
 export interface UserDto {
     id?: number;
-    name?: string;
+    name: string;
+    domain:string;
     email?: string;
     password?: string;
     bio?: string;
     occupation?: string;
     role?: UserRole;
     profileImage?: string;
-    Blogs?: Blog[];
+    blogs?: Blog[];
 }
 export interface Blog {
     id?: number;

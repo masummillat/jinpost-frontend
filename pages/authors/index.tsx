@@ -8,11 +8,15 @@ const Index = ({authors, notFound}:{authors: any[], notFound: boolean}) => {
         <div className="container">
             <div className="row">
                 {/* TODO SHOW AUTHORS HERE*/}
-                <div className="col-lg-4">
+                
                     {
-                        authors.map((author)=><AuthorCard key={author.id} author={author}/>)
+                        authors.map((author)=>  (
+                            <div key={author.id} className="col-lg-4 col-md-4 col-sm-6">
+                                <AuthorCard  author={author}/>
+                            </div>
+                            ))
                     }
-                </div>
+            
             </div>
         </div>
     );

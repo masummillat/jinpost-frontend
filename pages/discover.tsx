@@ -1,9 +1,16 @@
 import React from "react";
 import AuthorCard from "../components/authors/AuthorCard";
 import DefaultLayout from "../components/layouts/default";
+import { UserDto, CategoryEntry } from "../types";
+import Link from "next/link";
 
-const DiscoverPage = ({authors, notFound}:{authors: any[], notFound: boolean}) => {
+interface DiscoverPageProps {
+    authors: UserDto[];
+    categories: CategoryEntry[];
+}
+const DiscoverPage: React.FC<DiscoverPageProps> = ({authors, categories}) => {
 
+    console.log(categories)
     return(
         <div className="container">
             <div className="row">
@@ -11,19 +18,13 @@ const DiscoverPage = ({authors, notFound}:{authors: any[], notFound: boolean}) =
                     <div className="discover-topics">
                         <h2>Browse by Popular Topics</h2>
                         <ul>
-                            <li><a href="#">5G</a></li>
-                            <li><a href="#">AI</a></li>
-                            <li><a href="#">Automobile</a></li>
-                            <li><a href="#">Autonomous Driving</a></li>
-                            <li><a href="#">Big Data</a></li>
-                            <li><a href="#">Biotech</a></li>
-                            <li><a href="#">Blockchain</a></li>
-                            <li><a href="#">Cloud Computing</a></li>
-                            <li><a href="#">Ecommerce</a></li>
-                            <li><a href="#">Finance</a></li>
-                            <li><a href="#">FinTech</a></li>
-                            <li><a href="#">Internet of Things</a></li>
-                            <li><a href="#">Logistics</a></li>
+                            {categories.map((category,i)=>(
+                                    <li key={category.id}>
+                                        <Link href={`/categories/${category.id}`}>
+                                            <a>{category.name}</a>
+                                        </Link>
+                                    </li>
+                                ))}
                         </ul>
                     </div>
                     <div className="discover-tags">
@@ -59,7 +60,11 @@ DiscoverPage.Layout = DefaultLayout;
 
 export async function getStaticProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/users`)
-    const data = await res.json()
+    const data = await res.json();
+
+    const categoriesRes = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
+    const categories = await categoriesRes.json()
+
     if (!data) {
         return {
             notFound: true,
@@ -68,7 +73,8 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            authors: data
+            authors: data,
+            categories
         }, // will be passed to the page component as props
     }
 }

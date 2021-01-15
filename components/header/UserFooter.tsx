@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from "next/link";
 
 const UserFooter = () => {
 
@@ -9,10 +10,10 @@ const UserFooter = () => {
                     <footer>
                         <img src="/static/img/logo.png"/>
                         <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Terms of Services</a></li>
+                            <li><Link href="/"><a>Home</a></Link></li>
+                            <li><Link href="/about"><a>About Us</a></Link></li>
+                            <li><Link href="/privacy"><a>Privacy Policy</a></Link></li>
+                            <li><Link href="/terms"><a>Terms of Services</a></Link></li>
                         </ul>
                         <hr/>
                         <p>Copyright © 2020 JinPost. All rights reserved.</p>

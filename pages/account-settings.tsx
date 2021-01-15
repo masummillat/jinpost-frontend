@@ -115,12 +115,12 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
                                                         bio: user.bio,
                                                         occupation: user.occupation
                                                     }}
-                                                                        handleSubmit={handleUpdateUser}
+                                                        handleSubmit={handleUpdateUser}
                                                     />)
                                                 }
                                             </Tab.Pane>
                                             <Tab.Pane eventKey="change-password">
-                                                <PasswordChangeForm id={user.id}/>
+                                               {user && ( <PasswordChangeForm id={user.id}/>)}
                                             </Tab.Pane>
                                             <Tab.Pane eventKey="delete-account">
                                                 <p>If you delete account you will not be logged in again without

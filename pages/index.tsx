@@ -35,11 +35,13 @@ const Home = ({blogs}: any) => {
                                                 <a className="article-preview-title">{blogs && blogs[0].title}</a>
                                             </Link>
                                             <div className="article-preview-desc">
-                                                <div dangerouslySetInnerHTML={createMarkup(blogs && blogs[0].body)}/>
+                                                <p className="text-muted text-nowrap ">{blogs && blogs[0].description}</p>
                                             </div>
-                                            <a href="#" className="article-preview-author">
-                                                <img src="/static/img/profile.jpg"/>Sicong Long
+                                            <Link href={`/${blogs && blogs[0].author.domain}`} >
+                                            <a  className="article-preview-author">
+                                                <img src="/static/img/profile.jpg"/>{blogs[0].author.name}
                                             </a>
+                                            </Link>
                                         </div>
                                     </div>
                                 )
