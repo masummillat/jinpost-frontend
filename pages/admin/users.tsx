@@ -3,7 +3,12 @@ import AdminLayout from "../../components/layouts/admin";
 import Head from "../../components/head";
 import httpClient from "../../utils/api";
 
-const UsersComponent = ({users, err, notFound}: {users: any[], err: any, notFound: boolean}) => {
+interface UsersComponentProps{
+    usersData: any;
+}
+const UsersComponent = ({usersData}: UsersComponentProps) => {
+    console.log(usersData)
+    const users = usersData.items;
     console.log(users)
     return (
         <div>
@@ -64,7 +69,7 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            users: data
+            usersData: data
         }, // will be passed to the page component as props
     }
 }

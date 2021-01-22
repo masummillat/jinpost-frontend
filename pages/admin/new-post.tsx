@@ -12,7 +12,7 @@ interface INewPost {
     categories: Icategories[];
 
 }
-const NewPost: React.FC<INewPost> = ({categories}) => {
+const NewPost = ({categories}: INewPost) => {
     return (
         <div>
             <Head/>
@@ -21,7 +21,6 @@ const NewPost: React.FC<INewPost> = ({categories}) => {
     );
 }
 
-// @ts-ignore
 NewPost.Layout = AdminLayout;
 
 export async function getStaticProps(context: any) {
@@ -36,7 +35,7 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            categories: data
+            categories: data.items
         }, // will be passed to the page component as props
     }
 }

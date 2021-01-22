@@ -23,7 +23,7 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
             isAuthenticated() && (user.domain === profile.domain))
         }
     }, [profile])
-
+    console.log(authorized)
     return (
         <div className="container">
             <div className="row">

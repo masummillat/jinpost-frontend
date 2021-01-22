@@ -1,8 +1,14 @@
 import React from "react";
 import DefaultLayout from "../../components/layouts/default";
 import AuthorCard from "../../components/authors/AuthorCard";
+import { UserDto } from "../../types";
 
-const Index = ({authors, notFound}:{authors: any[], notFound: boolean}) => {
+interface AuthorsProps {
+    authorsData: any;
+    Layout: any;
+}
+const Index = ({authorsData}: AuthorsProps) => {
+    const authors: UserDto[] = authorsData.items;
     console.log(authors)
     return(
         <div className="container">
@@ -34,7 +40,7 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            authors: data
+            authorsData: data
         }, // will be passed to the page component as props
     }
 }

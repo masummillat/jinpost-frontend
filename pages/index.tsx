@@ -10,7 +10,12 @@ export function createMarkup(blogString: any) {
     return {__html: blogString};
 }
 
-const Home = ({blogs}: any) => {
+interface HomeProps{
+    blogsData: any;
+}
+const Home = ({blogsData}: any) => {
+    console.log(blogsData)
+    const blogs = blogsData.items;
     console.log(blogs)
     return (
         <div>
@@ -29,7 +34,7 @@ const Home = ({blogs}: any) => {
                             {
                                 blogs.length > 0 && (
                                     <div className="card">
-                                        <img src={blogs && blogs[0].featuredImg} className="card-img-top" alt="..."/>
+                                        <img src={blogs && blogs[0].featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
                                         <div className="card-body">
                                             <Link href={`/blogs/${blogs && blogs[0].id}`}>
                                                 <a className="article-preview-title">{blogs && blogs[0].title}</a>
@@ -145,7 +150,7 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            blogs: data
+            blogsData: data
         }, // will be passed to the page component as props
     }
 }

@@ -12,7 +12,7 @@ const PublishBlogCard: React.FC<PublishBlogCardProps> = ({blog, authorized}) => 
         <div className="col-lg-4">
             <div className="published-item">
                 <div className="card">
-                    <img src={blog.featuredImg} className="card-img-top" alt="..." />
+                    <img src={blog.featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..." />
                     <small>{moment(blog.createdAt).format('LL')}</small>
                     <div className="card-body">
                         <p className="article-preview-title">

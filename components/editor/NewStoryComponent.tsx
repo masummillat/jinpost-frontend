@@ -98,25 +98,26 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                 imageFormData = new FormData();
                 // @ts-ignore
                 await imageFormData.append('file', image)
-                await fetch('http://localhost:3000/blogs/image/upload', {
-                    headers: {
-                        'Accept': 'application/json',
-                        // 'Content-Type': 'multipart/form-data',
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                    },
-                    body: imageFormData,
-                    method: 'post',
-                }).then(res=>res.json())
-                    .then( result=>{
-                        formik.setFieldValue('featuredImg', result.url)
-                        fetch('http://localhost:3000/blogs', {
+                // await fetch(`${process.env.BACKEND_BASE_URL}/image/upload`, {
+                //     headers: {
+                //         mode: 'no-cors',
+                //         'Accept': 'application/json',
+                //         // 'Content-Type': 'multipart/form-data',
+                //         'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                //     },
+                //     body: imageFormData,
+                //     method: 'post',
+                // }).then(res=>res.json())
+                //     .then( result=>{
+                        formik.setFieldValue('featuredImg', null)
+                        fetch(`${process.env.BACKEND_BASE_URL}/blogs`, {
                             headers: {
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
                             },
                             method: 'post',
-                            body: JSON.stringify({...values, featuredImg: result.url}),
+                            body: JSON.stringify({...values, featuredImg: null}),
                         }).then(res=>res.json())
                             .then(r=>{
                                 console.log(r)
@@ -127,10 +128,10 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                 console.log(err)
                                 ToasterError(err.response.data.message);
                             })
-                    })
-                    .catch(err=>{
-                        console.log(err)
-                    })
+                    // })
+                    // .catch(err=>{
+                    //     console.log(err)
+                    // })
             }
 
 

@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
+  "homepage": "https://jinpost.com/",
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start"
   },
   "keywords": [],

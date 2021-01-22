@@ -2,7 +2,8 @@ import React from "react";
 import Head from "../../components/head";
 import AdminLayout from "../../components/layouts/admin";
 
-const Authors = ({authors}:{authors: any[]}) => {
+const Authors = ({authorsData}:{authorsData: any}) => {
+    const authors = authorsData.items;
     console.log(authors)
     return (
         <div>
@@ -52,7 +53,7 @@ const Authors = ({authors}:{authors: any[]}) => {
     );
 }
 
-Authors.Layout = AdminLayout;
+Authors.Layout = AdminLayout; 
 
 export async function getStaticProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/users`)
@@ -65,7 +66,7 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            authors: data
+            authorsData: data
         }, // will be passed to the page component as props
     }
 }

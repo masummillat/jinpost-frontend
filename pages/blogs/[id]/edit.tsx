@@ -3,7 +3,7 @@ import DefaultLayout from "../../../components/layouts/default";
 import NewStoryComponent from "../../../components/editor/NewStoryComponent";
 import {INewPostPage} from "../../new-post";
 
-const BlogEdit: React.FC<any> = ({categories, blog}) => {
+const BlogEdit = ({categories, blog}: any) => {
     console.log(blog)
     console.log(categories)
     return(
@@ -42,6 +42,6 @@ export async function getStaticProps(context: any) {
 }
 
 
-// @ts-ignore
+
 BlogEdit.Layout = DefaultLayout;
 export default BlogEdit;

@@ -1,13 +1,13 @@
 import React from 'react';
 import DefaultLayout from "../components/layouts/default";
 
-const PrivacyPage: React.FC = () => {
+const PrivacyPage = () => {
 
     return (<>
         <h1>Privacy page</h1>
     </>);
 }
 
-// @ts-ignore
+
 PrivacyPage.Layout = DefaultLayout
 export default PrivacyPage;

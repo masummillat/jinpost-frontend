@@ -26,7 +26,7 @@ const UserHeader = () => {
 
     useEffect(() => {
         httpClient.get('/categories').then(res => {
-            setCategories(res.data);
+            setCategories(res.data.items);
         }).catch(err => {
         });
     }, [setCategories]);

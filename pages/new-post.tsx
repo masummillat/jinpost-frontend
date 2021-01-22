@@ -16,7 +16,7 @@ export interface Icategories {
 export interface INewPostPage {
     categories: Icategories[]
 }
-const NewPostPage: React.FC<INewPostPage> = ({categories}) => {
+const NewPostPage = ({categories}: INewPostPage) => {
     return (
         <div>
             <Head/>
@@ -25,7 +25,6 @@ const NewPostPage: React.FC<INewPostPage> = ({categories}) => {
     );
 }
 
-// @ts-ignore
 NewPostPage.Layout = DefaultLayout;
 
 export async function getStaticProps(context: any) {
@@ -40,7 +39,7 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            categories: data
+            categories: data.items
         }, // will be passed to the page component as props
     }
 }

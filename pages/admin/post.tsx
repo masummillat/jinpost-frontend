@@ -8,7 +8,7 @@ interface IPost {
     blogs: Blog[]
 }
 
-const Post: React.FC<IPost> = ({blogs}) => {
+const Post= ({blogs}: IPost) => {
     console.log(blogs)
     return (
         <div>
@@ -64,7 +64,7 @@ const Post: React.FC<IPost> = ({blogs}) => {
     )
 }
 
-// @ts-ignore
+
 Post.Layout = AdminLayout;
 
 export async function getStaticProps(context: any) {
@@ -78,7 +78,7 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            blogs: data
+            blogs: data.items
         }, // will be passed to the page component as props
     }
 }

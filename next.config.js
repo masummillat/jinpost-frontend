@@ -5,7 +5,7 @@ module.exports = {
   //   domains: ['http://localhost:3000'],
   // },
   env: {
-    BACKEND_BASE_URL: 'http://localhost:3000',
+    BACKEND_BASE_URL: 'https://jinpost.herokuapp.com',
   },
   async redirects() {
     return [

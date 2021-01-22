@@ -37,6 +37,19 @@ const AdminHeader: React.FC = ()=>{
             document.getElementById('userSubMenu').style.display = 'block'
         }
     }
+
+    const handleNotificationToggle = (): void =>{
+        // @ts-ignore
+        document.getElementById('notificationDropdown').classList.toggle('active')
+        // @ts-ignore
+        if(document.getElementById('notificationSubMenu').style.display === 'block'){
+            // @ts-ignore
+            document.getElementById('notificationSubMenu').style.display = 'none';
+        }else{
+            // @ts-ignore
+            document.getElementById('notificationSubMenu').style.display = 'block'
+        }
+    }
     return(
         <div>
             <nav id="sidebar" className="sidebar-wrapper">
@@ -100,6 +113,21 @@ const AdminHeader: React.FC = ()=>{
                                     </ul>
                                 </div>
                             </li>
+                            <li  id="notificationDropdown"  className="sidebar-dropdown">
+                            <a onClick={handleNotificationToggle} href="#">
+                                <i className="fas fa-bell"></i>
+                                <span>Notifications<span className="badge badge-light">{' '} 4 </span></span>
+                            </a>
+                            <div id="notificationSubMenu" className="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <Link href="/admin/author-request">
+                                            <a>Author request</a>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
                         </ul>
                     </div>
                 </div>

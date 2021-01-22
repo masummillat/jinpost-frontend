@@ -8,7 +8,7 @@ import httpClient from "../utils/api";
 import {ToasterError, ToasterSuccess} from "../utils/statusMessage";
 import isAuthenticated from "../utils/isAuthenticated";
 
-const Registration: React.FC = () => {
+const Registration = () => {
     const [visible, setVisible] = useState(false);
     const router = useRouter();
     const toggle: () => void = () => setVisible(!visible);
@@ -35,7 +35,7 @@ const Registration: React.FC = () => {
             password: ''
         },
         onSubmit: values => {
-            httpClient.post('http://localhost:3000/auth/signup', values)
+            httpClient.post(`${process.env.BACKEND_BASE_URL}/auth/signup`, values)
                 .then(res=>{
                     formik.resetForm();
                     ToasterSuccess('Successfully signed up')

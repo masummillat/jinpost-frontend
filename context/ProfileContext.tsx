@@ -79,7 +79,7 @@ export const ProfileProvider = ({children}: any) =>{
                     }
                 })
                 .catch(err=>{
-                    console.log(err.response.data);
+                    console.log(err);
                     const { message, statusCode} = err.response.data;
                     ToasterError(message)
                 });

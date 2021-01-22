@@ -14,13 +14,13 @@ const SingleBlogPage = ({blog, suggestions})=>{
             <div className="row">
                 <div className="col-lg-8">
                     <div className="full-post">
-                        <h1 className="post-title">{blog.title}</h1>
+                        <h1 className="post-title">{ blog && blog.title}</h1>
                         <div className="author">
                             <img src="/static/img/profile.jpg" />
-                                <a href="#">{blog.author.name}</a> on <span>{moment(blog.createdAt).format('MMMM Do YYYY, h:mm A')}</span>
+                                <a href="#">{blog && blog.author &&  blog.author.name}</a> on <span>{moment(blog && blog.createdAt).format('MMMM Do YYYY, h:mm A')}</span>
                         </div>
-                        <img src={blog.featuredImg} className="featured-img" />
-                        <div dangerouslySetInnerHTML={createMarkup(blog.body)} />
+                        <img src={blog && blog.featuredImg || '/static/img/pic.jpg'} className="featured-img" />
+                        <div dangerouslySetInnerHTML={createMarkup(blog &&  blog.body)} />
                     </div>
                 </div>
                 <div className="offset-lg-1 col-lg-3">
@@ -84,19 +84,28 @@ const SingleBlogPage = ({blog, suggestions})=>{
     );
 }
 
-
-export async function getServerSideProps(context: any) {
+export async function getStaticPaths() {
+    return {
+        paths: [{ params: { id: '*' } }],
+        fallback: true,
+    };
+}
+export async function getStaticProps(context: any) {
     console.log(context.params)
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/${context.params.id}`)
     const data = await res.json()
 
     const suggestedRes = await  fetch(`${process.env.BACKEND_BASE_URL}/blogs`);
-    const suggestions: any[] = await suggestedRes.json()
+    const suggestions  = await suggestedRes.json()
 
+    console.log('=====================')
+    console.log(data)
+    console.log(suggestions)
+    console.log('=====================')
     return {
         props: {
-            blog: data || null,
-            suggestions:  suggestions || null
+            blog: data,
+            suggestions:  suggestions.items
         }, // will be passed to the page component as props
     }
 }

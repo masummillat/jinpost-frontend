@@ -6,6 +6,7 @@ import {GiBookmarklet} from 'react-icons/gi';
 import httpClient from "../../utils/api";
 import { useRouter } from 'next/router'
 import {GrSend} from "react-icons/gr";
+import { ToasterSuccess, ToasterError } from '../../utils/statusMessage';
 const WriterRequestModal = ({wriVisible, toggleWriVisible}: {wriVisible: boolean; toggleWriVisible: ()=>void}) => {
     const router = useRouter()
     const messageValidationSchema = Yup.object().shape({
@@ -16,18 +17,15 @@ const WriterRequestModal = ({wriVisible, toggleWriVisible}: {wriVisible: boolean
             message: '',
         },
         onSubmit: values => {
-            // httpClient.post('/auth/login', values)
-            //     .then(res=>{
-            //         console.log(res.data)
-            //         if (typeof window !== "undefined") {
-            //             localStorage.setItem('access_token', res.data.access_token);
-            //             toggleWriVisible();
-            //             // router.push('/');
-            //         }
-            //     })
-            //     .catch(err=>{
-            //         console.log({err});
-            //     })
+            httpClient.post('/users/author-requests', values)
+            .then(res=>{
+                ToasterSuccess('Request submitted');
+                console.log(res);
+            })
+            .catch(err=>{
+                ToasterError(err.response.data.message)
+                console.log(err)
+            })
             console.log(JSON.stringify(values, null, 2));
         },
         validationSchema: messageValidationSchema

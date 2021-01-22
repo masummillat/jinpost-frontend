@@ -35,11 +35,11 @@ const Category = ({blogs}: any) => {
 Category.Layout = DefaultLayout;
 export async function getStaticProps(context: any) {
     //TODO WE WILL GET BLOGS DATA FOR ALL CATEGORY INSTEAD OF BLOGS ONLY
-    const res = await fetch(`http://localhost:3000/blogs`)
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs`)
     const data = await res.json()
     return {
         props: {
-            blogs: data ,
+            blogs: data.items ,
 
         },
     }

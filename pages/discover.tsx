@@ -5,11 +5,12 @@ import { UserDto, CategoryEntry } from "../types";
 import Link from "next/link";
 
 interface DiscoverPageProps {
-    authors: UserDto[];
-    categories: CategoryEntry[];
+    authorsData: any;
+    categoriesData: any;
 }
-const DiscoverPage: React.FC<DiscoverPageProps> = ({authors, categories}) => {
-
+const DiscoverPage = ({authorsData, categoriesData}: DiscoverPageProps) => {
+    const authors: UserDto[] = authorsData.items
+    const categories: CategoryEntry[] = categoriesData.items;
     console.log(categories)
     return(
         <div className="container">
@@ -63,7 +64,7 @@ export async function getStaticProps(context: any) {
     const data = await res.json();
 
     const categoriesRes = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
-    const categories = await categoriesRes.json()
+    const categoriesData = await categoriesRes.json()
 
     if (!data) {
         return {
@@ -73,8 +74,8 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            authors: data,
-            categories
+            authorsData: data,
+            categoriesData
         }, // will be passed to the page component as props
     }
 }

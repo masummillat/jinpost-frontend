@@ -11,7 +11,8 @@ import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 interface ICategoriesProps {
     categories: CategoryEntry[]
 }
-const Categories: React.FC<ICategoriesProps> = ({categories}) =>{
+const Categories = ({categories}: ICategoriesProps) =>{
+    console.log(categories)
     const [show, setShow] = useState<boolean>(false);
     const [category, setCategory] = useState<CategoryEntry | null>(null);
     const [categoryState, setCategoryState] = useState<CategoryEntry[]>([]);
@@ -74,7 +75,7 @@ const Categories: React.FC<ICategoriesProps> = ({categories}) =>{
     const getCategories = ()=>{
         httpClient.get('/categories')
             .then(res=>{
-                setCategoryState(res.data);
+                setCategoryState(res.data.items);
             })
             .catch(err=>{
                 ToasterError(err.response.statusText);
@@ -176,9 +177,10 @@ Categories.Layout = AdminLayout;
 export async function getStaticProps() {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
     const data = await res.json()
+    console.log(data)
     return {
         props: {
-            categories: data.statusCode === 401 ? [] : data,
+            categories: data.items,
         },
     }
 }
