@@ -4,8 +4,7 @@ import NewStoryComponent from "../../../components/editor/NewStoryComponent";
 import {INewPostPage} from "../../new-post";
 
 const BlogEdit = ({categories, blog}: any) => {
-    console.log(blog)
-    console.log(categories)
+
     return(
         <div>
             <NewStoryComponent isEdit={true} blog={blog} categories={categories}/>
@@ -13,20 +12,19 @@ const BlogEdit = ({categories, blog}: any) => {
     );
 }
 
-export async function getStaticPaths() {
-    return {
-        paths: [{ params: { id: '*' } }],
-        fallback: true,
-    };
-}
-export async function getStaticProps(context: any) {
-    console.log(context)
+// export async function getStaticPaths() {
+//     return {
+//         paths: [{ params: { id: '*' } }],
+//         fallback: true,
+//     };
+// }
+export async function getServerSideProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
     const categories = await res.json();
 
-    const blogRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/${context.params.id}`)
+    const blogRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/${context.query.id}`)
     const blogData = await blogRes.json();
-    console.log(categories)
+
     if (!categories) {
         return {
             notFound: true,
