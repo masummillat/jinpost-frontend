@@ -143,6 +143,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         if(blog){
             console.log()
             formik.setFieldValue('title', blog.title)
+            formik.setFieldValue('description', blog.description)
             formik.setFieldValue('body', blog.body)
             formik.setFieldValue('categories', blog.categories.map((cat: { id: any; name: any; })=>{
                 return{
