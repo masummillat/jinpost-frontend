@@ -1,12 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {WithContext as ReactTags} from 'react-tag-input';
-import {useFormik} from 'formik';
-import Calendar from 'react-calendar';
+import React from 'react';
 import 'react-calendar/dist/Calendar.css';
-import Select from "react-select";
 import DefaultLayout from "../components/layouts/default";
 import Head from "../components/head";
-import TinyEditor from "../components/editor/TinyEditor";
+
 import NewStoryComponent from "../components/editor/NewStoryComponent";
 
 export interface Icategories {
@@ -27,7 +23,7 @@ const NewPostPage = ({categories}: INewPostPage) => {
 
 NewPostPage.Layout = DefaultLayout;
 
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
     const data = await res.json()
     console.log(data)
