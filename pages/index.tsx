@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import Head from '../components/head';
-import Nav from '../components/nav';
 import DefaultLayout from "../components/layouts/default";
-import result from "postcss/lib/result";
 import BlogCard from "../components/blogs/BlogCard";
 import SampleBlogCard from "../components/blogs/SampleBlogCard";
 
