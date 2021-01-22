@@ -6,7 +6,8 @@
   "homepage": "https://jinpost.com/",
   "scripts": {
     "dev": "next",
-    "build": "next build && next export",
+    "build": "next build",
+    "export": "next build && next export",
     "start": "next start"
   },
   "keywords": [],
