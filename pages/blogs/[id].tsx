@@ -97,11 +97,6 @@ export async function getStaticProps(context: any) {
 
     const suggestedRes = await  fetch(`${process.env.BACKEND_BASE_URL}/blogs`);
     const suggestions  = await suggestedRes.json()
-
-    console.log('=====================')
-    console.log(data)
-    console.log(suggestions)
-    console.log('=====================')
     return {
         props: {
             blog: data,

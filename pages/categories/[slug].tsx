@@ -1,125 +1,19 @@
 import React from "react";
 import DefaultLayout from "../../components/layouts/default";
+import BlogItemCard from "../../components/category/BlogItemCard";
 
-const SingleCategory = () => {
+const SingleCategory = ({category}: any) => {
+    const blogs = category.blogs;
 
     return(
         <div className="container">
             <div className="row">
                 <div className="col-lg-7">
                     <div className="category-post">
-                        <div className="card mb-3">
-                            <div className="row no-gutters">
-                                <div className="col-md-9">
-                                    <div className="card-body">
-                                        <h5 className="card-title"><a href="single-post.php">There are many variations
-                                            of passages of Lorem Ipsum</a></h5>
-                                        <p className="card-text">This is a wider card with supporting text below as a
-                                            natural lead-in to additional content.</p>
-                                        <small className="text-muted">Writer name on 15/12/2020, 05:50 PM</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3">
-                                    <img src="/static/img/pic.jpg" className="card-img" alt="..." />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card mb-3">
-                            <div className="row no-gutters">
-                                <div className="col-md-9">
-                                    <div className="card-body">
-                                        <h5 className="card-title"><a href="single-post.php">There are many variations
-                                            of passages of Lorem Ipsum</a></h5>
-                                        <p className="card-text">This is a wider card with supporting text below as a
-                                            natural lead-in to additional content.</p>
-                                        <small className="text-muted">Writer name on 15/12/2020, 05:50 PM</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3">
-                                    <img src="/static/img/pic.jpg" className="card-img" alt="..." />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card mb-3">
-                            <div className="row no-gutters">
-                                <div className="col-md-9">
-                                    <div className="card-body">
-                                        <h5 className="card-title"><a href="single-post.php">There are many variations
-                                            of passages of Lorem Ipsum</a></h5>
-                                        <p className="card-text">This is a wider card with supporting text below as a
-                                            natural lead-in to additional content.</p>
-                                        <small className="text-muted">Writer name on 15/12/2020, 05:50 PM</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3">
-                                    <img src="/static/img/pic.jpg" className="card-img" alt="..." />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card mb-3">
-                            <div className="row no-gutters">
-                                <div className="col-md-9">
-                                    <div className="card-body">
-                                        <h5 className="card-title"><a href="single-post.php">There are many variations
-                                            of passages of Lorem Ipsum</a></h5>
-                                        <p className="card-text">This is a wider card with supporting text below as a
-                                            natural lead-in to additional content.</p>
-                                        <small className="text-muted">Writer name on 15/12/2020, 05:50 PM</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3">
-                                    <img src="/static/img/pic.jpg" className="card-img" alt="..." />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card mb-3">
-                            <div className="row no-gutters">
-                                <div className="col-md-9">
-                                    <div className="card-body">
-                                        <h5 className="card-title"><a href="single-post.php">There are many variations
-                                            of passages of Lorem Ipsum</a></h5>
-                                        <p className="card-text">This is a wider card with supporting text below as a
-                                            natural lead-in to additional content.</p>
-                                        <small className="text-muted">Writer name on 15/12/2020, 05:50 PM</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3">
-                                    <img src="/static/img/pic.jpg" className="card-img" alt="..." />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card mb-3">
-                            <div className="row no-gutters">
-                                <div className="col-md-9">
-                                    <div className="card-body">
-                                        <h5 className="card-title"><a href="single-post.php">There are many variations
-                                            of passages of Lorem Ipsum</a></h5>
-                                        <p className="card-text">This is a wider card with supporting text below as a
-                                            natural lead-in to additional content.</p>
-                                        <small className="text-muted">Writer name on 15/12/2020, 05:50 PM</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3">
-                                    <img src="/static/img/pic.jpg" className="card-img" alt="..." />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card mb-3">
-                            <div className="row no-gutters">
-                                <div className="col-md-9">
-                                    <div className="card-body">
-                                        <h5 className="card-title"><a href="single-post.php">There are many variations
-                                            of passages of Lorem Ipsum</a></h5>
-                                        <p className="card-text">This is a wider card with supporting text below as a
-                                            natural lead-in to additional content.</p>
-                                        <small className="text-muted">Writer name on 15/12/2020, 05:50 PM</small>
-                                    </div>
-                                </div>
-                                <div className="col-md-3">
-                                    <img src="/static/img/pic.jpg" className="card-img" alt="..." />
-                                </div>
-                            </div>
-                        </div>
+                            {
+                                blogs.map((blog: { id: number, blog: any })=><BlogItemCard blog={blog} key={blog.id}/>)
+                            }
+                        
                     </div>
                 </div>
                 <div className="offset-lg-1 col-lg-4">
@@ -142,4 +36,16 @@ const SingleCategory = () => {
 }
 
 SingleCategory.Layout = DefaultLayout;
+
+export async function getServerSideProps(context: any) {
+    const { query } = context;
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories/${query.slug}`)
+    const category = await res.json()
+    return {
+        props: {
+            category: category ,
+
+        },
+    }
+}
 export default SingleCategory;

@@ -3,6 +3,7 @@ import {WithContext as ReactTags} from 'react-tag-input';
 import {useFormik} from 'formik';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import {RiDraftLine} from 'react-icons/ri'
 import Select from "react-select";
 import Head from "../head";
 import TinyEditor from "./TinyEditor";
@@ -39,6 +40,7 @@ const storySchema = Yup.object().shape({
 const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categories=[]}) => {
     const [image, setImage] = useState(null);
     const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
+    let imageFormData;
     useEffect(() => {
         setCategoryOptions([])
         setCategoryOptions(categories.map((cat: { id: number; name: string; }) => ({
@@ -49,7 +51,24 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
     }, [categories])
 
 
+    useEffect(()=>{
+        if(blog){
+            formik.setFieldValue('title', blog.title)
+            formik.setFieldValue('description', blog.description)
+            formik.setFieldValue('body', blog.body)
+            formik.setFieldValue('categories', blog.categories.map((cat: { id: any; name: any; })=>{
+                return{
+                    id: cat.id,
+                    label: cat.name,
+                    value: cat.id
+                }
+            }))
+            formik.setFieldValue('featuredImg', blog.featuredImg)
+
+        }
+    },[isEdit, blog])
     const updateBlog = (values: any) => {
+        console.log(values)
         httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {id: blog.id, ...values})
             .then(r=>{
                 console.log(r)
@@ -61,22 +80,36 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
             })
 
     }
-    const formik = useFormik({
-        initialValues: {
-            title: '',
-            description: '',
-            categories: [],
-            featuredImg: '',
-            body: '',
-            // tags: [],
-            publishedDate: new Date()
-        },
-        validationSchema: storySchema,
-        onSubmit: async values => {
-            let imageFormData;
-            console.log(values)
-            if (isEdit){
-                //TODO CHECK IF IT HAS NEW IMAGE TO UPLOAD
+    const handleDraft = async (values: any) => {
+
+        if(isEdit){
+            if (image){
+                imageFormData = new FormData();
+                // @ts-ignore
+                await imageFormData.append('file', image);
+                httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
+                    .then((res)=>{
+                        console.log(res)
+                        // @ts-ignore
+                        formik.setFieldValue('featuredImg', res.data.url)
+                        updateBlog({...values, featuredImg: res.data.url, isPublished: false});
+                    })
+                    .catch(err=>{
+                        console.log(err);
+                    })
+            }else{
+                updateBlog({...values, isPublished: false});
+            }
+        }else {
+            handleSave({...values, isPublished: false});
+        }
+    }
+
+    const handlePublish = async () => {
+        if (Object.keys(formik.errors).length === 0){
+            if(isEdit){
+                // Update  Blog with publish 
+                // check if image  change. if image change then upload image and update data 
                 if (image){
                     imageFormData = new FormData();
                     // @ts-ignore
@@ -86,18 +119,32 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                             console.log(res)
                             // @ts-ignore
                             formik.setFieldValue('featuredImg', res.data.url)
-                            updateBlog({...values, featuredImg: res.data.url});
+                            updateBlog({...formik.values, featuredImg: res.data.url});
                         })
                         .catch(err=>{
                             console.log(err);
                         })
                 }else{
-                    updateBlog(values);
+                    updateBlog({...formik.values, isPublished: true});
                 }
+
             }else {
-                imageFormData = new FormData();
+                // SaveBlog with publish
+
+                // upload image  then save data
+                handleSave({...formik.values, isPublished: true})
+
+            }
+
+        }
+    }
+
+
+
+    const handleSave = async (values: any) => {
+        imageFormData = new FormData();
                 // @ts-ignore
-                await imageFormData.append('file', image)
+                // await imageFormData.append('file', image)
                 // await fetch(`${process.env.BACKEND_BASE_URL}/image/upload`, {
                 //     headers: {
                 //         mode: 'no-cors',
@@ -109,6 +156,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                 //     method: 'post',
                 // }).then(res=>res.json())
                 //     .then( result=>{
+
                         formik.setFieldValue('featuredImg', null)
                         fetch(`${process.env.BACKEND_BASE_URL}/blogs`, {
                             headers: {
@@ -127,39 +175,31 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                             .catch(err=>{
                                 console.log(err)
                                 ToasterError(err.response.data.message);
-                            })
+                            });
                     // })
                     // .catch(err=>{
                     //     console.log(err)
                     // })
-            }
-
-
-
+             }
+    
+    const formik = useFormik({
+        initialValues: {
+            title: '',
+            description: '',
+            categories: [],
+            featuredImg: '',
+            body: '',
+            // tags: [],
+            publishedDate: new Date()
         },
+        validationSchema: storySchema,
+        onSubmit: async values => handleDraft(values),
     });
 
-    useEffect(()=>{
-        if(blog){
-            console.log()
-            formik.setFieldValue('title', blog.title)
-            formik.setFieldValue('description', blog.description)
-            formik.setFieldValue('body', blog.body)
-            formik.setFieldValue('categories', blog.categories.map((cat: { id: any; name: any; })=>{
-                return{
-                    id: cat.id,
-                    label: cat.name,
-                    value: cat.id
-                }
-            }))
-            formik.setFieldValue('featuredImg', blog.featuredImg)
-
-        }
-    },[isEdit, blog])
     const [tagsState, setTagState] = useState({
         tags: [
-            {id: "Thailand", text: "Thailand"},
-            {id: "India", text: "India"}
+            {id: 'USA', text: 'USA'},
+            {id: 'Germany', text: 'Germany'},
         ],
         suggestions: [
             {id: 'USA', text: 'USA'},
@@ -378,7 +418,16 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                                 }}
                                             />
                                         </div>
-                                        <button className="btn btn-main">Publish</button>
+                                        <div className="d-flex flex-column">
+                                            <button onClick={handlePublish} className="btn btn-primary" type="button">Publish</button>
+                                            <br/>
+                                            <button
+                                             type="submit" 
+                                              className="btn  btn-outline-info">
+                                                  <RiDraftLine className="mr-2"/>
+                                                    {isEdit ? 'Edit Draft' : 'Save Draft'}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
