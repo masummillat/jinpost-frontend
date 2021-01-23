@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import moment from "moment";
 const BlogItemCard = ({blog}:{blog: any}) => {
-
+    console.log(blog)
     return(
         <div className="card mb-3">
             <div className="row no-gutters">
