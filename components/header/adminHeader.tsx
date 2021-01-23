@@ -8,6 +8,7 @@ const AdminHeader: React.FC = ()=>{
     const toggleToolbar = () => setToolbarOpen(prevState => !prevState);
     // @ts-ignore
     const { user, handleLogout } = profileCtx;
+    console.log(profileCtx);
     console.log(user);
     const handleToggle = (event: any): void =>{
         // @ts-ignore
@@ -143,8 +144,8 @@ const AdminHeader: React.FC = ()=>{
                                            <span className="mr-2"> {user?user.name : ''}</span>
                                             <img
                                                 style={{width: 40,height: 40, borderRadius: '50%'}}
-                                                src={user && user.profileImage}
-                                                alt={user && user.name}
+                                                src={user && user.profileImage || '/static/img/profile.jpg'}
+                                                alt={user && user.name || ''}
                                             />
                                         </DropdownToggle>
                                         <DropdownMenu>
