@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import Link from "next/link";
+import { useRouter } from 'next/router'
 import UserLoginComponent from "../login/userLoginComponent";
 import {Dropdown, DropdownMenu, DropdownItem, DropdownToggle} from "reactstrap";
 import {GiBookmarklet} from 'react-icons/gi';
@@ -23,6 +24,7 @@ const UserHeader = () => {
     const toggleWriVisible = () => setWriVisible(!wriVisible);
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
     const toggleToolbar = () => setToolbarOpen(prevState => !prevState);
+    const router = useRouter();
 
     useEffect(() => {
         httpClient.get('/categories').then(res => {
@@ -30,6 +32,14 @@ const UserHeader = () => {
         }).catch(err => {
         });
     }, [setCategories]);
+
+    const handleWrite = () => {
+        if( user && (user.role === 'author' || user.role === 'admin')){
+            router.push('/new-post');
+        }else {
+            toggleWriVisible();
+        }
+    }
 
     return (
         <header>
@@ -82,11 +92,11 @@ const UserHeader = () => {
                     {
                         isLoggedIn ? (
                             <div className="my-2 my-lg-0" style={{display: 'contents'}}>
-                                <a href="#" className="notification-icon">
+                                <a href="javascript:void(0)" className="notification-icon">
                                     <IoMdNotificationsOutline style={{fontSize: 24}}/>
                                 </a>
 
-                                <a onClick={toggleWriVisible} className="be-writter">
+                                <a onClick={handleWrite} style={{cursor: 'pointer'}}  className="be-writter">
                                     <GiBookmarklet
                                         style={{fontSize: 24}} 
                                         className=" pr-2 "/>
