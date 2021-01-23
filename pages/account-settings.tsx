@@ -10,10 +10,7 @@ import {AiOutlineUser} from "react-icons/ai";
 import {ToasterError, ToasterSuccess} from "../utils/statusMessage";
 
 const AccountSettings = ({userInfo}: { userInfo: any }) => {
-    // @ts-ignore
-    const {user} = useContext(ProfileContext);
-    console.log(userInfo)
-    console.log(user)
+    const profileCtx = useContext(ProfileContext);
     const [profileImg, setProfileImg] = useState<ArrayBuffer | string | null>(null);
     const [imagePreviewUrl, setImagePreviewUrl] = useState<string>('');
     const imageInputRef = useRef(null);
@@ -42,7 +39,7 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
             // @ts-ignore
             await imageFormData.append('file', profileImg)
             console.log(imageFormData.get('file'))
-            await fetch('http://localhost:3000/blogs/image/upload', {
+            await fetch(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, {
                 headers: {
                     'Accept': 'application/json',
                     // 'Content-Type': 'multipart/form-data',
@@ -52,7 +49,8 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
                 method: 'post',
             }).then(res => res.json())
                 .then(r => {
-                    httpClient.put(`/users/${user.id}`, {...payload, profileImage: r.url})
+                    if(profileCtx.user){
+                        httpClient.put(`/users/${profileCtx.user.id}`, {...payload, profileImage: r.url})
                         .then(res => {
                             console.log(res);
                             ToasterSuccess("Successfully updated")
@@ -61,27 +59,30 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
                             console.error(err.response.data)
                             ToasterError(err.response.data.message)
                         })
+                    }
                 })
 
         } else {
-            httpClient.put(`/users/${user.id}`, payload)
-                .then(res => {
-                    console.log(res)
-                    ToasterSuccess('Successfully Updated');
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+          if(profileCtx.user){
+            httpClient.put(`/users/${profileCtx.user.id}`, payload)
+            .then(res => {
+                console.log(res)
+                ToasterSuccess('Successfully Updated');
+            })
+            .catch(err => {
+                console.log(err)
+            })
+          }
         }
 
         console.log(JSON.stringify(payload, null, 2));
     }
 
     useEffect(() => {
-        if (user) {
-            setImagePreviewUrl(user.profileImg)
+        if (profileCtx.user) {
+            setImagePreviewUrl(profileCtx.user.profileImg)
         }
-    }, [user])
+    }, [profileCtx.user])
     return (
         <div className="container">
             <div className="row mt-4">
@@ -109,18 +110,20 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
                                         <Tab.Content>
                                             <Tab.Pane eventKey="edit-profile">
                                                 {
-                                                    user && (<BasicForm basicInfo={{
-                                                        name: user.name,
-                                                        email: user.email,
-                                                        bio: user.bio,
-                                                        occupation: user.occupation
+                                                    profileCtx.user && (<BasicForm basicInfo={{
+                                                        name: profileCtx.user.name,
+                                                        email: profileCtx.user.email,
+                                                        bio: profileCtx.user.bio,
+                                                        occupation: profileCtx.user.occupation
                                                     }}
                                                         handleSubmit={handleUpdateUser}
                                                     />)
                                                 }
                                             </Tab.Pane>
                                             <Tab.Pane eventKey="change-password">
-                                               {user && ( <PasswordChangeForm id={user.id}/>)}
+                                               {profileCtx.user && ( <PasswordChangeForm id={profileCtx.user.id}/>)}
+                                               {profileCtx.user && ( <PasswordChangeForm id={profileCtx.user.id}/>)}
+                                               {profileCtx.user && ( <PasswordChangeForm id={profileCtx.user.id}/>)}
                                             </Tab.Pane>
                                             <Tab.Pane eventKey="delete-account">
                                                 <p>If you delete account you will not be logged in again without
@@ -139,8 +142,8 @@ const AccountSettings = ({userInfo}: { userInfo: any }) => {
                         // @ts-ignore
                         imageInputRef.current.click()
                     }} className="profile-photo-change-preview">
-                        {user && user.profileImage ?
-                            <img src={user.profileImage} className="img-fluid"/> : imagePreviewUrl ?
+                        {profileCtx.user && profileCtx.user.profileImage ?
+                            <img src={profileCtx.user.profileImage} className="img-fluid"/> : imagePreviewUrl ?
                                 <img src={imagePreviewUrl} className="img-fluid"/> : <AiOutlineUser size={100}/>}
 
 

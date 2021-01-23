@@ -89,7 +89,7 @@ const AuthorRequest= ({authorRequests}:{authorRequests: any}) =>  {
     );
 }
 
-// AuthorRequest.Layout = AdminLayout;
+AuthorRequest.Layout = AdminLayout;
 
 export async function getStaticProps() {
     // Call an external API endpoint to get posts.
