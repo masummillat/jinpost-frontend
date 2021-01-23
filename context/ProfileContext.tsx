@@ -21,7 +21,7 @@ interface IProfile {
     handleLogin?: (values: ILoginInput)=>Promise<any> | null;
     handleLogout?: ()=>Promise<any> | null;
 }
-export const ProfileContext = React.createContext<IProfile | null>({isLoggedIn: isAuthenticated()});
+export const ProfileContext = React.createContext<IProfile>({isLoggedIn: isAuthenticated()});
 
 export const ProfileProvider = ({children}: any) =>{
     const [user, setUser] = useState(null);

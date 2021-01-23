@@ -12,13 +12,12 @@ import { UserDto } from '../types';
 const ProfilePage = ({ profile }: { profile: UserDto }) => {
     const [authorized, setAuthorized] = useState<boolean>(false)
     const router = useRouter();
-    // @ts-ignore
-    const { user } = useContext(ProfileContext);
 
+    const proCtx = useContext(ProfileContext);
     useEffect(() => {
-        if (profile && user) {
+        if (profile && proCtx.user) {
             setAuthorized((router.query.domain === profile.domain) &&
-            isAuthenticated() && (user.domain === profile.domain))
+            isAuthenticated() && (proCtx.user && proCtx.user.domain === profile.domain))
         }
     }, [profile])
     console.log(authorized)
