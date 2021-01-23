@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import AdminLayout from '../../components/layouts/admin';
-import Head from '../../components/head';
+import React, { useState } from "react";
 import { Modal, Button } from 'react-bootstrap';
-import { UserDto } from '../../types';
-import httpClient from '../../utils/api';
+import Head from "../../components/head";
+import AdminLayout from "../../components/layouts/admin";
+import httpClient from "../../utils/api";
+import { UserDto } from "../../types";
 
-export interface AuthorRequest {
+export interface IAuthorRequest {
     id?: number;
     message?: string;
     read?: boolean;
     isAccept?: boolean;
     author?: UserDto;
   }
-  
-const AuthorRequest= ({authorRequests}:{authorRequests: any}) =>  {
+
+const AuthorRequest = ({authorRequests}:{authorRequests: any}) => {
     console.log(authorRequests)
     const [show, setShow] = useState(false);
-    const [selectedReq, setSelectedReq] = useState<AuthorRequest>();
+    const [selectedReq, setSelectedReq] = useState<IAuthorRequest>();
 
     const handleClose = (data: {isAccept: boolean}) => {
         console.log(data);
@@ -37,8 +37,8 @@ const AuthorRequest= ({authorRequests}:{authorRequests: any}) =>  {
     };
 
     return (
-        <>
-            <Head title="Author rquest"/>
+        <div>
+            <Head/>
             <main className="page-content">
             <div className="container-fluid">
                 <div className="row">
@@ -85,13 +85,13 @@ const AuthorRequest= ({authorRequests}:{authorRequests: any}) =>  {
             </Modal.Footer>
           </Modal>
        )}
-        </>
+        </div>
     );
 }
 
-AuthorRequest.Layout = AdminLayout;
+AuthorRequest.Layout = AdminLayout; 
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     // Call an external API endpoint to get posts.
     // You can use any data fetching library
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/users/author-requests`)
