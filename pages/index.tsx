@@ -12,9 +12,7 @@ interface HomeProps{
     blogsData: any;
 }
 const Home = ({blogsData}: any) => {
-    console.log(blogsData)
     const blogs = blogsData.items;
-    console.log(blogs)
     return (
         <div>
             <Head title="Home"/>

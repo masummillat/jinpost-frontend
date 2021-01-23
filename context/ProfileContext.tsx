@@ -27,9 +27,6 @@ export const ProfileProvider = ({children}: any) =>{
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const router = useRouter();
-
-    console.log(router)
-    console.log(user)
     useEffect(()=>{
         setIsLoggedIn(isAuthenticated())
         if(isAuthenticated()){
@@ -51,7 +48,6 @@ export const ProfileProvider = ({children}: any) =>{
                     fetch(`${process.env.BACKEND_BASE_URL}/users/${decodedToken.id}`)
                         .then(res=>res.json())
                         .then(r =>{
-                            console.log(r)
                             setUser(r)
                         })
                         .catch(e=>console.log(e))
