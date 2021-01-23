@@ -90,7 +90,9 @@ const UserHeader = () => {
                                     <GiBookmarklet
                                         style={{fontSize: 24}} 
                                         className=" pr-2 "/>
-                                        {user && user.role === 'author' ? 'Write' : 'Become a writter'}
+                                        {user && (
+                                            user.role === 'author' || user.role === 'admin')  
+                                            ? 'Write' : 'Become a writter'}
                                 </a>
 
                                 <Dropdown isOpen={toolbarOpen} toggle={toggleToolbar}>

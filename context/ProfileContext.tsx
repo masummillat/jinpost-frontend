@@ -18,10 +18,15 @@ interface ILoginInput {
 interface IProfile {
     user?: IUser | null;
     isLoggedIn: boolean;
-    handleLogin?: (values: ILoginInput)=>Promise<any> | null;
-    handleLogout?: ()=>Promise<any> | null;
+    handleLogin: (values: ILoginInput)=>void;
+    handleLogout: ()=>void;
 }
-export const ProfileContext = React.createContext<IProfile>({isLoggedIn: isAuthenticated()});
+export const ProfileContext = React.createContext<IProfile>(
+    {
+        isLoggedIn: isAuthenticated(),
+        handleLogin: (values)=>{},
+        handleLogout: ()=>{},
+    });
 
 export const ProfileProvider = ({children}: any) =>{
     const [user, setUser] = useState(null);
@@ -58,7 +63,7 @@ export const ProfileProvider = ({children}: any) =>{
         }
 
     }
-    const handleLogin = (values: any): Promise<any> =>{
+    const handleLogin = (values: any) =>{
 
         try{
             httpClient.post('/auth/login', values)
@@ -68,7 +73,7 @@ export const ProfileProvider = ({children}: any) =>{
                         localStorage.setItem('access_token', res.data.access_token);
                         setIsLoggedIn(true)
                         getCurrentUser();
-                        if(router.pathname === '/registration') router.push('/')
+                        router.push('/')
                         ToasterSuccess('Successfully logged in');
 
 
@@ -77,21 +82,19 @@ export const ProfileProvider = ({children}: any) =>{
                 .catch(err=>{
                     console.log(err);
                     const { message, statusCode} = err.response.data;
-                    ToasterError(message)
+                    ToasterError(message);
                 });
-            return Promise.resolve();
+           
         }catch (e) {
-           return Promise.reject();
+          console.log(e);
         }
-        return Promise.reject()
     }
-    const handleLogout = async (): Promise<any> => {
+    const handleLogout = async () => {
         if (typeof window !== 'undefined'){
             setIsLoggedIn(false)
             await localStorage.removeItem('access_token');
             router.push('/')
-        }
-        return Promise.resolve();
+        };
     }
     return(
         <ProfileContext.Provider value={{isLoggedIn, user, handleLogin, handleLogout}}>

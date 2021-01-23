@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import {ProfileContext} from "../../context/ProfileContext";
 const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>void}) => {
     const profileCtx = useContext(ProfileContext);
+    console.log(profileCtx)
     // @ts-ignore
     const {user, isLoggedIn, handleLogin, handleLogout} = profileCtx;
     const router = useRouter()
@@ -24,10 +25,8 @@ const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>vo
             password: ''
         },
         onSubmit: values => {
-            handleLogin(values).then(()=>{
-                toggle();
-                router.push('/')
-            })
+            handleLogin(values);
+            toggle();
         },
         validationSchema: loginSchema
     });
