@@ -12,11 +12,11 @@ import { UserDto } from '../types';
 const ProfilePage = ({ profile }: { profile: UserDto }) => {
     const [authorized, setAuthorized] = useState<boolean>(false)
     const router = useRouter();
-    console.log(router)
     // @ts-ignore
     const { user } = useContext(ProfileContext);
+
     useEffect(() => {
-        if (profile) {
+        if (profile && user) {
             setAuthorized((router.query.domain === profile.domain) &&
             isAuthenticated() && (user.domain === profile.domain))
         }
@@ -99,10 +99,6 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
 ProfilePage.Layout = DefaultLayout;
 
 export async function getServerSideProps(context: any) {
-
-    console.log('===========')
-        console.log(context.query)
-    console.log('===========')
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/users/domain/${context.params.domain}`)
     const data = await res.json()
 
