@@ -11,17 +11,17 @@ interface PublishBlogCardProps {
 }
 const PublishBlogCard: React.FC<PublishBlogCardProps> = ({ blog, authorized }) => {
 
-    const handleDelete = (id: number) =>{
+    const handleDelete = (id: number) => {
         httpClient.delete(`/blogs/${id}`)
-            .then(res=>{
+            .then(res => {
                 console.log(res);
                 ToasterSuccess('Successfully deleted');
             })
-            .catch(err=>{
+            .catch(err => {
                 console.log(err);
                 ToasterError("Couldn't delete ");
             })
-    } 
+    }
     return (
         <div className="col-lg-4">
             <div className="published-item">
@@ -41,11 +41,9 @@ const PublishBlogCard: React.FC<PublishBlogCardProps> = ({ blog, authorized }) =
                                 <a className="card-link text-success">Edit</a>
                             </Link>
                         )}
-                        {authorized && (<a 
-                                onClick={handleDelete}
-                                className="card-link float-right text-danger">
-                                    Delete
-                                    </a>
+                        {authorized && (<div onClick={()=>handleDelete} className="card-link float-right text-danger">
+                            Delete
+                                    </div>
                         )}
                     </div>
                 </div>

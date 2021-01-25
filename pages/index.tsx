@@ -142,7 +142,6 @@ const Home = ({blogsData, tagsData}: HomeProps) => {
 };
 
 export async function getServerSideProps(context: any) {
-    console.log(context)
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=true`)
     const data = await res.json()
 
