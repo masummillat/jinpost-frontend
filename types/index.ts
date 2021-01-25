@@ -6,6 +6,7 @@ export enum UserRole {
 }
 
 export interface UserDto {
+    [x: string]: any;
     id?: number;
     name: string;
     domain:string;

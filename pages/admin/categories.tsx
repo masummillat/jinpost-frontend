@@ -84,7 +84,7 @@ const Categories = ({categories}: ICategoriesProps) =>{
 
     return(
         <div>
-            <Head/>
+            <Head title="Jinpost Admin | categories"/>
             <main className="page-content">
                 <div className="container-fluid">
                     <div className="row">

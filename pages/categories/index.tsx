@@ -1,31 +1,36 @@
 import React from "react";
 import DefaultLayout from "../../components/layouts/default";
 import BlogItemCard from "../../components/category/BlogItemCard";
+import Head from "../../components/head";
 
-const Category = ({blogs}: any) => {
+const Category = ({ blogs }: any) => {
 
-    return(
-        <div className="container">
-            <div className="row">
-                <div className="col-lg-7">
-                    <div className="category-post">
-                        {
-                            blogs.map((blog: { id: number, blog: any })=><BlogItemCard blog={blog} key={blog.id}/>)
-                        }
+    return (
+        <div>
+            <Head
+                title="Jinpost" />
+            <div className="container">
+                <div className="row">
+                    <div className="col-lg-7">
+                        <div className="category-post">
+                            {
+                                blogs.map((blog: { id: number, blog: any }) => <BlogItemCard blog={blog} key={blog.id} />)
+                            }
+                        </div>
                     </div>
-                </div>
-                <div className="offset-lg-1 col-lg-4">
-                    <div className="category-popular-post">
-                        <h5>Popular in Category</h5>
-                        <ul>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                        </ul>
+                    <div className="offset-lg-1 col-lg-4">
+                        <div className="category-popular-post">
+                            <h5>Popular in Category</h5>
+                            <ul>
+                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -39,7 +44,7 @@ export async function getStaticProps(context: any) {
     const data = await res.json()
     return {
         props: {
-            blogs: data.items ,
+            blogs: data.items,
 
         },
     }

@@ -7,7 +7,7 @@ const Authors = ({authorsData}:{authorsData: any}) => {
     console.log(authors)
     return (
         <div>
-            <Head/>
+            <Head title="Jinpost Admin | authors"/>
             <main className="page-content">
                 <div className="container-fluid">
                     <div className="row">

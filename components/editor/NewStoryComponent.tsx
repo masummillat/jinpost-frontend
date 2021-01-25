@@ -11,7 +11,16 @@ import * as Yup from "yup";
 import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 import httpClient from "../../utils/api";
 import {UserDto} from "../../types";
+import { unique } from '../../utils/uniqevalue';
 
+interface ITags {
+    id: string;
+    text: string;
+}
+interface ITagState {
+    tags: ITags[];
+    suggestions: ITags[];
+}
 interface Icategories {
     id: number;
     name: string;
@@ -20,6 +29,7 @@ interface INewStoryComponent {
     categories: Icategories[];
     blog?: any;
     isEdit?: boolean;
+    suggestionTags?: string[];
 
 }
 const storySchema = Yup.object().shape({
@@ -37,9 +47,26 @@ const storySchema = Yup.object().shape({
     publishedDate: Yup.date().required('required'),
 });
 // @ts-ignore
-const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categories=[]}) => {
+
+export const createStringArray = values =>{
+    let result: string[] = [];
+    values.forEach((value: { tags: string[]; })=>{
+        value.tags.map((tag: string)=>{
+            result.push(tag)
+        })
+    })
+    return result;
+}
+
+const createTags = (values: string[]): ITags[] => {
+    return values.map((tag:string)=>({id: tag, text: tag}))
+}
+const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categories=[], suggestionTags=[]}) => {
     const [image, setImage] = useState(null);
     const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
+    const [tags, setTags] = useState<ITags[]>([])
+    const [tagSuggestions, setTagSuggestions]= useState<ITags[]>(createTags(unique(createStringArray(suggestionTags))))
+    console.log(tagSuggestions)
     let imageFormData;
     useEffect(() => {
         setCategoryOptions([])
@@ -50,7 +77,11 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         })))
     }, [categories])
 
-
+    useEffect(()=>{
+        setTags(isEdit? blog && createTags(blog.tags) : []);
+        setTagSuggestions(createTags(unique(createStringArray(suggestionTags))));
+    },[suggestionTags, isEdit])
+    console.log(tagSuggestions)
     useEffect(()=>{
         if(blog){
             formik.setFieldValue('title', blog.title)
@@ -196,19 +227,9 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         onSubmit: async values => handleDraft(values),
     });
 
-    const [tagsState, setTagState] = useState({
-        tags: [
-            {id: 'USA', text: 'USA'},
-            {id: 'Germany', text: 'Germany'},
-        ],
-        suggestions: [
-            {id: 'USA', text: 'USA'},
-            {id: 'Germany', text: 'Germany'},
-            {id: 'Austria', text: 'Austria'},
-            {id: 'Costa Rica', text: 'Costa Rica'},
-            {id: 'Sri Lanka', text: 'Sri Lanka'},
-            {id: 'Thailand', text: 'Thailand'}
-        ]
+    const [tagsState, setTagState] = useState<ITagState>({
+        tags: [],
+        suggestions: []
     });
     const KeyCodes = {
         comma: 188,
@@ -217,39 +238,24 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
     const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
     const handleDelete = (i: number) => {
-        setTagState(prevState => {
-            return {
-                ...prevState,
-                tags: prevState.tags.filter((tag, index) => index !== i)
-            }
-        })
+        setTags(tags.filter((tag, index) => index !== i)  )
     }
 
     const handleAddition = (tag: { id: string; text: string; }) => {
-        setTagState(prevState => {
-            return {
-                ...prevState,
-                tags: [...prevState.tags, tag],
-            }
-        })
+        setTags( [...tags, tag])
     }
     useEffect(() => {
         formik.setFieldValue('tags', tagsState.tags.map(tag => tag.text));
     }, [tagsState.tags])
 
-    const handleDrag = (tag: any, currPos: number, newPos: number) => {
-        const tags = [...tagsState.tags];
-        const newTags = tags.slice();
+    // const handleDrag = (tag: any, currPos: number, newPos: number) => {
+    //     const tags = [...tagsState.tags];
+    //     const newTags = tags.slice();
 
-        newTags.splice(currPos, 1);
-        newTags.splice(newPos, 0, tag);
-        setTagState(prevState => {
-            return {
-                ...prevState,
-                tags: newTags,
-            }
-        });
-    }
+    //     newTags.splice(currPos, 1);
+    //     newTags.splice(newPos, 0, tag);
+    //     setTags(newTags);
+    // }
 
     const [imagePreviewUrl, setImagePreviewUrl] = useState<string>('');
     const imageInputRef = useRef(null);
@@ -271,7 +277,6 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         reader.readAsDataURL(file)
 
     }
-    const {tags, suggestions} = tagsState;
     // @ts-ignore
     return (
         <div>
@@ -400,10 +405,10 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
 
                                             <ReactTags
                                                 tags={tags}
-                                                suggestions={suggestions}
+                                                suggestions={tagSuggestions}
                                                 handleDelete={handleDelete}
                                                 handleAddition={handleAddition}
-                                                handleDrag={handleDrag}
+                                                // handleDrag={handleDrag}
                                                 delimiters={delimiters}
                                                 allowUnique
                                                 classNames={{

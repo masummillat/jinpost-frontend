@@ -92,7 +92,7 @@ const UserHeader = () => {
                     {
                         isLoggedIn ? (
                             <div className="my-2 my-lg-0" style={{display: 'contents'}}>
-                                <a href="javascript:void(0)" className="notification-icon">
+                                <a href="#" className="notification-icon">
                                     <IoMdNotificationsOutline style={{fontSize: 24}}/>
                                 </a>
 

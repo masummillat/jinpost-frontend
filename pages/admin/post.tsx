@@ -12,7 +12,7 @@ const Post= ({blogs}: IPost) => {
     console.log(blogs)
     return (
         <div>
-            <Head />
+            <Head title="Jinpost admin | Post" />
             <main className="page-content">
                 <div className="container-fluid">
                     <div className="row">

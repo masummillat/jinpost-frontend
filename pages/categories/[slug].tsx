@@ -1,12 +1,16 @@
 import React from "react";
 import DefaultLayout from "../../components/layouts/default";
 import BlogItemCard from "../../components/category/BlogItemCard";
+import Head from "../../components/head";
 
 const SingleCategory = ({category}: any) => {
     const blogs = category.blogs;
 
     return(
-        <div className="container">
+        <div>
+            <Head 
+            title="Jinpost"/>
+            <div className="container">
             <div className="row">
                 <div className="col-lg-7">
                     <div className="category-post">
@@ -31,6 +35,7 @@ const SingleCategory = ({category}: any) => {
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     );
 }

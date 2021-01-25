@@ -15,7 +15,7 @@ interface INewPost {
 const NewPost = ({categories}: INewPost) => {
     return (
         <div>
-            <Head/>
+            <Head title="Jinpost admin | new post"/>
             <NewStoryComponent categories={categories}/>
         </div>
     );

@@ -7,7 +7,6 @@ import { useRouter } from 'next/router'
 import {ProfileContext} from "../../context/ProfileContext";
 const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>void}) => {
     const profileCtx = useContext(ProfileContext);
-    console.log(profileCtx)
     // @ts-ignore
     const {user, isLoggedIn, handleLogin, handleLogout} = profileCtx;
     const router = useRouter()

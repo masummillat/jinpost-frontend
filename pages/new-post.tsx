@@ -11,12 +11,14 @@ export interface Icategories {
 }
 export interface INewPostPage {
     categories: Icategories[]
+    suggestionTags: string[]
 }
-const NewPostPage = ({categories}: INewPostPage) => {
+const NewPostPage = ({categories, suggestionTags}: INewPostPage) => {
+    
     return (
         <div>
-            <Head/>
-           <NewStoryComponent categories={categories}/>
+            <Head title="Jinpost | write your store here"/>
+           <NewStoryComponent suggestionTags={suggestionTags} categories={categories}/>
         </div>
     );
 }
@@ -24,8 +26,12 @@ const NewPostPage = ({categories}: INewPostPage) => {
 NewPostPage.Layout = DefaultLayout;
 
 export async function getServerSideProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
-    const data = await res.json()
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories?page=1&limit=100`);
+    const data = await res.json();
+
+    const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`);
+    const tags = await tagsRes.json();
+
     console.log(data)
     if (!data) {
         return {
@@ -35,7 +41,8 @@ export async function getServerSideProps(context: any) {
 
     return {
         props: {
-            categories: data.items
+            categories: data.items,
+            suggestionTags: tags
         }, // will be passed to the page component as props
     }
 }

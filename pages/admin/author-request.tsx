@@ -38,7 +38,7 @@ const AuthorRequest = ({authorRequests}:{authorRequests: any}) => {
 
     return (
         <div>
-            <Head/>
+            <Head title="Jinpost Admin | author requests"/>
             <main className="page-content">
             <div className="container-fluid">
                 <div className="row">

@@ -3,6 +3,8 @@ import Head from '../components/head';
 import DefaultLayout from "../components/layouts/default";
 import BlogCard from "../components/blogs/BlogCard";
 import SampleBlogCard from "../components/blogs/SampleBlogCard";
+import { createStringArray } from '../components/editor/NewStoryComponent';
+import { unique } from '../utils/uniqevalue';
 
 export function createMarkup(blogString: any) {
     return {__html: blogString};
@@ -10,12 +12,15 @@ export function createMarkup(blogString: any) {
 
 interface HomeProps{
     blogsData: any;
+    tagsData: any[];
 }
-const Home = ({blogsData}: any) => {
+const Home = ({blogsData, tagsData}: HomeProps) => {
+    const tags = unique(createStringArray(tagsData));
     const blogs = blogsData.items;
     return (
         <div>
-            <Head title="Home"/>
+            <Head 
+            title="Jinpost | A story telling website"/>
             <div className="container">
                 <div className="row">
                     <div className="col-12">
@@ -62,7 +67,9 @@ const Home = ({blogsData}: any) => {
                             <div>
                                 <h1>Join us</h1>
                                 <p>Stay tuned with the latest developments of companies and industries in China.</p>
-                                <button className="btn btn-white">Get Started</button>
+                                <Link href="/registration">
+                                    <a className="btn btn-white">Get Started</a>
+                                </Link>
                             </div>
                             <div className="join-us-bg">
                                 <div></div>
@@ -74,7 +81,9 @@ const Home = ({blogsData}: any) => {
                     <div className="col-12">
                         <div className="section-title">
                             <h1>Articles</h1>
-                            <a href="#" className="all">All</a>
+                            <Link href="/blogs">
+                                <a className="all">All</a>
+                            </Link>
                         </div>
                     </div>
                     {blogs.map((blog: any, i: any)=><SampleBlogCard key={i} blog={blog}/>)}
@@ -88,24 +97,15 @@ const Home = ({blogsData}: any) => {
                     <div className="col-12">
                         <div className="popular-topics">
                             <ul>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                            </ul>
-                            <ul>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                                <li><a href="#">Lorem Ipsum</a></li>
-                                <li><a href="#">Lorem Ipsum</a></li>
+                                {
+                                    tags.map((tag, index)=>(
+                                        <Link href={`${process.env.BASE_URL}/blogs?tags=${tag}`} key={index}>
+                                            <a className="badge badge-pill badge-primary px-4 py-2 m-2">
+                                                {tag}
+                                            </a>
+                                        </Link>
+                                    ))
+                                }
                             </ul>
                         </div>
                     </div>
@@ -116,13 +116,22 @@ const Home = ({blogsData}: any) => {
                             <div className="left">
                                 <p>China Business intelligence</p>
                                 <h1>Discover the popular companies or individuals on our platform</h1>
-                                <a href="#" className="btn btn-white">Discover now</a>
+                                <Link href={`${process.env.BASE_URL}/blogs`}>
+                                    <a className="btn btn-white">Discover now</a>
+                                </Link>
                             </div>
                             <div className="tag-list">
-                                <a href="#" className="btn-tag">Lorem Ipsum</a>
-                                <a href="#" className="btn-tag">Ipsum</a>
-                                <a href="#" className="btn-tag">Lorem Ipsum</a>
-                                <a href="#" className="btn-tag">Lorem Ipsum</a>
+                            <ul>
+                                {
+                                    tags.map((tag, index)=>(
+                                        <Link href={`${process.env.BASE_URL}/blogs?tags=${tag}`} key={index}>
+                                            <a className="badge badge-pill badge-primary px-4 py-2 m-2">
+                                                {tag}
+                                            </a>
+                                        </Link>
+                                    ))
+                                }
+                            </ul>
                             </div>
                         </div>
                     </div>
@@ -132,10 +141,13 @@ const Home = ({blogsData}: any) => {
     )
 };
 
-export async function getStaticProps(context: any) {
-
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs`)
+export async function getServerSideProps(context: any) {
+    console.log(context)
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=true`)
     const data = await res.json()
+
+    const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)
+    const tags = await tagsRes.json()
 
     if (!data) {
         return {
@@ -146,7 +158,8 @@ export async function getStaticProps(context: any) {
 
     return {
         props: {
-            blogsData: data
+            blogsData: data,
+            tagsData: tags,
         }, // will be passed to the page component as props
     }
 }

@@ -2,13 +2,27 @@ import React from 'react';
 import moment from "moment";
 import Link from "next/link";
 import { Blog } from '../../types';
+import httpClient from '../../utils/api';
+import { ToasterSuccess, ToasterError } from '../../utils/statusMessage';
 
-interface PublishBlogCardProps{
+interface PublishBlogCardProps {
     blog: Blog;
     authorized: boolean;
 }
-const PublishBlogCard: React.FC<PublishBlogCardProps> = ({blog, authorized}) => {
-    return(
+const PublishBlogCard: React.FC<PublishBlogCardProps> = ({ blog, authorized }) => {
+
+    const handleDelete = (id: number) =>{
+        httpClient.delete(`/blogs/${id}`)
+            .then(res=>{
+                console.log(res);
+                ToasterSuccess('Successfully deleted');
+            })
+            .catch(err=>{
+                console.log(err);
+                ToasterError("Couldn't delete ");
+            })
+    } 
+    return (
         <div className="col-lg-4">
             <div className="published-item">
                 <div className="card">
@@ -22,9 +36,17 @@ const PublishBlogCard: React.FC<PublishBlogCardProps> = ({blog, authorized}) => 
                         </p>
                         <p className="article-preview-desc">{blog.description}</p>
                         <hr />
-                       {authorized && ( <a  className="card-link text-success">Edit</a>)}
-                        {authorized && (<a href="#"
-                           className="card-link float-right text-danger">Delete</a>)}
+                        {authorized && (
+                            <Link href={`/blogs/${blog.id}/edit`}>
+                                <a className="card-link text-success">Edit</a>
+                            </Link>
+                        )}
+                        {authorized && (<a 
+                                onClick={handleDelete}
+                                className="card-link float-right text-danger">
+                                    Delete
+                                    </a>
+                        )}
                     </div>
                 </div>
             </div>

@@ -12,7 +12,7 @@ const UsersComponent = ({usersData}: UsersComponentProps) => {
     console.log(users)
     return (
         <div>
-            <Head/>
+            <Head title="Jinpost admin | users"/>
             <main className="page-content">
                 <div className="container-fluid">
                     <div className="row">

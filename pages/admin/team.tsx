@@ -6,7 +6,7 @@ const Team = () => {
 
     return (
         <div>
-            <Head/>
+            <Head title="Jinpost admin | Team"/>
             <main className="page-content">
                 <div className="container-fluid">
                     <div className="row">
