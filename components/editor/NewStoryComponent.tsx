@@ -65,8 +65,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
     const [image, setImage] = useState(null);
     const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
     const [tags, setTags] = useState<ITags[]>([])
-    const [tagSuggestions, setTagSuggestions]= useState<ITags[]>(createTags(unique(createStringArray(suggestionTags))))
-    console.log(tagSuggestions)
+    const [tagSuggestions, setTagSuggestions]= useState<ITags[]>(createTags(unique(createStringArray(suggestionTags))));
     let imageFormData;
     useEffect(() => {
         setCategoryOptions([])
@@ -81,7 +80,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         setTags(isEdit? blog && createTags(blog.tags) : []);
         setTagSuggestions(createTags(unique(createStringArray(suggestionTags))));
     },[suggestionTags, isEdit])
-    console.log(tagSuggestions)
+
     useEffect(()=>{
         if(blog){
             formik.setFieldValue('title', blog.title)
@@ -137,6 +136,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
     }
 
     const handlePublish = async () => {
+        console.log(formik.errors)
         if (Object.keys(formik.errors).length === 0){
             if(isEdit){
                 // Update  Blog with publish 
@@ -227,10 +227,6 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         onSubmit: async values => handleDraft(values),
     });
 
-    const [tagsState, setTagState] = useState<ITagState>({
-        tags: [],
-        suggestions: []
-    });
     const KeyCodes = {
         comma: 188,
         enter: 13,
@@ -245,8 +241,8 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         setTags( [...tags, tag])
     }
     useEffect(() => {
-        formik.setFieldValue('tags', tagsState.tags.map(tag => tag.text));
-    }, [tagsState.tags])
+        formik.setFieldValue('tags', tags.map(tag => tag.text));
+    }, [tags])
 
     // const handleDrag = (tag: any, currPos: number, newPos: number) => {
     //     const tags = [...tagsState.tags];
