@@ -1,18 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { BiTrash } from 'react-icons/bi';
 import AdminLayout from "../../components/layouts/admin";
 import Head from "../../components/head";
 import httpClient from "../../utils/api";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import { ToasterSuccess, ToasterError } from '../../utils/statusMessage';
 
-interface UsersComponentProps{
+interface UsersComponentProps {
     usersData: any;
 }
-const UsersComponent = ({usersData}: UsersComponentProps) => {
-    console.log(usersData)
-    const users = usersData.items;
-    console.log(users)
+const UsersComponent = ({ usersData }: UsersComponentProps) => {
+
+    const [users, setUsers] = useState<any[]>(usersData.items);
+
+    const handleUserDelete = (id: number): void => {
+        confirmAlert({
+            title: 'Confirm to delete',
+            message: 'Are you sure deleting this.',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => {
+                        httpClient.delete(`/users/${id}`)
+                            .then(res => {
+                                setUsers(users.filter(user => user.id !== id));
+                                ToasterSuccess('Successfully deleted');
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                ToasterError("Couldn't delete");
+                            })
+                    }
+                },
+                {
+                    label: 'No',
+                    onClick: () => { }
+                }
+            ]
+        });
+
+    }
     return (
         <div>
-            <Head title="Jinpost admin | users"/>
+            <Head title="Jinpost admin | users" />
             <main className="page-content">
                 <div className="container-fluid">
                     <div className="row">
@@ -23,27 +54,27 @@ const UsersComponent = ({usersData}: UsersComponentProps) => {
                             <div className="row">
                                 <div className="col-lg-12">
                                     <div className="user-list">
-                                        <table id="user-list" className="table table-bordered" style={{width: '100%'}}>
+                                        <table id="user-list" className="table table-bordered" style={{ width: '100%' }}>
                                             <thead>
-                                            <tr>
-                                                <th>Person</th>
-                                                <th>Interest</th>
-                                                <th>Actions</th>
-                                            </tr>
+                                                <tr>
+                                                    <th>Person</th>
+                                                    <th>Interest</th>
+                                                    <th>Actions</th>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                            {users.map((user: { id: number, name: string })=>(
-                                                <tr key={user.id}>
-                                                    <td>
-                                                        <img src="/static/img/profile.jpg" className="author-list-img"/>
-                                                        <span className="ml-2">{user.name}</span>
-                                                    </td>
-                                                    <td>Data Science, Natural Language Processing & Speech</td>
-                                                    <td>
-                                                        <a href="#"><i className="far fa-trash-alt"></i></a>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                                {users.map((user: { id: number, occupation: string, name: string }) => (
+                                                    <tr key={user.id}>
+                                                        <td>
+                                                            <img src="/static/img/profile.jpg" className="author-list-img" />
+                                                            <span className="ml-2">{user.name}</span>
+                                                        </td>
+                                                        <td>{user.occupation}</td>
+                                                        <td>
+                                                            <BiTrash onClick={() => handleUserDelete(user.id)} size={25} />
+                                                        </td>
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>
@@ -58,8 +89,8 @@ const UsersComponent = ({usersData}: UsersComponentProps) => {
 }
 
 
-export async function getStaticProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users`)
+export async function getServerSideProps(context: any) {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users?role=user`)
     const data = await res.json()
     if (!data) {
         return {

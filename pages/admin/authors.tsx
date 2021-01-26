@@ -1,10 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "../../components/head";
 import AdminLayout from "../../components/layouts/admin";
+import httpClient from "../../utils/api";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import { ToasterSuccess, ToasterError } from '../../utils/statusMessage';
+import { BiTrash } from "react-icons/bi";
 
 const Authors = ({authorsData}:{authorsData: any}) => {
-    const authors = authorsData.items;
-    console.log(authors)
+    const [authors, setAuthors] = useState<any[]>(authorsData.items);
+
+    const handleUserDelete = (id: number): void => {
+        confirmAlert({
+            title: 'Confirm to delete',
+            message: 'Are you sure deleting this.',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => {
+                        httpClient.delete(`/users/${id}`)
+                            .then(res => {
+                                setAuthors(authors.filter(author => author.id !== id));
+                                ToasterSuccess('Successfully deleted');
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                ToasterError("Couldn't delete");
+                            })
+                    }
+                },
+                {
+                    label: 'No',
+                    onClick: () => { }
+                }
+            ]
+        });
+        console.log('called', id)
+
+    }
     return (
         <div>
             <Head title="Jinpost Admin | authors"/>
@@ -28,15 +61,15 @@ const Authors = ({authorsData}:{authorsData: any}) => {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            {authors.map((user: { id: number, name: string })=>(
+                                            {authors.map((user: { id: number, occupation: string, name: string })=>(
                                                 <tr key={user.id}>
                                                     <td>
                                                         <img src="/static/img/profile.jpg" className="author-list-img"/>
                                                         <span className="ml-2">{user.name}</span>
                                                     </td>
-                                                    <td>Data Science, Natural Language Processing & Speech</td>
+                                            <td>{user.occupation}</td>
                                                     <td>
-                                                        <a href="#"><i className="far fa-trash-alt"></i></a>
+                                                    <BiTrash onClick={() => handleUserDelete(user.id)} size={25} />
                                                     </td>
                                                 </tr>
                                             ))}
@@ -55,8 +88,8 @@ const Authors = ({authorsData}:{authorsData: any}) => {
 
 Authors.Layout = AdminLayout; 
 
-export async function getStaticProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users`)
+export async function getServerSideProps(context: any) {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users?role=author`)
     const data = await res.json()
     if (!data) {
         return {

@@ -4,8 +4,9 @@ import AdminLayout from "../../components/layouts/admin";
 import {useFormik} from "formik";
 import httpClient from "../../utils/api";
 import {CategoryEntry} from "../../types";
-import {Button, Modal} from "react-bootstrap";
-import {toast} from "react-toastify";
+import { Modal} from "react-bootstrap";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 
 interface ICategoriesProps {
@@ -20,14 +21,30 @@ const Categories = ({categories}: ICategoriesProps) =>{
 
     const handleDelete = (id: number | undefined) =>{
        if(id){
-           httpClient.delete(`/categories/${id}`)
-               .then(res=>{
-                  ToasterSuccess('Successfully deleted');
-                   getCategories();
-               })
-               .catch(err=>{
-                   ToasterError(err.response.statusText);
-               })
+        confirmAlert({
+            title: 'Confirm to delete',
+            message: 'Are you sure deleting this.',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => {
+                        httpClient.delete(`/categories/${id}`)
+                        .then(res=>{
+                           ToasterSuccess('Successfully deleted');
+                            getCategories();
+                        })
+                        .catch(err=>{
+                            ToasterError(err.response.statusText);
+                        })
+                    }
+                },
+                {
+                    label: 'No',
+                    onClick: () => { }
+                }
+            ]
+        });
+           
        }
     }
     useEffect(()=>{
@@ -174,7 +191,7 @@ const Categories = ({categories}: ICategoriesProps) =>{
 
 // @ts-ignore
 Categories.Layout = AdminLayout;
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
     const data = await res.json()
     console.log(data)

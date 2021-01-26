@@ -45,7 +45,7 @@ const Post= ({blogs}: IPost) => {
                                                         <td>{moment(blog.publishedDate).format('LLL')}</td>
                                                         <td>Hello</td>
                                                         <td>
-                                                            <a href="new-post.php"><i className="far fa-edit"></i></a>
+                                                            <a href="#"><i className="far fa-edit"></i></a>
                                                             <a href="#"><i className="far fa-trash-alt"></i></a>
                                                         </td>
                                                     </tr>
