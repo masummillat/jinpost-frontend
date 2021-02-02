@@ -6,9 +6,10 @@ module.exports = {
   // },
   env: {
     // BACKEND_BASE_URL: 'http://localhost:3000',
-    BACKEND_BASE_URL: 'https://jinpost.herokuapp.com',
-    BASE_URL: 'https://jinpost-frontend.vercel.app',
     // BASE_URL: 'http://localhost:3001',
+    BACKEND_BASE_URL: 'http://54.169.44.155',
+    // BASE_URL: 'https://jinpost-frontend.vercel.app',
+    
   },
   async redirects() {
     return [
