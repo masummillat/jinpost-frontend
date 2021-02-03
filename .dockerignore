@@ -1,0 +1,8 @@
+.idea
+.vscode
+
+**/node_modules/**
+deploy
+.next
+
+.env.development.local
