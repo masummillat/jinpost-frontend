@@ -12,6 +12,8 @@ import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 import httpClient from "../../utils/api";
 import {UserDto} from "../../types";
 import { unique } from '../../utils/uniqevalue';
+import { Tabs, Tab } from 'react-bootstrap';
+import ChineseTinyEditor from './ChinesTinyEditor';
 
 interface ITags {
     id: string;
@@ -84,8 +86,11 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
     useEffect(()=>{
         if(blog){
             formik.setFieldValue('title', blog.title)
+            formik.setFieldValue('chineseTitle', blog.chineseTitle)
             formik.setFieldValue('description', blog.description)
+            formik.setFieldValue('chineseDescription', blog.chineseDescription)
             formik.setFieldValue('body', blog.body)
+            formik.setFieldValue('chineseBod', blog.chineseBod)
             formik.setFieldValue('categories', blog.categories.map((cat: { id: any; name: any; })=>{
                 return{
                     id: cat.id,
@@ -175,19 +180,19 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
     const handleSave = async (values: any) => {
         imageFormData = new FormData();
                 // @ts-ignore
-                // await imageFormData.append('file', image)
-                // await fetch(`${process.env.BACKEND_BASE_URL}/image/upload`, {
-                //     headers: {
-                //         mode: 'no-cors',
-                //         'Accept': 'application/json',
-                //         // 'Content-Type': 'multipart/form-data',
-                //         'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                //     },
-                //     body: imageFormData,
-                //     method: 'post',
-                // }).then(res=>res.json())
-                //     .then( result=>{
-
+                await imageFormData.append('file', image)
+                await fetch(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, {
+                    headers: {
+                        mode: 'no-cors',
+                        'Accept': 'application/json',
+                        // 'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    },
+                    body: imageFormData,
+                    method: 'post',
+                }).then(res=>res.json())
+                    .then( result=>{
+                         console.log(result)       
                         formik.setFieldValue('featuredImg', null)
                         fetch(`${process.env.BACKEND_BASE_URL}/blogs`, {
                             headers: {
@@ -196,7 +201,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
                             },
                             method: 'post',
-                            body: JSON.stringify({...values, featuredImg: null}),
+                            body: JSON.stringify({...values, featuredImg: result.Location}),
                         }).then(res=>res.json())
                             .then(r=>{
                                 console.log(r)
@@ -207,19 +212,22 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                 console.log(err)
                                 ToasterError(err.response.data.message);
                             });
-                    // })
-                    // .catch(err=>{
-                    //     console.log(err)
-                    // })
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                    })
              }
     
     const formik = useFormik({
         initialValues: {
             title: '',
+            chineseTitle: '',
             description: '',
+            chineseDescription: '',
             categories: [],
             featuredImg: '',
             body: '',
+            chineseBody: '',
             // tags: [],
             publishedDate: new Date()
         },
@@ -273,6 +281,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
         reader.readAsDataURL(file)
 
     }
+    console.log(formik.values)
     // @ts-ignore
     return (
         <div>
@@ -286,61 +295,69 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                             </div>
                             <div className="row">
                                 <div className="col-lg-8">
-                                    <div className="new-post">
-                                        <input
-                                            type="text"
-                                            name="title"
-                                            className="form-control post-title"
-                                            placeholder="Enter title here"
-                                            onChange={formik.handleChange}
-                                            value={formik.values.title}
-                                        />
-                                        <p className="small text-danger">{formik.touched.title && formik.errors && formik.errors.title}</p>
-                                        {/* <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                            <li className="nav-item" role="presentation">
-                                                <a className="nav-link active" id="pills-content-tab"
-                                                   data-bs-toggle="pill" href="#pills-content" role="tab"
-                                                   aria-controls="pills-content" aria-selected="true">Content</a>
-                                            </li>
-                                            <li className="nav-item" role="presentation">
-                                                <a className="nav-link" id="pills-original-tab"
-                                                   data-bs-toggle="pill" href="#pills-original" role="tab"
-                                                   aria-controls="pills-original" aria-selected="false">Original</a>
-                                            </li>
-                                            <li className="nav-item" role="presentation">
-                                                <a className="nav-link" id="pills-note-tab" data-bs-toggle="pill"
-                                                   href="#pills-note" role="tab" aria-controls="pills-note"
-                                                   aria-selected="false">Note</a>
-                                            </li>
-                                        </ul> */}
-                                        <div>
-                                        <input
-                                            type="text"
-                                            name="description"
-                                            className="form-control post-title"
-                                            placeholder="Enter description here"
-                                            onChange={formik.handleChange}
-                                            value={formik.values.description}
-                                        />
-                                        <p className="small text-danger">{formik.touched.description && formik.errors && formik.errors.description}</p>
-                                        </div>
-                                        <div className="tab-content" id="pills-tabContent">
-                                            <TinyEditor formik={formik}/>
-                                            <p className="small text-danger">{formik.touched.title && formik.errors.body}</p>
-                                            <div className="tab-pane" id="pills-original" role="tabpanel"
-                                                 aria-labelledby="pills-original-tab">
-                                                    <textarea className="form-control note"
-                                                              placeholder="Note"/>
+
+                                <Tabs defaultActiveKey="english" id="uncontrolled-tab-example">
+                                    <Tab eventKey="english" title="English">
+                                        <div className="new-post p-3">
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                className="form-control post-title"
+                                                placeholder="Enter title here"
+                                                onChange={formik.handleChange}
+                                                value={formik.values.title}
+                                            />
+                                            <p className="small text-danger">{formik.touched.title && formik.errors && formik.errors.title}</p>
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    name="description"
+                                                    className="form-control post-title"
+                                                    placeholder="Enter description here"
+                                                    onChange={formik.handleChange}
+                                                    value={formik.values.description}
+                                                />
+                                                <p className="small text-danger">{formik.touched.description && formik.errors && formik.errors.description}</p>
                                             </div>
-                                            <div className="tab-pane" id="pills-note" role="tabpanel"
-                                                 aria-labelledby="pills-note-tab">
-                                                    <textarea className="form-control note"
-                                                              placeholder="Note"/>
+                                            <div className="tab-content" id="pills-tabContent">
+                                                <TinyEditor formik={formik}/>
+                                                <p className="small text-danger">{formik.touched.title && formik.errors.body}</p>
                                             </div>
                                         </div>
+                                    </Tab>
+                                    <Tab eventKey="chinese" title="Chinese">
+                                        <div className="new-post p-3">
+                                            <input
+                                                type="text"
+                                                name="chineseTitle"
+                                                className="form-control post-title"
+                                                placeholder="在这里输入标题"
+                                                onChange={formik.handleChange}
+                                                value={formik.values.chineseTitle}
+                                            />
+                                            <p className="small text-danger">{formik.touched.chineseTitle && formik.errors && formik.errors.chineseTitle}</p>
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    name="chineseDescription"
+                                                    className="form-control post-title"
+                                                    placeholder="在此处输入说明"
+                                                    onChange={formik.handleChange}
+                                                    value={formik.values.chineseDescription}
+                                                />
+                                                <p className="small text-danger">{formik.touched.chineseDescription && formik.errors && formik.errors.chineseDescription}</p>
+                                            </div>
+                                            <div className="tab-" id="tabContent">
+                                                <ChineseTinyEditor  formik={formik}/>
+                                                <p className="small text-danger">{formik.touched.chineseTitle && formik.errors.chineseBody}</p>
+                                            </div>
 
 
-                                    </div>
+                                        </div>
+                                    </Tab>
+                                   
+                                </Tabs>
+                                    
                                 </div>
                                 <div className="col-lg-4">
                                     <div className="new-post-sidebar">

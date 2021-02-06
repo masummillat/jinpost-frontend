@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import moment from "moment";
 import {
     EmailShareButton,
@@ -13,10 +13,16 @@ import { createMarkup } from "../../index";
 import SuggestionBlogCard from "../../../components/blogs/SuggestionBlogCard";
 
 import Head from '../../../components/head';
+import Switch from 'react-switch';
+import { BiBody } from 'react-icons/bi';
 
 // @ts-ignore
 const SingleBlogPage = ({ blog, suggestions, authorData }) => {
-
+    const [lang, setLang] = useState<string>('en')
+    const handleLangChange = ()=>{
+        if(lang==='en') setLang('chi');
+        else setLang('en');
+    }
     return (
         <div>
             <Head
@@ -31,15 +37,27 @@ const SingleBlogPage = ({ blog, suggestions, authorData }) => {
                 <div className="row">
                     <div className="col-lg-8">
                         <div className="full-post">
-                            <h1 className="post-title">{blog && blog.title}</h1>
-                            <div className="author">
-                                <img src="/static/img/profile.jpg" />
-                                <Link href={`/${blog && blog.author && blog.author.domain}`}>
-                                    <a>{blog && blog.author && blog.author.name}</a>
-                                </Link> on <span>{moment(blog && blog.createdAt).format('MMMM Do YYYY, h:mm A')}</span>
+                            <h1 className="post-title">{blog && (lang ==='chi' ? blog.chineseTitle : blog.title)}</h1>
+                            <div className="author d-flex justify-content-between">
+                                <div>
+                                    <img src="/static/img/profile.jpg" />
+                                    <Link href={`/${blog && blog.author && blog.author.domain}`}>
+                                        <a>{blog && blog.author && blog.author.name}</a>
+                                    </Link> on <span>{moment(blog && blog.createdAt).format('MMMM Do YYYY, h:mm A')}</span>
+                                </div>
+                                <Switch 
+                                    width= {70}
+                                    onChange={handleLangChange}
+                                    checked={lang==='chi'}
+                                    checkedIcon={<div className="d-flex justify-content-center align-items-center">EN</div>}
+                                    uncheckedIcon={<div className="d-flex justify-content-center align-items-center">中文</div>}
+                                  />
                             </div>
                             <img src={blog && blog.featuredImg || '/static/img/pic.jpg'} className="featured-img" />
-                            <div dangerouslySetInnerHTML={createMarkup(blog && blog.body)} />
+                            <div className="small italic mb-4">
+                                {blog && (lang ==='chi' ? blog.chineseDescription : blog.description)}
+                            </div>
+                            <div dangerouslySetInnerHTML={createMarkup(blog && (lang=== 'chi' ? blog.chineseBody : blog.body))} />
                         </div>
                     </div>
                     <div className="offset-lg-1 col-lg-3">

@@ -2,9 +2,9 @@ import React, {useContext, useState} from 'react';
 import { Modal } from 'reactstrap';
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import httpClient from "../../utils/api";
 import { useRouter } from 'next/router'
 import {ProfileContext} from "../../context/ProfileContext";
+import Link from 'next/link';
 const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>void}) => {
     const profileCtx = useContext(ProfileContext);
     // @ts-ignore
@@ -60,7 +60,9 @@ const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>vo
                             />
                             <p className="text-danger m-0">{formik.errors.password}</p>
                             <button type="submit" className="btn btn-primary">sign in</button>
-                            <a href="#" className="green-text mt-2">Forgot password?</a>
+                            <Link href="/forgot-password">
+                            <a  className="green-text mt-2">Forgot password?</a>
+                            </Link>
                         </form>
                     </div>
                 </div>

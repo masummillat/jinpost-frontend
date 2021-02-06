@@ -51,7 +51,7 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
             }).then(res => res.json())
                 .then(r => {
                     if (profileCtx.user) {
-                        httpClient.put(`/users/${profileCtx.user.id}`, { ...payload, profileImage: r.url })
+                        httpClient.put(`/users/${profileCtx.user.id}`, { ...payload, profileImage: r.Location })
                             .then(res => {
                                 console.log(res);
                                 ToasterSuccess("Successfully updated")
@@ -126,8 +126,7 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
                                                 </Tab.Pane>
                                                 <Tab.Pane eventKey="change-password">
                                                     {profileCtx.user && (<PasswordChangeForm id={profileCtx.user.id} />)}
-                                                    {profileCtx.user && (<PasswordChangeForm id={profileCtx.user.id} />)}
-                                                    {profileCtx.user && (<PasswordChangeForm id={profileCtx.user.id} />)}
+                                                
                                                 </Tab.Pane>
                                                 <Tab.Pane eventKey="delete-account">
                                                     <p>If you delete account you will not be logged in again without
