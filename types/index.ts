@@ -40,4 +40,12 @@ export interface CategoryEntry {
     blogEntries?: Blog[];
 }
 
+export interface IComment {
+    id: number;
+    message: string;
+    author?: UserDto;
+    blog?: Blog;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
 
