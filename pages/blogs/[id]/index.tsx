@@ -339,7 +339,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                     </div>
                 </div>
                 <div className="row">
-                    <button onClick={() => {
+                    <button className="btn btn-primary mt-4 px-5" onClick={() => {
                         setCommentVisible(!commentVisible)
                     }}>Comments
                     </button>

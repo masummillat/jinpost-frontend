@@ -5,11 +5,11 @@ module.exports = {
   //   domains: ['http://localhost:3000'],
   // },
   env: {
-    BACKEND_BASE_URL: 'http://localhost:3000',
-    BASE_URL: 'http://localhost:3001',
-    // BACKEND_BASE_URL: 'http://54.169.44.155',
-    // BASE_URL: 'https://jinpost-frontend.vercel.app',
-    
+    // BACKEND_BASE_URL: 'http://localhost:3000',
+    // BASE_URL: 'http://localhost:3001',
+    BACKEND_BASE_URL: 'http://54.251.217.105',
+    BASE_URL: 'http://jinpost.com',
+
   },
   async redirects() {
     return [
