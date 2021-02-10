@@ -15,7 +15,7 @@ const DiscoverPage = ({ authorsData, categoriesData }: DiscoverPageProps) => {
     console.log(categories)
     return (
         <div>
-            <Head 
+            <Head
             title="Jinpost | discover new stories"/>
             <div className="container">
                 <div className="row">
@@ -69,7 +69,7 @@ const DiscoverPage = ({ authorsData, categoriesData }: DiscoverPageProps) => {
 
 DiscoverPage.Layout = DefaultLayout;
 
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/users?role=author`)
     const data = await res.json();
 

@@ -22,10 +22,10 @@ const Index = ({authorsData}: AuthorsProps) => {
                             <div className="col-md-12 d-flex justify-content-center">
                                 <h1>No Author Found</h1>
                             </div>
-                        </div>                        
-                    </div>      
+                        </div>
+                    </div>
                 )}
-                
+
                     {
                         authors.map((author)=>  (
                             <div key={author.id} className="col-lg-4 col-md-4 col-sm-6">
@@ -33,7 +33,7 @@ const Index = ({authorsData}: AuthorsProps) => {
                             </div>
                             ))
                     }
-            
+
             </div>
         </div>
         </div>
@@ -41,7 +41,7 @@ const Index = ({authorsData}: AuthorsProps) => {
 }
 
 Index.Layout = DefaultLayout;
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/users?role=author`)
     const data = await res.json()
     if (!data) {

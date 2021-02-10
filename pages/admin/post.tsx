@@ -67,7 +67,7 @@ const Post= ({blogs}: IPost) => {
 
 Post.Layout = AdminLayout;
 
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs`)
     const data = await res.json()
     if (!data) {

@@ -126,7 +126,7 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
                                                 </Tab.Pane>
                                                 <Tab.Pane eventKey="change-password">
                                                     {profileCtx.user && (<PasswordChangeForm id={profileCtx.user.id} />)}
-                                                
+
                                                 </Tab.Pane>
                                                 <Tab.Pane eventKey="delete-account">
                                                     <p>If you delete account you will not be logged in again without
@@ -162,7 +162,7 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
 
 AccountSettings.Layout = DefaultLayout;
 
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/users/1`)
     const data = await res.json()
     console.log(data)

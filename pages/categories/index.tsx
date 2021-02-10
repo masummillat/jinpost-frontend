@@ -38,7 +38,7 @@ const Category = ({ blogs }: any) => {
     );
 }
 Category.Layout = DefaultLayout;
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
     //TODO WE WILL GET BLOGS DATA FOR ALL CATEGORY INSTEAD OF BLOGS ONLY
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs`)
     const data = await res.json()

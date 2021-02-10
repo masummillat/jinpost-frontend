@@ -23,7 +23,7 @@ const NewPost = ({categories}: INewPost) => {
 
 NewPost.Layout = AdminLayout;
 
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
     const data = await res.json()
     console.log(data)

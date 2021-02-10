@@ -1,14 +1,10 @@
 const path = require('path');
 module.exports = {
-  // images: {
-  //   loader: 'imgix',
-  //   domains: ['http://localhost:3000'],
-  // },
   env: {
-    // BACKEND_BASE_URL: 'http://localhost:3000',
-    // BASE_URL: 'http://localhost:3001',
-    BACKEND_BASE_URL: 'http://54.251.217.105',
-    BASE_URL: 'http://jinpost.com',
+    BACKEND_BASE_URL: 'http://localhost:3000',
+    BASE_URL: 'http://localhost:3001',
+    // BACKEND_BASE_URL: 'http://54.251.217.105',
+    // BASE_URL: 'http://jinpost.com',
 
   },
   async redirects() {
