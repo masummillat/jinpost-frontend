@@ -1,9 +1,14 @@
 import React, {useState} from 'react';
 import DefaultLayout from "../../../components/layouts/default";
-import NewStoryComponent from "../../../components/editor/NewStoryComponent";
 import {INewPostPage} from "../../new-post";
 import Head from '../../../components/head';
+import dynamic from "next/dynamic";
+import PageLoader from "../../../components/pageLoader";
 
+const NewStoryComponent = dynamic(()=>import('../../../components/editor/NewStoryComponent'), {
+    ssr: false,   loading: () => <PageLoader/>
+
+});
 
 const BlogEdit = ({categories, blog, suggestionTags}: any) => {
 

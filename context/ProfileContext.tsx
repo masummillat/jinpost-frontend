@@ -20,16 +20,18 @@ interface IProfile {
     isLoggedIn: boolean;
     handleLogin: (values: ILoginInput)=>void;
     handleLogout: ()=>void;
+    setUserData: (values: any) => void;
 }
 export const ProfileContext = React.createContext<IProfile>(
     {
         isLoggedIn: isAuthenticated(),
         handleLogin: (values)=>{},
         handleLogout: ()=>{},
+        setUserData: values => {},
     });
 
 export const ProfileProvider = ({children}: any) =>{
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<any>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const router = useRouter();
     useEffect(()=>{
@@ -73,7 +75,7 @@ export const ProfileProvider = ({children}: any) =>{
                         localStorage.setItem('access_token', res.data.access_token);
                         setIsLoggedIn(true)
                         getCurrentUser();
-                        router.push('/')
+                        router.push('/',undefined, {shallow: false})
                         ToasterSuccess('Successfully logged in');
 
 
@@ -84,20 +86,24 @@ export const ProfileProvider = ({children}: any) =>{
                     const { message, statusCode} = err.response.data;
                     ToasterError(message);
                 });
-           
+
         }catch (e) {
           console.log(e);
         }
     }
     const handleLogout = async () => {
         if (typeof window !== 'undefined'){
-            setIsLoggedIn(false)
             await localStorage.removeItem('access_token');
-            router.push('/')
+            await setIsLoggedIn(isAuthenticated());
+            router.push('/', undefined, {shallow: false})
         };
     }
+
+    const setUserData = (values: any) => {
+        setUser(values);
+    }
     return(
-        <ProfileContext.Provider value={{isLoggedIn, user, handleLogin, handleLogout}}>
+        <ProfileContext.Provider value={{isLoggedIn, user, setUserData, handleLogin, handleLogout}}>
             {children}
         </ProfileContext.Provider>
     );

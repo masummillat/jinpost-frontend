@@ -54,6 +54,7 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
                         httpClient.put(`/users/${profileCtx.user.id}`, { ...payload, profileImage: r.Location })
                             .then(res => {
                                 console.log(res);
+                                profileCtx.setUserData(res.data)
                                 ToasterSuccess("Successfully updated")
                             })
                             .catch(err => {
@@ -68,6 +69,7 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
                 httpClient.put(`/users/${profileCtx.user.id}`, payload)
                     .then(res => {
                         console.log(res)
+                        profileCtx.setUserData(res.data)
                         ToasterSuccess('Successfully Updated');
                     })
                     .catch(err => {
@@ -78,7 +80,7 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
 
         console.log(JSON.stringify(payload, null, 2));
     }
-
+    console.log(imagePreviewUrl)
     useEffect(() => {
         if (profileCtx.user) {
             setImagePreviewUrl(profileCtx.user.profileImg)
@@ -87,7 +89,7 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
     return (
         <div>
             <Head
-                title="Jinpost | account settings" />
+                title="Jinpost: account settings" />
             <div className="container">
                 <div className="row mt-4">
                     <div className="col-lg-10">
@@ -145,9 +147,9 @@ const AccountSettings = ({ userInfo }: { userInfo: any }) => {
                             // @ts-ignore
                             imageInputRef.current.click()
                         }} className="profile-photo-change-preview">
-                            {profileCtx.user && profileCtx.user.profileImage ?
-                                <img src={profileCtx.user.profileImage} className="img-fluid" /> : imagePreviewUrl ?
-                                    <img src={imagePreviewUrl} className="img-fluid" /> : <AiOutlineUser size={100} />}
+                            {
+                                 <img  src={imagePreviewUrl ? imagePreviewUrl : profileCtx.user && profileCtx.user.profileImage}  alt=""/>
+                            }
 
 
                             <input style={{ visibility: 'hidden' }} ref={imageInputRef} type="file" accept="image/*"

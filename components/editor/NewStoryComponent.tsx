@@ -10,7 +10,6 @@ import TinyEditor from "./TinyEditor";
 import * as Yup from "yup";
 import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 import httpClient from "../../utils/api";
-import {UserDto} from "../../types";
 import { unique } from '../../utils/uniqevalue';
 import { Tabs, Tab } from 'react-bootstrap';
 import ChineseTinyEditor from './ChinesTinyEditor';
@@ -48,9 +47,8 @@ const storySchema = Yup.object().shape({
     body: Yup.string().required('Blog content is required'),
     publishedDate: Yup.date().required('required'),
 });
-// @ts-ignore
 
-export const createStringArray = values =>{
+export const createStringArray = (values: any[]) =>{
     let result: string[] = [];
     values.forEach((value: { tags: string[]; })=>{
         value.tags.map((tag: string)=>{
@@ -63,12 +61,30 @@ export const createStringArray = values =>{
 const createTags = (values: string[]): ITags[] => {
     return values.map((tag:string)=>({id: tag, text: tag}))
 }
-const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categories=[], suggestionTags=[]}) => {
+const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit=false, blog, categories=[], suggestionTags=[]}) => {
     const [image, setImage] = useState(null);
     const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
     const [tags, setTags] = useState<ITags[]>([])
     const [tagSuggestions, setTagSuggestions]= useState<ITags[]>(createTags(unique(createStringArray(suggestionTags))));
     let imageFormData;
+
+    const formik = useFormik({
+        initialValues: {
+            title: '',
+            chineseTitle: '',
+            description: '',
+            chineseDescription: '',
+            categories: [],
+            featuredImg: '',
+            body: '',
+            chineseBody: '',
+            // tags: [],
+            publishedDate: new Date()
+        },
+        validationSchema: storySchema,
+        validateOnChange: true,
+        onSubmit: async values => handleDraft(values),
+    });
     useEffect(() => {
         setCategoryOptions([])
         setCategoryOptions(categories.map((cat: { id: number; name: string; }) => ({
@@ -84,7 +100,9 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
     },[suggestionTags, isEdit])
 
     useEffect(()=>{
+        console.log(blog, isEdit)
         if(blog){
+            formik.resetForm();
             formik.setFieldValue('title', blog.title)
             formik.setFieldValue('chineseTitle', blog.chineseTitle)
             formik.setFieldValue('description', blog.description)
@@ -142,10 +160,11 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
 
     const handlePublish = async () => {
         console.log(formik.errors)
-        if (Object.keys(formik.errors).length === 0){
+        // if (Object.keys(formik.errors).length === 0){
             if(isEdit){
-                // Update  Blog with publish 
-                // check if image  change. if image change then upload image and update data 
+                console.log('updating ')
+                // Update  Blog with publish
+                // check if image  change. if image change then upload image and update data
                 if (image){
                     imageFormData = new FormData();
                     // @ts-ignore
@@ -154,8 +173,8 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                         .then((res)=>{
                             console.log(res)
                             // @ts-ignore
-                            formik.setFieldValue('featuredImg', res.data.url)
-                            updateBlog({...formik.values, featuredImg: res.data.url});
+                            formik.setFieldValue('featuredImg', res.data.Location)
+                            updateBlog({...formik.values, featuredImg: res.data.Location, });
                         })
                         .catch(err=>{
                             console.log(err);
@@ -168,72 +187,52 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                 // SaveBlog with publish
 
                 // upload image  then save data
-                handleSave({...formik.values, isPublished: true})
+                await handleSave({...formik.values, isPublished: true})
 
             }
 
-        }
+        // }
     }
 
 
+    const saveBlog = async (values: any) =>{
+        console.log(values)
+        httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs`, values)
+            .then(r=>{
+                console.log(r)
+                ToasterSuccess('successfully created');
+                formik.resetForm();
+            })
+            .catch(err=>{
+                console.log(err)
+                ToasterError(err.response.data.message);
+            });
+    }
 
     const handleSave = async (values: any) => {
-        imageFormData = new FormData();
-                // @ts-ignore
-                await imageFormData.append('file', image)
-                await fetch(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, {
-                    headers: {
-                        mode: 'no-cors',
-                        'Accept': 'application/json',
-                        // 'Content-Type': 'multipart/form-data',
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                    },
-                    body: imageFormData,
-                    method: 'post',
-                }).then(res=>res.json())
-                    .then( result=>{
-                         console.log(result)       
-                        formik.setFieldValue('featuredImg', null)
-                        fetch(`${process.env.BACKEND_BASE_URL}/blogs`, {
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                            },
-                            method: 'post',
-                            body: JSON.stringify({...values, featuredImg: result.Location}),
-                        }).then(res=>res.json())
-                            .then(r=>{
-                                console.log(r)
-                                ToasterSuccess('successfully created');
-                                formik.resetForm();
-                            })
-                            .catch(err=>{
-                                console.log(err)
-                                ToasterError(err.response.data.message);
-                            });
-                    })
-                    .catch(err=>{
-                        console.log(err)
-                    })
-             }
-    
-    const formik = useFormik({
-        initialValues: {
-            title: '',
-            chineseTitle: '',
-            description: '',
-            chineseDescription: '',
-            categories: [],
-            featuredImg: '',
-            body: '',
-            chineseBody: '',
-            // tags: [],
-            publishedDate: new Date()
-        },
-        validationSchema: storySchema,
-        onSubmit: async values => handleDraft(values),
-    });
+
+        if(image){
+        //    saveblogg with image location
+            imageFormData = new FormData();
+            // @ts-ignore
+            await imageFormData.append('file', image)
+            await httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData )
+                .then( async  result=>{
+                    console.log(result)
+                    // @ts-ignore
+                    await  formik.setFieldValue('featuredImg', result.data.Location)
+
+                    await  saveBlog({...values, featuredImg: result.data.Location})
+                })
+        }else {
+        //save blog without image location
+            saveBlog({...values, featuredImg: null})
+        }
+
+
+     }
+
+
 
     const KeyCodes = {
         comma: 188,
@@ -251,15 +250,6 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
     useEffect(() => {
         formik.setFieldValue('tags', tags.map(tag => tag.text));
     }, [tags])
-
-    // const handleDrag = (tag: any, currPos: number, newPos: number) => {
-    //     const tags = [...tagsState.tags];
-    //     const newTags = tags.slice();
-
-    //     newTags.splice(currPos, 1);
-    //     newTags.splice(newPos, 0, tag);
-    //     setTags(newTags);
-    // }
 
     const [imagePreviewUrl, setImagePreviewUrl] = useState<string>('');
     const imageInputRef = useRef(null);
@@ -282,6 +272,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
 
     }
     console.log(formik.values)
+    console.log(formik.errors)
     // @ts-ignore
     return (
         <div>
@@ -309,8 +300,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                             />
                                             <p className="small text-danger">{formik.touched.title && formik.errors && formik.errors.title}</p>
                                             <div>
-                                                <input
-                                                    type="text"
+                                                <textarea
                                                     name="description"
                                                     className="form-control post-title"
                                                     placeholder="Enter description here"
@@ -337,8 +327,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                             />
                                             <p className="small text-danger">{formik.touched.chineseTitle && formik.errors && formik.errors.chineseTitle}</p>
                                             <div>
-                                                <input
-                                                    type="text"
+                                                <textarea
                                                     name="chineseDescription"
                                                     className="form-control post-title"
                                                     placeholder="在此处输入说明"
@@ -355,9 +344,9 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
 
                                         </div>
                                     </Tab>
-                                   
+
                                 </Tabs>
-                                    
+
                                 </div>
                                 <div className="col-lg-4">
                                     <div className="new-post-sidebar">
@@ -380,38 +369,6 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                                 }}
                                             />
                                             <p className="small text-danger">{formik.errors.categories}</p>
-                                        </div>
-                                        <div className="featured-img">
-                                            <p>Featured Image</p>
-                                            <div style={{width: '100%', minHeight: 250, border: '1px solid black'}} onClick={
-                                                ()=>{
-                                                    // @ts-ignore
-                                                    imageInputRef.current.click()}
-                                            }>
-                                                {
-                                                    imagePreviewUrl ? <img src={imagePreviewUrl} className="img-fluid" alt=""/> : isEdit ? <img className="img-fluid" src={formik.values.featuredImg} alt=""/> :
-                                                         'Upload Image'
-                                                }
-                                            </div>
-                                            <input
-                                                style={{visibility: 'hidden'}}
-                                                ref={imageInputRef}
-                                                name="featuredImg"
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleProfileImg}
-                                            />
-                                            <p className="small text-danger">{image === null ? 'Featured image is required': ''}</p>
-                                        </div>
-                                        <div className="date">
-                                            <label>Date</label>
-                                            <Calendar
-                                                onChange={date => {
-                                                    formik.setFieldValue('date', date)
-                                                }}
-                                                value={formik.values.publishedDate}
-                                            />
-                                            <p className="small text-danger">{formik.errors.publishedDate}</p>
                                         </div>
                                         <div className="tags">
                                             <label>Tags</label>
@@ -436,11 +393,43 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit, blog, categori
                                                 }}
                                             />
                                         </div>
+                                        <div className="featured-img">
+                                            <p>Featured Image</p>
+                                            <div style={{width: '100%', minHeight: 250, border: '1px solid black'}} onClick={
+                                                ()=>{
+                                                    // @ts-ignore
+                                                    imageInputRef.current.click()}
+                                            }>
+                                                {
+                                                    imagePreviewUrl ? <img src={imagePreviewUrl} className="img-fluid" alt=""/> : isEdit ? <img className="img-fluid" src={formik.values.featuredImg} alt=""/> :
+                                                         'Upload Image'
+                                                }
+                                            </div>
+                                            <input
+                                                style={{visibility: 'hidden'}}
+                                                ref={imageInputRef}
+                                                name="featuredImg"
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleProfileImg}
+                                            />
+                                        </div>
+                                        <div className="date">
+                                            <label>Date</label>
+                                            <Calendar
+                                                onChange={date => {
+                                                    formik.setFieldValue('date', date)
+                                                }}
+                                                value={formik.values.publishedDate}
+                                            />
+                                            <p className="small text-danger">{formik.errors.publishedDate}</p>
+                                        </div>
+
                                         <div className="d-flex flex-column">
                                             <button onClick={handlePublish} className="btn btn-primary" type="button">Publish</button>
                                             <br/>
                                             <button
-                                             type="submit" 
+                                             type="submit"
                                               className="btn  btn-outline-info">
                                                   <RiDraftLine className="mr-2"/>
                                                     {isEdit ? 'Edit Draft' : 'Save Draft'}

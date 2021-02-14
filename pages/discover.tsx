@@ -4,15 +4,18 @@ import DefaultLayout from "../components/layouts/default";
 import { UserDto, CategoryEntry } from "../types";
 import Link from "next/link";
 import Head from "../components/head";
+import {unique} from "../utils/uniqevalue";
+import {createStringArray} from "../components/editor/NewStoryComponent";
 
 interface DiscoverPageProps {
     authorsData: any;
     categoriesData: any;
+    tagsData: any[];
 }
-const DiscoverPage = ({ authorsData, categoriesData }: DiscoverPageProps) => {
+const DiscoverPage = ({ authorsData, categoriesData, tagsData }: DiscoverPageProps) => {
     const authors: UserDto[] = authorsData.items
     const categories: CategoryEntry[] = categoriesData.items;
-    console.log(categories)
+    const tags = unique(createStringArray(tagsData));
     return (
         <div>
             <Head
@@ -34,18 +37,13 @@ const DiscoverPage = ({ authorsData, categoriesData }: DiscoverPageProps) => {
                         </div>
                         <div className="discover-tags">
                             <h2>Discover the popular companies</h2>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
-                            <a href="#" className="btn-tag">Ipsum</a>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
-                            <a href="#" className="btn-tag">Ipsum</a>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
-                            <a href="#" className="btn-tag">Ipsum</a>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
-                            <a href="#" className="btn-tag">Lorem Ipsum</a>
+                            {
+                                tags.map((tag, index)=>(
+                                    <Link href={`${process.env.BASE_URL}/blogs?tags=${tag}`} key={index}>
+                                        <a className="btn-tag">{tag}</a>
+                                    </Link>
+                                ))
+                            }
                         </div>
                     </div>
                     <div className="offset-lg-1 col-lg-4" style={{ padding: 0 }}>
@@ -76,6 +74,9 @@ export async function getServerSideProps(context: any) {
     const categoriesRes = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
     const categoriesData = await categoriesRes.json()
 
+    const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)
+    const tags = await tagsRes.json()
+
     if (!data) {
         return {
             notFound: true,
@@ -85,7 +86,8 @@ export async function getServerSideProps(context: any) {
     return {
         props: {
             authorsData: data,
-            categoriesData
+            categoriesData,
+            tagsData: tags,
         }, // will be passed to the page component as props
     }
 }

@@ -19,13 +19,11 @@ import {FiSend} from "react-icons/fi";
 import {useFormik} from "formik";
 import * as yup from 'yup';
 import httpClient from "../../../utils/api";
-import isAuthenticated from "../../../utils/isAuthenticated";
 import {IComment} from "../../../types";
 import {AiFillEdit} from "react-icons/ai";
 import {BsTrash} from "react-icons/bs";
 import {ToasterError, ToasterSuccess} from "../../../utils/statusMessage";
 import {ProfileContext} from "../../../context/ProfileContext";
-import {GoCommentDiscussion} from "react-icons/go";
 import {FaComments} from "react-icons/fa";
 
 
@@ -173,7 +171,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                         <div className="row mt-4">
                             {
                                 comments.map((comment, index) => (
-                                    <div className="col-12 d-flex mb-4">
+                                    <div key={index} className="col-12 d-flex mb-4">
                                         <img
                                             className="mx-1"
                                             src={comment.author && comment.author.profileImage || '/static/img/profile.jpg'}
@@ -190,7 +188,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                                             </span>
                                             <div className="mb-1 ">{comment.message}</div>
                                             {
-                                                (comment.author && user) &&  (comment.author.id === user.id) && (
+                                                isLoggedIn &&  (comment.author && user) &&   (comment.author.id === user.id) && (
                                                     <div className="d-flex">
                                                         <BsTrash
                                                             className="mr-4 my-2"
@@ -235,15 +233,19 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                                         <a>{blog && blog.author && blog.author.name}</a>
                                     </Link> on <span>{moment(blog && blog.createdAt).format('MMMM Do YYYY, h:mm A')}</span>
                                 </div>
-                                <Switch
-                                    width={70}
-                                    onChange={handleLangChange}
-                                    checked={lang === 'chi'}
-                                    checkedIcon={<div
-                                        className="d-flex justify-content-center align-items-center">EN</div>}
-                                    uncheckedIcon={<div
-                                        className="d-flex justify-content-center align-items-center">中文</div>}
-                                />
+                                {
+                                    blog && blog.chineseTitle && (
+                                        <Switch
+                                            width={70}
+                                            onChange={handleLangChange}
+                                            checked={lang === 'chi'}
+                                            checkedIcon={<div
+                                                className="d-flex justify-content-center align-items-center">EN</div>}
+                                            uncheckedIcon={<div
+                                                className="d-flex justify-content-center align-items-center">中文</div>}
+                                        />
+                                    )
+                                }
                             </div>
                             <img src={blog && blog.featuredImg || '/static/img/pic.jpg'} className="featured-img"
                                  alt="feature image"/>

@@ -6,14 +6,14 @@ const Membership = () => {
 
     return (
         <div>
-            <Head 
+            <Head
             title="Jinpost | join with us"/>
             <div className="container">
                 <div className="row">
                     <div className="col-12">
                         <h2 style={{ fontSize: '32px', textAlign: 'center', marginTop: '2rem' }}>Get unlimited access to
                             everything
-                        on China SDG</h2>
+                        on Jinpost</h2>
                     </div>
                 </div>
                 <div className="row">
@@ -39,7 +39,7 @@ const Membership = () => {
                                     style={{ fontSize: '32px' }}>50 <small>USD</small></span>
                             </h2>
                             <p>Pay with</p>
-                            <button type="submit" className="btn">
+                            <button disabled type="submit" className="btn">
                                 <img src="/static/img/paypal.png" />
                             </button>
                         </div>

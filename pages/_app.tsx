@@ -9,9 +9,6 @@ import '../public/static/css/user-panel.css';
 import BlankLayout from "../components/layouts/blank";
 import {ProfileProvider} from "../context/ProfileContext";
 
-
-
-
 function MyApp({Component, pageProps}: { Component: any, pageProps: any }) {
     const {Layout: Layout1} = Component;
     const Layout = Layout1 || BlankLayout;
@@ -29,7 +26,7 @@ function MyApp({Component, pageProps}: { Component: any, pageProps: any }) {
           });
         }
       }, [])
-    
+
 
     return (
         <MainLayout>

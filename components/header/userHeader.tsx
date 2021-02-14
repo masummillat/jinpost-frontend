@@ -2,13 +2,13 @@ import React, {useContext, useEffect, useState} from "react";
 import Link from "next/link";
 import { useRouter } from 'next/router'
 import UserLoginComponent from "../login/userLoginComponent";
-import {Dropdown, DropdownMenu, DropdownItem, DropdownToggle} from "reactstrap";
 import {GiBookmarklet} from 'react-icons/gi';
 import {IoMdNotificationsOutline} from "react-icons/io";
 import WriterRequestModal from "../authors/WriterRequestModal";
 import {ProfileContext} from "../../context/ProfileContext";
 import httpClient from "../../utils/api";
 import {CategoryEntry} from "../../types";
+import {Dropdown, Nav} from "react-bootstrap";
 
 
 const UserHeader = () => {
@@ -62,12 +62,13 @@ const UserHeader = () => {
                                 <a className="nav-link selected">Home</a>
                             </Link>
                         </li>
-                        <li>
-                            <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                                <DropdownToggle nav caret>
+                        <li className="nav-item d-flex justify-content-center align-items-center">
+                            <Dropdown>
+                               <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav} caret className="nav-link"  id="dropdown-split-basic" >
                                     Topics
-                                </DropdownToggle>
-                                <DropdownMenu>
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
                                     {
                                         categories.map((category: CategoryEntry) => (
                                             <Link key={category.id} href={`/categories/${category.id}`}>
@@ -75,7 +76,7 @@ const UserHeader = () => {
                                             </Link>
                                         ))
                                     }
-                                </DropdownMenu>
+                                </Dropdown.Menu>
                             </Dropdown>
                         </li>
                         <li className="nav-item">
@@ -98,36 +99,37 @@ const UserHeader = () => {
 
                                 <a onClick={handleWrite} style={{cursor: 'pointer'}}  className="be-writter">
                                     <GiBookmarklet
-                                        style={{fontSize: 24}} 
+                                        style={{fontSize: 24}}
                                         className=" pr-2 "/>
                                         {user && (
-                                            user.role === 'author' || user.role === 'admin')  
+                                            user.role === 'author' || user.role === 'admin')
                                             ? 'Write' : 'Become a writter'}
                                 </a>
 
-                                <Dropdown isOpen={toolbarOpen} toggle={toggleToolbar}>
-                                    <DropdownToggle nav>
+                                <Dropdown>
+                                    <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav} caret className="nav-link"  id="dropdown-split-basic" >
                                         {user && user.profileImage ?
-                                            <img style={{width: 40, borderRadius: 7}} src={user.profileImage}/> :
+                                            <img style={{width: 50, borderRadius: 7}} src={user.profileImage}/> :
                                             <img style={{width: 50, borderRadius: 7}} src="/static/img/profile.jpg"/>}
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        <DropdownItem>
+                                    </Dropdown.Toggle>
+
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item>
                                             <Link href="/membership"><a>Upgrade</a></Link>
-                                        </DropdownItem>
-                                        <DropdownItem>
+                                        </Dropdown.Item>
+                                        <Dropdown.Item>
                                             <Link href="/new-post"><a>Write</a></Link>
-                                        </DropdownItem>
-                                        <DropdownItem>
+                                        </Dropdown.Item>
+                                        <Dropdown.Item>
                                             {user && (<Link href={`/${user.domain}`}><a>Profile</a></Link>)}
-                                        </DropdownItem>
-                                        <DropdownItem>
+                                        </Dropdown.Item>
+                                        <Dropdown.Item>
                                             <Link href="/account-settings"><a>Account Settings</a></Link>
-                                        </DropdownItem>
-                                        <DropdownItem>
-                                            <a onClick={handleLogout} className="btn btn-link">Log Out</a>
-                                        </DropdownItem>
-                                    </DropdownMenu>
+                                        </Dropdown.Item>
+                                        <Dropdown.Item>
+                                            <a onClick={handleLogout} className="">Log Out</a>
+                                        </Dropdown.Item>
+                                    </Dropdown.Menu>
                                 </Dropdown>
                             </div>
                         ) : (<div className="my-2 my-lg-0">

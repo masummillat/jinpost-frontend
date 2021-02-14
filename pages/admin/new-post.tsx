@@ -10,13 +10,14 @@ interface Icategories {
 }
 interface INewPost {
     categories: Icategories[];
+    suggestionTags: string[];
 
 }
-const NewPost = ({categories}: INewPost) => {
+const NewPost = ({categories, suggestionTags}: INewPost) => {
     return (
         <div>
             <Head title="Jinpost admin | new post"/>
-            <NewStoryComponent categories={categories}/>
+            <NewStoryComponent suggestionTags={suggestionTags} categories={categories}/>
         </div>
     );
 }
@@ -25,7 +26,9 @@ NewPost.Layout = AdminLayout;
 
 export async function getServerSideProps(context: any) {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
-    const data = await res.json()
+    const data = await res.json();
+    const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`);
+    const tags = await tagsRes.json();
     console.log(data)
     if (!data) {
         return {
@@ -35,7 +38,8 @@ export async function getServerSideProps(context: any) {
 
     return {
         props: {
-            categories: data.items
+            categories: data.items,
+            suggestionTags: tags
         }, // will be passed to the page component as props
     }
 }

@@ -12,14 +12,12 @@ const BlogCard = ({blog}) => {
                     <div className="card-body">
                         <p className="article-preview-title">
                             <Link href={`/blogs/${blog.id}`}>
-                                <a >
-                                    {blog.title}
-                                </a>
+                                <a className="line-clamp-2">{blog.title}</a>
                             </Link>
                         </p>
                         <Link  href={`/${blog.author.domain}`}>
                         <a className="article-preview-author">
-                            <img src="/static/img/profile.jpg"/>{blog.author.name}
+                            <img src={blog.author.profileImage || '/static/img/profile.jpg'}/>{blog.author.name}
                         </a>
                         </Link>
                     </div>

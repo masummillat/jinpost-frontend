@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router'
+import  * as _ from 'lodash'
 import { FaUserEdit } from 'react-icons/fa';
 import DefaultLayout from "../components/layouts/default";
 import PublishBlogCard from "../components/blogs/PublishBlogCard";
@@ -104,7 +105,7 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
                                                 {
                                                     profile &&
                                                     profile.blogs &&
-                                                    profile.blogs.filter((b: any) => b.isPublished === true)
+                                                    _.orderBy(profile.blogs.filter((b: any) => b.isPublished === true), 'id', 'desc')
                                                         .map((blog: any, i: number) => (
                                                             <PublishBlogCard key={i} blog={blog} authorized={authorized} />
                                                         ))}
@@ -114,7 +115,7 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
                                             <Row>
                                                 {
                                                     profile &&
-                                                    profile.blogs && profile.blogs.filter((b: any) => b.isPublished === false)
+                                                    _.orderBy(profile.blogs && profile.blogs.filter((b: any) => b.isPublished === false), 'id', 'desc')
                                                         .map((blog: any, i: number) => <PublishBlogCard authorized={authorized} key={i} blog={blog} />)}
                                             </Row>
                                         </Tab.Pane>

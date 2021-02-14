@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import Head from '../components/head';
 import DefaultLayout from "../components/layouts/default";
-import BlogCard from "../components/blogs/BlogCard";
-import SampleBlogCard from "../components/blogs/SampleBlogCard";
 import { createStringArray } from '../components/editor/NewStoryComponent';
 import { unique } from '../utils/uniqevalue';
+import dynamic from "next/dynamic";
 
+const BlogCard = dynamic(()=>import('../components/blogs/BlogCard') );
+const SampleBlogCard = dynamic(()=>import('../components/blogs/SampleBlogCard'));
 export function createMarkup(blogString: any) {
     return {__html: blogString};
 }
@@ -13,23 +14,19 @@ export function createMarkup(blogString: any) {
 interface HomeProps{
     blogsData: any;
     tagsData: any[];
+    categoriesData: any
 }
-const Home = ({blogsData, tagsData}: HomeProps) => {
+const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
     const tags = unique(createStringArray(tagsData));
     const blogs = blogsData.items;
+    console.log(categoriesData)
+    const categories = categoriesData.items;
     return (
         <div>
-            <Head 
-            title="Jinpost | A story telling website"/>
+            <Head
+            title="Jinpost: China business intelligence that values"/>
             <div className="container">
-                <div className="row">
-                    <div className="col-12">
-                        <div className="section-title">
-                            <h1 className="pt-2">Popular</h1>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
+                <div className="row mt-4">
                     <div className="col-lg-6">
                         <div className="article-preview-left">
                             {
@@ -38,10 +35,10 @@ const Home = ({blogsData, tagsData}: HomeProps) => {
                                         <img src={blogs && blogs[0].featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
                                         <div className="card-body">
                                             <Link href={`/blogs/${blogs && blogs[0].id}`}>
-                                                <a className="article-preview-title">{blogs && blogs[0].title}</a>
+                                                <a className="article-preview-title line-clamp-2">{blogs && blogs[0].title}</a>
                                             </Link>
                                             <div className="article-preview-desc">
-                                                <p className="text-muted text-nowrap ">{blogs && blogs[0].description}</p>
+                                                <p className="text-muted text-nowrap line-clamp-2">{blogs && blogs[0].description}</p>
                                             </div>
                                             <Link href={`/${blogs && blogs[0].author.domain}`} >
                                             <a  className="article-preview-author">
@@ -56,7 +53,7 @@ const Home = ({blogsData, tagsData}: HomeProps) => {
                     </div>
                     <div className="col-lg-6">
                         <div className="row">
-                            {blogs && blogs.map((blog: { id: string | number | null | undefined; }) => <BlogCard
+                            {blogs && blogs.slice(1,5).map((blog: { id: string | number | null | undefined; }) => <BlogCard
                                 blog={blog} key={blog.id}/>)}
                         </div>
                     </div>
@@ -72,7 +69,7 @@ const Home = ({blogsData, tagsData}: HomeProps) => {
                                 </Link>
                             </div>
                             <div className="join-us-bg">
-                                <div></div>
+                                <div/>
                             </div>
                         </div>
                     </div>
@@ -96,17 +93,17 @@ const Home = ({blogsData, tagsData}: HomeProps) => {
                     </div>
                     <div className="col-12">
                         <div className="popular-topics">
-                            <ul>
+                            <div>
                                 {
-                                    tags.map((tag, index)=>(
-                                        <Link href={`${process.env.BASE_URL}/blogs?tags=${tag}`} key={index}>
+                                    categories.map((category: any, index:number)=>(
+                                        <Link href={`${process.env.BASE_URL}/categories/${category.id}`} key={index}>
                                             <a className="badge badge-pill badge-primary px-4 py-2 m-2">
-                                                {tag}
+                                                {category.name}
                                             </a>
                                         </Link>
                                     ))
                                 }
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -148,6 +145,9 @@ export async function getServerSideProps(context: any) {
     const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)
     const tags = await tagsRes.json()
 
+    const categoriesRes = await fetch(`${process.env.BACKEND_BASE_URL}/categories?limit=150`)
+    const categories = await  categoriesRes.json();
+
     if (!data) {
         return {
             notFound: true,
@@ -159,6 +159,7 @@ export async function getServerSideProps(context: any) {
         props: {
             blogsData: data,
             tagsData: tags,
+            categoriesData: categories
         }, // will be passed to the page component as props
     }
 }

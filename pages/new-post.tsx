@@ -1,9 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import 'react-calendar/dist/Calendar.css';
 import DefaultLayout from "../components/layouts/default";
 import Head from "../components/head";
+import dynamic from "next/dist/next-server/lib/dynamic";
+import PageLoader from "../components/pageLoader";
 
-import NewStoryComponent from "../components/editor/NewStoryComponent";
+const NewStoryComponent = dynamic(()=>import('../components/editor/NewStoryComponent'), {
+    ssr: false,   loading: () => <PageLoader/>
+
+});
+
 
 export interface Icategories {
     id: number;
@@ -14,7 +20,6 @@ export interface INewPostPage {
     suggestionTags: string[]
 }
 const NewPostPage = ({categories, suggestionTags}: INewPostPage) => {
-    
     return (
         <div>
             <Head title="Jinpost | write your store here"/>
