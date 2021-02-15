@@ -42,7 +42,7 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                                             </div>
                                             <Link href={`/${blogs && blogs[0].author.domain}`} >
                                             <a  className="article-preview-author">
-                                                <img src="/static/img/profile.jpg"/>{blogs[0].author.name}
+                                                <img src={blogs && blogs[0].author.profileImage || '/static/img/profile.jpg'}/>{blogs[0].author.name}
                                             </a>
                                             </Link>
                                         </div>
@@ -111,24 +111,25 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                     <div className="col-12">
                         <div className="discover-tag">
                             <div className="left">
-                                <p>China Business intelligence</p>
+                                <p>China Business Intelligence</p>
                                 <h1>Discover the popular companies or individuals on our platform</h1>
                                 <Link href={`${process.env.BASE_URL}/blogs`}>
                                     <a className="btn btn-white">Discover now</a>
                                 </Link>
                             </div>
                             <div className="tag-list">
-                            <ul>
+
                                 {
                                     tags.map((tag, index)=>(
                                         <Link href={`${process.env.BASE_URL}/blogs?tags=${tag}`} key={index}>
-                                            <a className="badge badge-pill badge-primary px-4 py-2 m-2">
+                                            <a className="badge badge-light px-4 py-2 m-2">
                                                 {tag}
                                             </a>
                                         </Link>
                                     ))
+
                                 }
-                            </ul>
+
                             </div>
                         </div>
                     </div>

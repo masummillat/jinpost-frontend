@@ -7,9 +7,11 @@ const SampleBlogCard = ({blog}:{blog: any}) => {
         <div className="col-lg-4 col-md-4" style={{marginBottom: '16px'}}>
             <div className="article-item">
                 <div className="card">
-                    <a href="#" className="article-preview-author">
-                        <img src={blog.author.profileImage || '/static/img/profile.jpg' }/>{blog.author.name}
-                    </a>
+                    <Link href={`/${blog.author.domain}`}>
+                        <a className="article-preview-author">
+                            <img src={blog.author.profileImage || '/static/img/profile.jpg' }/>{blog.author.name}
+                        </a>
+                    </Link>
                     <img src={blog.featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
                     <small>{moment(blog.createdAt).format('LL')}</small>
                     <div className="card-body">

@@ -15,15 +15,14 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
 
     const [authorized, setAuthorized] = useState<boolean>(false)
     const router = useRouter();
-
     const proCtx = useContext(ProfileContext);
+
     useEffect(() => {
         if (profile && proCtx.user) {
             setAuthorized((router.query.domain === profile.domain) &&
                 isAuthenticated() && (proCtx.user && proCtx.user.domain === profile.domain))
         }
     }, [profile])
-
 
     if (profile.statusCode === 404) {
         return (
@@ -57,7 +56,7 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
                             <div className="card">
                                 <div className="row no-gutters">
                                     <div className="col-md-4">
-                                        <img src="/static/img/profile.jpg" className="card-img" alt="..." />
+                                        <img src={profile.profileImage || '/static/img/profile.jpg'} className="card-img" alt="..." />
                                     </div>
                                     <div className="col-md-8">
                                         <div className="card-body">
@@ -105,18 +104,23 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
                                                 {
                                                     profile &&
                                                     profile.blogs &&
-                                                    _.orderBy(profile.blogs.filter((b: any) => b.isPublished === true), 'id', 'desc')
+                                                    profile.blogs.filter((b: any) => b.isPublished === true).reverse()
                                                         .map((blog: any, i: number) => (
                                                             <PublishBlogCard key={i} blog={blog} authorized={authorized} />
-                                                        ))}
+                                                        ))
+                                                }
                                             </Row>
                                         </Tab.Pane>
                                         <Tab.Pane eventKey="draft">
                                             <Row>
                                                 {
                                                     profile &&
-                                                    _.orderBy(profile.blogs && profile.blogs.filter((b: any) => b.isPublished === false), 'id', 'desc')
-                                                        .map((blog: any, i: number) => <PublishBlogCard authorized={authorized} key={i} blog={blog} />)}
+                                                    profile.blogs &&
+                                                    profile.blogs.filter((b: any) => b.isPublished === false).reverse()
+                                                        .map((blog: any, i: number) => (
+                                                            <PublishBlogCard key={i} blog={blog} authorized={authorized} />
+                                                        ))
+                                                }
                                             </Row>
                                         </Tab.Pane>
                                     </Tab.Content>

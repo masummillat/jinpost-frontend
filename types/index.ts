@@ -1,7 +1,7 @@
 export enum UserRole {
     ADMIN = 'admin',
     CHIEFEDITOR = 'chiefeditor',
-    EDITOR = 'editor',
+    AUTHOR = 'editor',
     USER = 'user',
 }
 

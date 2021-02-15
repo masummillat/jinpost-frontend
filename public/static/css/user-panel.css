@@ -68,6 +68,7 @@ input:focus, textarea:focus, select:focus{
     border-radius: 4px;
     padding: 0.3rem 0.7rem;
     margin-right: 0.5rem;
+    margin-bottom: 1rem;
 }
 .btn-tag:hover {
     text-decoration: none;
@@ -293,14 +294,15 @@ header {
     font-size: 18px;
 }
 .discover-tag {
+    height: 460px;
     display: grid;
     grid-template-columns: 50% 50%;
-    margin: 2.5rem 0;
+    margin: 2.5rem ;
 }
 .discover-tag .left {
-    height: 460px;
+
     width: 100%;
-    background: url(../img/banner1.jpg) rgba(255, 0, 150, 0.3);
+    background: url(../img/banner-2.jpg) rgba(255, 0, 150, 0.3);
     background-size: cover;
     background-blend-mode: multiply;
     border-top-left-radius: 10px;
@@ -323,10 +325,13 @@ header {
     line-height: 1;
 }
 .discover-tag .tag-list {
+    height: 460px;
     background-color: #B3F2CD;
     padding: 1rem;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
+    display: inline-block;
+    overflow: scroll;
 }
 /*------ Medium devices (tablets, less than 992px) ------*/
 @media (max-width: 991.98px) {
