@@ -1,5 +1,4 @@
 import React from 'react';
-import 'react-calendar/dist/Calendar.css';
 import Head from "../../components/head";
 import AdminLayout from "../../components/layouts/admin";
 import NewStoryComponent from "../../components/editor/NewStoryComponent";

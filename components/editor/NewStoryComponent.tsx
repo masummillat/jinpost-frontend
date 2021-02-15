@@ -2,7 +2,6 @@ import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
 import {WithContext as ReactTags} from 'react-tag-input';
 import {useFormik} from 'formik';
 import Datetime from 'react-datetime';
-import 'react-calendar/dist/Calendar.css';
 import {RiDraftLine} from 'react-icons/ri'
 import Select from "react-select";
 import Head from "../head";

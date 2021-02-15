@@ -1,5 +1,4 @@
 import React, {useContext} from 'react';
-import 'react-calendar/dist/Calendar.css';
 import DefaultLayout from "../components/layouts/default";
 import Head from "../components/head";
 import dynamic from "next/dist/next-server/lib/dynamic";
