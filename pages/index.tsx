@@ -62,17 +62,17 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                             {
                                 blogsData.items.length > 0 && (
                                     <div className="card">
-                                        <img src={blogsData.items && blogsData.items[0].featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
+                                        <img src={ blogsData.items[0].featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
                                         <div className="card-body">
-                                            <Link href={`/blogsData.items/${blogsData.items && blogsData.items[0].id}`}>
-                                                <a className="article-preview-title line-clamp-2">{blogsData.items && blogsData.items[0].title}</a>
+                                            <Link href={`/blogs/${ blogsData.items[0].id}`}>
+                                                <a className="article-preview-title line-clamp-2">{ blogsData.items[0].title}</a>
                                             </Link>
                                             <div className="article-preview-desc">
-                                                <p className="text-muted text-nowrap line-clamp-2">{blogsData.items && blogsData.items[0].description}</p>
+                                                <p className="text-muted text-nowrap line-clamp-2">{ blogsData.items[0].description}</p>
                                             </div>
-                                            <Link href={`/${blogsData.items && blogsData.items[0].author.domain}`} >
+                                            <Link href={`/${blogsData.items[0].author.domain}`} >
                                             <a  className="article-preview-author">
-                                                <img src={blogsData.items && blogsData.items[0].author.profileImage || '/static/img/profile.jpg'}/>{blogsData.items[0].author.name}
+                                                <img src={ blogsData.items[0].author.profileImage || '/static/img/profile.jpg'}/>{blogsData.items[0].author.name}
                                             </a>
                                             </Link>
                                         </div>
