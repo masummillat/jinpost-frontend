@@ -8,7 +8,7 @@ const SingleCategory = ({category}: any) => {
 
     return(
         <div>
-            <Head 
+            <Head
             title="Jinpost"/>
             <div className="container">
             <div className="row">
@@ -17,20 +17,21 @@ const SingleCategory = ({category}: any) => {
                             {
                                 blogs.map((blog: { id: number, blog: any })=><BlogItemCard blog={blog} key={blog.id}/>)
                             }
-                        
+
                     </div>
                 </div>
                 <div className="offset-lg-1 col-lg-4">
                     <div className="category-popular-post">
                         <h5>Popular in Category</h5>
                         <ul>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                            <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                            {
+                                blogs.map((blog: any)=> (
+                                    <li key={blog.id}>
+                                        <a className="text-primary" href={`/blogs/${blog.id}`}>{blog.title}</a>
+                                    </li>
+                                ))
+                            }
+
                         </ul>
                     </div>
                 </div>

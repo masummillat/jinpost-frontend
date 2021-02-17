@@ -9,6 +9,7 @@ import {ProfileContext} from "../../context/ProfileContext";
 import httpClient from "../../utils/api";
 import {CategoryEntry} from "../../types";
 import {Dropdown, Nav} from "react-bootstrap";
+import {FcMenu} from "react-icons/fc";
 
 
 const UserHeader = () => {
@@ -18,16 +19,15 @@ const UserHeader = () => {
     const {user, isLoggedIn, handleLogin, handleLogout} = profileCtx;
     const [visible, setVisible] = useState(false);
     const [wriVisible, setWriVisible] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [toolbarOpen, setToolbarOpen] = useState(false);
+    const [show, setShow] = useState(false);
     const toggle = () => setVisible(!visible);
     const toggleWriVisible = () => setWriVisible(!wriVisible);
-    const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
-    const toggleToolbar = () => setToolbarOpen(prevState => !prevState);
+    const toggleShow = () => setShow(prevState => !prevState);
+
     const router = useRouter();
 
     useEffect(() => {
-        httpClient.get('/categories').then(res => {
+        httpClient.get('/categories?limit=150').then(res => {
             setCategories(res.data.items);
         }).catch(err => {
         });
@@ -49,20 +49,20 @@ const UserHeader = () => {
                         <img src="/static/img/logo.png"/>
                     </a>
                 </Link>
-                <button className="navbar-toggler" type="button" data-toggle="collapse"
+                <button onClick={toggleShow} className="navbar-toggler" type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
+                    <FcMenu size={30}/>
                 </button>
 
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                <div className={`collapse navbar-collapse ${show ? 'show' : ''}`} id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto chinasdg-nav">
                         <li className="nav-item active">
                             <Link href="/">
                                 <a className="nav-link selected">Home</a>
                             </Link>
                         </li>
-                        <li className="nav-item d-flex justify-content-center align-items-center">
+                        <li className="nav-item d-flex justify-content-center align-items-center topic-nav-item">
                             <Dropdown>
                                <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav} caret className="nav-link"  id="dropdown-split-basic" >
                                     Topics
@@ -72,7 +72,7 @@ const UserHeader = () => {
                                     {
                                         categories.map((category: CategoryEntry) => (
                                             <Link key={category.id} href={`/categories/${category.id}`}>
-                                                <a className="dropdown-item">{category.name} </a>
+                                                <a className="dropdown-item pr-lg-5">{category.name} </a>
                                             </Link>
                                         ))
                                     }

@@ -22,13 +22,13 @@ const Category = ({ blogs }: any) => {
                         <div className="category-popular-post">
                             <h5>Popular in Category</h5>
                             <ul>
-                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
-                                <li><a href="#">Lorem ipsum dolor sit amet consetetur sadipscing</a></li>
+                                {
+                                    blogs.map((blog: any)=> (
+                                        <li key={blog.id}>
+                                            <a className="text-primary" href={`/blogs/${blog.id}`}>{blog.title}</a>
+                                        </li>
+                                    ))
+                                }
                             </ul>
                         </div>
                     </div>

@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import moment from "moment";
 const BlogItemCard = ({blog}:{blog: any}) => {
-    console.log(blog)
     return(
         <div className="card mb-3">
             <div className="row no-gutters">
@@ -14,7 +13,7 @@ const BlogItemCard = ({blog}:{blog: any}) => {
                             </Link>
                         </h5>
                              <p className="card-text">{blog && blog.description}</p>
-                        <small className="text-muted">Writer name on {moment(blog.publishedDate).format('MMMM Do YYYY, h:mm A')}</small>
+                        <small className="text-muted">Published on {moment(blog.publishedDate).format('MMMM Do YYYY, h:mm A')}</small>
                     </div>
                 </div>
                 <div className="col-md-3">

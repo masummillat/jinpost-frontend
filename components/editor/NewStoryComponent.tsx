@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
 import {WithContext as ReactTags} from 'react-tag-input';
 import {useFormik} from 'formik';
 import Datetime from 'react-datetime';
@@ -90,7 +90,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         validateOnChange: true,
         onSubmit: async values => handleDraft(values),
     });
-    console.log(formik.values)
+
     useEffect(() => {
         setCategoryOptions([])
         setCategoryOptions(categories.map((cat: { id: number; name: string; }) => ({
@@ -103,10 +103,10 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
     useEffect(() => {
         setTags(isEdit ? blog && createTags(blog.tags) : []);
         setTagSuggestions(createTags(unique(createStringArray(suggestionTags))));
-    }, [suggestionTags, isEdit])
+    }, [suggestionTags, isEdit]);
+
 
     useEffect(() => {
-        console.log(blog, isEdit)
         if (blog) {
             formik.resetForm();
             formik.setFieldValue('title', blog.title)
@@ -125,21 +125,22 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
             formik.setFieldValue('featuredImg', blog.featuredImg)
 
         }
-    }, [isEdit, blog])
-    const updateBlog = (values: any) => {
-        console.log(values)
+    }, [isEdit, blog]);
+
+
+    const updateBlog = useCallback((values: any) => {
         httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {id: blog.id, ...values})
             .then(r => {
-                console.log(r)
                 ToasterSuccess('Successfully updated')
             })
             .catch(er => {
                 ToasterError(er.response.data.message);
-                console.log(er)
             })
 
-    }
-    const handleDraft = async (values: any) => {
+    },[]);
+
+
+    const handleDraft = useCallback(async (values: any) => {
 
         if (isEdit) {
             if (image) {
@@ -162,9 +163,9 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         } else {
             handleSave({...values, isPublished: false});
         }
-    }
+    },[]);
 
-    const handlePublish = async () => {
+    const handlePublish = useCallback(async () => {
         console.log(formik.errors)
         // if (Object.keys(formik.errors).length === 0){
         if (isEdit) {
@@ -177,7 +178,6 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
                 await imageFormData.append('file', image)
                 httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
                     .then((res) => {
-                        console.log(res)
                         // @ts-ignore
                         formik.setFieldValue('featuredImg', res.data.Location)
                         updateBlog({...formik.values, featuredImg: res.data.Location,});
@@ -198,46 +198,40 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         }
 
         // }
-    }
+    },[]);
 
 
-    const saveBlog = async (values: any) => {
+    const saveBlog = useCallback(async (values: any) => {
         console.log(values)
         httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs`, values)
             .then(r => {
-                console.log(r)
                 ToasterSuccess('successfully created');
                 formik.resetForm();
             })
             .catch(err => {
-                console.log(err)
                 ToasterError(err.response.data.message);
             });
-    }
+    },[]);
 
-    const handleSave = async (values: any) => {
+    const handleSave = useCallback(async (values: any) => {
 
-        if (image) {
-            //    saveblogg with image location
-            imageFormData = new FormData();
-            // @ts-ignore
-            await imageFormData.append('file', image)
-            await httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
-                .then(async result => {
-                    console.log(result)
-                    // @ts-ignore
-                    await formik.setFieldValue('featuredImg', result.data.Location)
+            if (image) {
+                //    saveblogg with image location
+                imageFormData = new FormData();
+                // @ts-ignore
+                await imageFormData.append('file', image)
+                await httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
+                    .then(async result => {
+                        // @ts-ignore
+                        await formik.setFieldValue('featuredImg', result.data.Location);
 
-                    await saveBlog({...values, featuredImg: result.data.Location})
-                })
-        } else {
-            //save blog without image location
-            saveBlog({...values, featuredImg: null})
-        }
-
-
-    }
-
+                        await saveBlog({...values, featuredImg: result.data.Location});
+                    })
+            } else {
+                //save blog without image location
+                saveBlog({...values, featuredImg: null});
+            }
+        },[]);
 
     const KeyCodes = {
         comma: 188,
@@ -245,20 +239,23 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
     };
     const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
-    const handleDelete = (i: number) => {
-        setTags(tags.filter((tag, index) => index !== i))
-    }
+    const handleDelete = useCallback((i: number) => {
+        setTags(tags.filter((tag, index) => index !== i));
+    },[]);
 
-    const handleAddition = (tag: { id: string; text: string; }) => {
-        setTags([...tags, tag])
-    }
+    const handleAddition = useCallback((tag: { id: string; text: string; }) => {
+        setTags([...tags, tag]);
+    },[]);
+
     useEffect(() => {
         formik.setFieldValue('tags', tags.map(tag => tag.text));
-    }, [tags])
+    }, [tags]);
 
     const [imagePreviewUrl, setImagePreviewUrl] = useState<string>('');
     const imageInputRef = useRef(null);
-    const handleProfileImg = (event: ChangeEvent<HTMLInputElement>) => {
+
+
+    const handleProfileImg = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
         // @ts-ignore
         let file = event.currentTarget.files[0];
@@ -266,16 +263,13 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         setImage(file);
         let reader = new FileReader();
         reader.onloadend = () => {
-            console.log(reader.result)
             // @ts-ignore
-            setImagePreviewUrl(reader.result)
-            // @ts-ignore
-
+            setImagePreviewUrl(reader.result);
         }
 
-        reader.readAsDataURL(file)
+        reader.readAsDataURL(file);
 
-    }
+    },[]);
 
     return (
         <div>
@@ -306,7 +300,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
                                                 <textarea
                                                     name="description"
                                                     className="form-control post-title"
-                                                    placeholder="Enter description here"
+                                                    placeholder="Enter summary here"
                                                     onChange={formik.handleChange}
                                                     value={formik.values.description}
                                                 />
@@ -333,7 +327,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
                                                 <textarea
                                                     name="chineseDescription"
                                                     className="form-control post-title"
-                                                    placeholder="在此处输入说明"
+                                                    placeholder="在此处输入摘要"
                                                     onChange={formik.handleChange}
                                                     value={formik.values.chineseDescription}
                                                 />
@@ -426,7 +420,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
                                             <label>Date</label>
                                             <Datetime onChange={date => {
                                                 console.log(date)
-                                                formik.setFieldValue('date', new Date(moment(date).format('YYYY-MM-DDTHH:mm:ss')))
+                                                formik.setFieldValue('publishedDate', new Date(moment(date).format('YYYY-MM-DDTHH:mm:ss')))
                                                 }}
                                                       // value={new Date(formik.values.publishedDate)}
                                                 initialValue={new Date(formik.values.publishedDate)}
@@ -457,4 +451,4 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
     );
 }
 
-export default NewStoryComponent;
+export default React.memo(NewStoryComponent);

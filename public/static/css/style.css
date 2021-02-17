@@ -180,6 +180,7 @@ input:focus, textarea:focus, select:focus{
     .page-wrapper.toggled .page-content {
         padding-left: 280px;
     }
+
 }
 /*----------------show sidebar button----------------*/
 #show-sidebar {
@@ -565,6 +566,10 @@ tbody tr td, tbody tr td a {
     .avatar-upload .avatar-edit {
       right: 62px;
     }
+    .topic-nav-item{
+        display: flex;
+        justify-content: left !important;
+    }
 }
 .avatar-upload .avatar-edit input {
   display: none;
@@ -597,6 +602,19 @@ tbody tr td, tbody tr td a {
     .avatar-upload .avatar-preview {
       width: 135px;
       height: 135px;
+    }
+    .topic-nav-item{
+        display: flex;
+        justify-content: left !important;
+    }
+}
+@media screen and (max-width: 768px) {
+    .topic-nav-item{
+        display: flex;
+        justify-content: left !important;
+    }
+    .be-writter{
+        display: table-cell !important;
     }
 }
 .avatar-upload .avatar-preview > div {

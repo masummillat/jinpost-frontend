@@ -33,35 +33,35 @@ let schema = yup.object().shape({
 
 // @ts-ignore
 const SingleBlogPage = ({blog, suggestions, authorData}) => {
-    const [lang, setLang] = useState<string>('en')
+    const [lang, setLang] = useState<string>('en');
     const [commentVisible, setCommentVisible] = useState<boolean>(false);
     const [comments, setComments] = useState<IComment[]>([]);
     const [selectedComment, setSelectedComment] = useState<IComment | null>(null);
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const profileCtx = useContext(ProfileContext);
     const {user, isLoggedIn} = profileCtx;
+
     useEffect(() => {
         httpClient.get(`/comments?blogId=${blog.id}`)
             .then(res => {
-                console.log(res);
                 setComments(res.data);
             })
-            .catch(err => {
-                console.log(err);
+            .catch((err) => {
+                ToasterError("Couldn't fetch comments");
             })
     }, []);
 
     useEffect(() => {
         if (isEdit && selectedComment) {
-            formik.setFieldValue('message', selectedComment.message)
+            formik.setFieldValue('message', selectedComment.message);
         }
-    }, [isEdit])
+    }, [isEdit]);
 
     const handleEditCancel = () => {
         setIsEdit(false);
         setSelectedComment(null);
         formik.setFieldValue('message', '');
-    }
+    };
 
     const formik = useFormik({
         initialValues: {
@@ -88,7 +88,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                         setIsEdit(false);
                         setSelectedComment(null);
                         ToasterError("Couldn't update");
-                    })
+                    });
             } else {
                 httpClient.post('/comments', {...values, blog: {id: blog.id}})
                     .then(res => {
@@ -107,7 +107,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
     const handleLangChange = () => {
         if (lang === 'en') setLang('chi');
         else setLang('en');
-    }
+    };
 
     const handleDeleteComment = (id: number) => {
         httpClient.delete(`/comments/${id}`)
@@ -119,10 +119,10 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                 ToasterSuccess('Successfully deleted comment');
             })
             .catch(err => {
-                console.log(err)
                 ToasterError("Couldn't delete comment");
             })
-    }
+    };
+
     return (
         <div>
             <Head
@@ -143,7 +143,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                         <div className="row">
                             <div className="col-12 d-flex justify-content-between">
                                 <span><FaComments style={{color: '#059770'}} size={25} className="mr-2" />{comments.length}</span>
-                                <button className="btn btn-link" onClick={() => setCommentVisible(false)}>Login</button>
+                                {!isLoggedIn && (<button className="btn btn-link" onClick={() => setCommentVisible(false)}>Login</button>)}
                             </div>
                         </div>
                         <hr/>
@@ -228,7 +228,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                             <h1 className="post-title">{blog && (lang === 'chi' ? blog.chineseTitle : blog.title)}</h1>
                             <div className="author d-flex justify-content-between">
                                 <div>
-                                    <img src="/static/img/profile.jpg"/>
+                                    <img src={ blog && blog.author.profileImage || '/static/img/profile.jpg'}/>
                                     <Link href={`/${blog && blog.author && blog.author.domain}`}>
                                         <a>{blog && blog.author && blog.author.name}</a>
                                     </Link> on <span>{moment(blog && blog.createdAt).format('MMMM Do YYYY, h:mm A')}</span>
@@ -349,7 +349,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                 <div className="row">
                     <div className="col-12">
                         <div className="section-title mt-5">
-                            <h1>More from China SDG</h1>
+                            <h1>More from JinPost</h1>
                         </div>
                     </div>
                     {suggestions && suggestions.map((blog: { id: number; }) => <SuggestionBlogCard key={blog.id}
@@ -362,14 +362,14 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
 }
 
 export async function getServerSideProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/${context.query.id}`)
-    const blog = await res.json()
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/${context.query.id}`);
+    const blog = await res.json();
 
-    const suggestedRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs`);
-    const suggestions = await suggestedRes.json()
+    const suggestedRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?limit=4`);
+    const suggestions = await suggestedRes.json();
 
     const authorRes = await fetch(`${process.env.BACKEND_BASE_URL}/users/${blog.author.id}`);
-    const authorData = await authorRes.json()
+    const authorData = await authorRes.json();
 
     return {
         props: {

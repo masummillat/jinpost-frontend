@@ -8,12 +8,15 @@ import { Modal} from "react-bootstrap";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
+import Link from "next/link";
+import {GrChapterNext, GrChapterPrevious} from "react-icons/gr";
+import {useRouter} from "next/router";
 
 interface ICategoriesProps {
     categories: CategoryEntry[]
 }
 const Categories = ({categories}: ICategoriesProps) =>{
-    console.log(categories)
+    const router = useRouter();
     const [show, setShow] = useState<boolean>(false);
     const [category, setCategory] = useState<CategoryEntry | null>(null);
     const [categoryState, setCategoryState] = useState<CategoryEntry[]>([]);
@@ -44,7 +47,7 @@ const Categories = ({categories}: ICategoriesProps) =>{
                 }
             ]
         });
-           
+
        }
     }
     useEffect(()=>{
@@ -111,6 +114,20 @@ const Categories = ({categories}: ICategoriesProps) =>{
                             </div>
                             <div className="row">
                                 <div className="col-lg-8">
+                                    <div className="row">
+                                        <div className="col-12  ">
+                                            <div className="d-flex float-right">
+                                                <Link
+                                                    href={`/admin/categories?page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
+                                                    <a className="mr-5 p-4"> <GrChapterPrevious size={25} /></a>
+                                                </Link>
+                                                <Link
+                                                    href={`/admin/categories?page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
+                                                    <a className="p-4"> <GrChapterNext size={25}/></a>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="category-list">
                                         <table id="category-list" className="table table-striped table-bordered"
                                                style={{width:'100%'}}>
@@ -191,8 +208,10 @@ const Categories = ({categories}: ICategoriesProps) =>{
 
 // @ts-ignore
 Categories.Layout = AdminLayout;
-export async function getServerSideProps() {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories`)
+export async function getServerSideProps(context: { query: any; }) {
+    const {query} = context;
+    console.log(query)
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/categories?page=${query.page || 1}&limit=${query.limit || 10}`)
     const data = await res.json()
     console.log(data)
     return {

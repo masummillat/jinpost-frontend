@@ -117,7 +117,7 @@ const AdminHeader: React.FC = ()=>{
                             <li  id="notificationDropdown"  className="sidebar-dropdown">
                             <a onClick={handleNotificationToggle} href="#">
                                 <i className="fas fa-bell"></i>
-                                <span>Notifications<span className="badge badge-light">{' '} 4 </span></span>
+                                <span>Notifications</span>
                             </a>
                             <div id="notificationSubMenu" className="sidebar-submenu">
                                 <ul>

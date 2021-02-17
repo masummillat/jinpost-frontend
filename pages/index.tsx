@@ -4,6 +4,9 @@ import DefaultLayout from "../components/layouts/default";
 import { createStringArray } from '../components/editor/NewStoryComponent';
 import { unique } from '../utils/uniqevalue';
 import dynamic from "next/dynamic";
+import {useState} from "react";
+import httpClient from "../utils/api";
+import {ToasterError} from "../utils/statusMessage";
 
 const BlogCard = dynamic(()=>import('../components/blogs/BlogCard') );
 const SampleBlogCard = dynamic(()=>import('../components/blogs/SampleBlogCard'));
@@ -17,10 +20,37 @@ interface HomeProps{
     categoriesData: any
 }
 const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
+    const [blogs, setBlogs] = useState(blogsData.items);
+    const [nextBlogsUrl, setNextBlogsUrl] = useState(blogsData.links.next)
+    const [previousBlogsUrl, setPreviousBlogsUrl] = useState(blogsData.links.previous)
     const tags = unique(createStringArray(tagsData));
-    const blogs = blogsData.items;
-    console.log(categoriesData)
     const categories = categoriesData.items;
+
+    const getNextBlogs = () => {
+        httpClient.get(nextBlogsUrl)
+            .then(res=>{
+                setBlogs(res.data.items);
+                setNextBlogsUrl(res.data.links.next);
+                setPreviousBlogsUrl(res.data.links.previous);
+
+            })
+            .catch(err=>{
+                ToasterError("Couldn't fetch data");
+            })
+    }
+
+    const getPreviousBlogs = () => {
+        httpClient.get(previousBlogsUrl)
+            .then(res=>{
+                setBlogs(res.data.items);
+                setNextBlogsUrl(res.data.links.next);
+                setPreviousBlogsUrl(res.data.links.previous);
+
+            })
+            .catch(err=>{
+                ToasterError("Couldn't fetch data");
+            })
+    }
     return (
         <div>
             <Head
@@ -30,19 +60,19 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                     <div className="col-lg-6">
                         <div className="article-preview-left">
                             {
-                                blogs.length > 0 && (
+                                blogsData.items.length > 0 && (
                                     <div className="card">
-                                        <img src={blogs && blogs[0].featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
+                                        <img src={blogsData.items && blogsData.items[0].featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
                                         <div className="card-body">
-                                            <Link href={`/blogs/${blogs && blogs[0].id}`}>
-                                                <a className="article-preview-title line-clamp-2">{blogs && blogs[0].title}</a>
+                                            <Link href={`/blogsData.items/${blogsData.items && blogsData.items[0].id}`}>
+                                                <a className="article-preview-title line-clamp-2">{blogsData.items && blogsData.items[0].title}</a>
                                             </Link>
                                             <div className="article-preview-desc">
-                                                <p className="text-muted text-nowrap line-clamp-2">{blogs && blogs[0].description}</p>
+                                                <p className="text-muted text-nowrap line-clamp-2">{blogsData.items && blogsData.items[0].description}</p>
                                             </div>
-                                            <Link href={`/${blogs && blogs[0].author.domain}`} >
+                                            <Link href={`/${blogsData.items && blogsData.items[0].author.domain}`} >
                                             <a  className="article-preview-author">
-                                                <img src={blogs && blogs[0].author.profileImage || '/static/img/profile.jpg'}/>{blogs[0].author.name}
+                                                <img src={blogsData.items && blogsData.items[0].author.profileImage || '/static/img/profile.jpg'}/>{blogsData.items[0].author.name}
                                             </a>
                                             </Link>
                                         </div>
@@ -53,7 +83,7 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                     </div>
                     <div className="col-lg-6">
                         <div className="row">
-                            {blogs && blogs.slice(1,5).map((blog: { id: string | number | null | undefined; }) => <BlogCard
+                            {blogsData.items && blogsData.items.slice(1,5).map((blog: { id: string | number | null | undefined; }) => <BlogCard
                                 blog={blog} key={blog.id}/>)}
                         </div>
                     </div>
@@ -83,7 +113,17 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                             </Link>
                         </div>
                     </div>
+                    <div className="col-12 mb-4 ">
+                        <div className="d-flex float-right">
+                            <button disabled={previousBlogsUrl.length === 0} onClick={getPreviousBlogs} className="btn btn-info mr-4">Previous</button>
+                            <button disabled={nextBlogsUrl.length === 0} onClick={getNextBlogs} className="btn btn-primary">Next</button>
+                        </div>
+                    </div>
                     {blogs.map((blog: any, i: any)=><SampleBlogCard key={i} blog={blog}/>)}
+                </div>
+                <div className="row d-flex float-right">
+                        <button disabled={previousBlogsUrl.length === 0} onClick={getPreviousBlogs} className="btn btn-info mr-4">Previous</button>
+                        <button disabled={nextBlogsUrl.length === 0} onClick={getNextBlogs} className="btn btn-primary">Next</button>
                 </div>
                 <div className="row">
                     <div className="col-12">

@@ -52,14 +52,17 @@ const AuthorRequest = ({authorRequests}:{authorRequests: any}) => {
                                     <ul>
                                         {
                                             authorRequests.map((req: any)=>(
-                                                <li key={req.id}>{req.author.name} wants to be an author 
-                                                    <span onClick={()=>handleShow(req)} 
+                                                <li key={req.id}>{req.author.name} wants to be an author
+                                                    <span onClick={()=>handleShow(req)}
                                                      style={{cursor: 'pointer'}}
                                                      className="ml-2 text-primary">
                                                          More
                                                     </span>
                                                 </li>
                                             ))
+                                        }
+                                        {
+                                            authorRequests.length === 0 && (<h5>No notification for now</h5>)
                                         }
                                     </ul>
                                 </div>
@@ -89,14 +92,14 @@ const AuthorRequest = ({authorRequests}:{authorRequests: any}) => {
     );
 }
 
-AuthorRequest.Layout = AdminLayout; 
+AuthorRequest.Layout = AdminLayout;
 
 export async function getServerSideProps() {
     // Call an external API endpoint to get posts.
     // You can use any data fetching library
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/users/author-requests`)
     const authorRequests = await res.json()
-  
+
     // By returning { props: posts }, the Blog component
     // will receive `posts` as a prop at build time
     return {

@@ -3,13 +3,16 @@ import moment from "moment";
 import AdminLayout from "../../components/layouts/admin";
 import Head from "../../components/head";
 import {Blog} from "../../types";
+import Link from "next/link";
+import {GrChapterNext, GrChapterPrevious} from "react-icons/gr";
+import {useRouter} from "next/router";
 
 interface IPost {
     blogs: Blog[]
 }
 
 const Post= ({blogs}: IPost) => {
-    console.log(blogs)
+    const router = useRouter();
     return (
         <div>
             <Head title="Jinpost admin | Post" />
@@ -19,6 +22,20 @@ const Post= ({blogs}: IPost) => {
                         <div className="col-12">
                             <div className="page-title">
                                 <h1>Posts</h1>
+                            </div>
+                            <div className="row">
+                                <div className="col-12  ">
+                                    <div className="d-flex float-right">
+                                        <Link
+                                            href={`/admin/post?page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
+                                            <a className="mr-5 p-4"> <GrChapterPrevious size={25} /></a>
+                                        </Link>
+                                        <Link
+                                            href={`/admin/post?page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
+                                            <a className="p-4"> <GrChapterNext size={25}/></a>
+                                        </Link>
+                                    </div>
+                                </div>
                             </div>
                             <div className="row">
                                 <div className="col-lg-12">
@@ -43,7 +60,7 @@ const Post= ({blogs}: IPost) => {
                                                         <td>{blog.description}</td>
                                                         <td>{blog.author && blog.author.name}</td>
                                                         <td>{moment(blog.publishedDate).format('LLL')}</td>
-                                                        <td>Hello</td>
+                                                        <td></td>
                                                         <td>
                                                             <a href="#"><i className="far fa-edit"></i></a>
                                                             <a href="#"><i className="far fa-trash-alt"></i></a>
@@ -68,7 +85,8 @@ const Post= ({blogs}: IPost) => {
 Post.Layout = AdminLayout;
 
 export async function getServerSideProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs`)
+    const {query} = context;
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?page=${Number(query.page) || 1 }&limit=${Number(query.limit) || 10}`)
     const data = await res.json()
     if (!data) {
         return {

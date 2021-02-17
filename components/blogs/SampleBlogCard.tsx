@@ -1,8 +1,9 @@
 import React from "react";
 import moment from "moment";
 import Link from "next/link";
+
+
 const SampleBlogCard = ({blog}:{blog: any}) => {
-    console.log(blog)
     return(
         <div className="col-lg-4 col-md-4" style={{marginBottom: '16px'}}>
             <div className="article-item">
@@ -13,7 +14,7 @@ const SampleBlogCard = ({blog}:{blog: any}) => {
                         </a>
                     </Link>
                     <img src={blog.featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
-                    <small>{moment(blog.createdAt).format('LL')}</small>
+                    <small>{moment(blog.publishedDate).format('LL')}</small>
                     <div className="card-body">
                         <p className="article-preview-title">
                             <Link  href={`/blogs/${blog.id}`}>

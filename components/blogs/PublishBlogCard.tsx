@@ -28,7 +28,7 @@ const PublishBlogCard: React.FC<PublishBlogCardProps> = ({blog, authorized}) => 
             <div className="published-item">
                 <div className="card">
                     <img src={blog.featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
-                    <small>{moment(blog.createdAt).format('LL')}</small>
+                    <small>{moment(blog.publishedDate).format('LL')}</small>
                     <div className="card-body">
                         <p className="article-preview-title">
                             <Link href={`/blogs/${blog.id}`}>
