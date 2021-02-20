@@ -18,14 +18,14 @@ interface ILoginInput {
 interface IProfile {
     user?: IUser | null;
     isLoggedIn: boolean;
-    handleLogin: (values: ILoginInput)=>void;
+    handleLogin: (values: ILoginInput)=>Promise<any>;
     handleLogout: ()=>void;
     setUserData: (values: any) => void;
 }
 export const ProfileContext = React.createContext<IProfile>(
     {
         isLoggedIn: isAuthenticated(),
-        handleLogin: (values)=>{},
+        handleLogin: (values)=>Promise.resolve(false),
         handleLogout: ()=>{},
         setUserData: values => {},
     });
@@ -65,30 +65,30 @@ export const ProfileProvider = ({children}: any) =>{
         }
 
     }
-    const handleLogin = (values: any) =>{
+    const handleLogin = async (values: any) =>{
 
         try{
-            httpClient.post('/auth/login', values)
-                .then(res=>{
-                    console.log(res)
+          return  await httpClient.post('/auth/login', values)
+                .then(async res=>{
                     if (typeof window !== "undefined") {
-                        localStorage.setItem('access_token', res.data.access_token);
-                        setIsLoggedIn(true)
-                        getCurrentUser();
-                        router.push('/',undefined, {shallow: false})
-                        ToasterSuccess('Successfully logged in');
+                       localStorage.setItem('access_token', res.data.access_token);
+                       await setIsLoggedIn(true)
+                       await getCurrentUser();
+                       return  Promise.resolve(user);
+                        // router.push('/',undefined, {shallow: false})
+                        // ToasterSuccess('Successfully logged in');
 
 
                     }
                 })
                 .catch(err=>{
-                    console.log(err);
                     const { message, statusCode} = err.response.data;
-                    ToasterError(message);
+                    return Promise.reject(err.response.data);
+                    // ToasterError(message);
                 });
 
         }catch (e) {
-          console.log(e);
+          return  await Promise.reject(e)
         }
     }
     const handleLogout = async () => {

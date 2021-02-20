@@ -2,28 +2,49 @@ import React, {useContext, useEffect, useState} from 'react';
 import AdminHeader from "../header/adminHeader";
 import {IoIosArrowForward} from 'react-icons/io'
 import {useRouter} from "next/router";
-import isAuthenticated from "../../utils/isAuthenticated";
 import {ProfileContext} from "../../context/ProfileContext";
 import UnAuthorized from "../unauthorized/UnAuthorized";
 
-const AdminLayout = ({ children }: {children: React.ReactChildren}) => {
-    const userCtx = useContext(ProfileContext);
+const authorizedRoutes = [
+    '/admin/posts/[id]/edit',
+    '/admin/new-post',
+    '/admin/author-request',
+    '/admin/authors',
+    '/',
+    '/admin',
+    '/admin/team',
+    '/admin/users',
+    '/admin/posts'
+]
+
+const AdminLayout = ({children}: { children: React.ReactChildren }) => {
+    const profileCtx = useContext(ProfileContext);
     // @ts-ignore
-    const {user} = userCtx;
+    const {user} = profileCtx;
     const [isAllowed, setIsAllowed] = useState<boolean>(false);
     const router = useRouter();
-    useEffect(()=>{
-        if(user){
-            if (router.pathname.startsWith('/admin/') && isAuthenticated() && user.role === 'admin') {
-                setIsAllowed(true)
+    useEffect(() => {
+        if (authorizedRoutes.includes(router.pathname)) {
+            if(user){
+                if (profileCtx.isLoggedIn && user.role ==='admin') {
+                    setIsAllowed(true)
+                } else {
+                    setIsAllowed(false)
+                }
+            }else {
+                setIsAllowed(false)
             }
-        }
-    },[user])
 
-    const handleToggle = (event: any): void =>{
+        } else {
+            setIsAllowed(false);
+        }
+    }, [router.pathname, profileCtx.user]);
+
+    const handleToggle = (event: any): void => {
         // @ts-ignore
         document.getElementById('page-wrapper').classList.toggle('toggled')
-    }
+    };
+
     return isAllowed ? (
         <div id="page-wrapper" className="page-wrapper chiller-theme toggled ">
             <a onClick={handleToggle} id="show-sidebar" className="btn btn-sm btn-dark" href="#">
@@ -32,7 +53,7 @@ const AdminLayout = ({ children }: {children: React.ReactChildren}) => {
             <AdminHeader/>
             {children}
         </div>
-    )  : (<UnAuthorized/>);
+    ) : (<UnAuthorized/>);
 }
 
 export default AdminLayout;

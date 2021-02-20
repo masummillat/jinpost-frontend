@@ -2,7 +2,6 @@ import React from "react";
 import {Editor} from '@tinymce/tinymce-react';
 const ChineseTinyEditor = ({formik}: any) =>{
     const handleEditorChange = (content: any, editor: any) => {
-        console.log('Content was updated:', content);
         formik.setFieldValue('chineseBody', content);
     }
 

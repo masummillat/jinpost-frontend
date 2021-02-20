@@ -83,11 +83,10 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
             featuredImg: '',
             body: '',
             chineseBody: '',
-            // tags: [],
+            tags: [],
             publishedDate: isEdit? blog.publishedDate : new Date(),
         },
         validationSchema: storySchema,
-        validateOnChange: true,
         onSubmit: async values => handleDraft(values),
     });
 
@@ -109,35 +108,38 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
     useEffect(() => {
         if (blog) {
             formik.resetForm();
-            formik.setFieldValue('title', blog.title)
-            formik.setFieldValue('chineseTitle', blog.chineseTitle)
-            formik.setFieldValue('description', blog.description)
-            formik.setFieldValue('chineseDescription', blog.chineseDescription)
-            formik.setFieldValue('body', blog.body)
-            formik.setFieldValue('chineseBod', blog.chineseBod)
+            formik.setFieldValue('title', blog.title);
+            formik.setFieldValue('chineseTitle', blog.chineseTitle);
+            formik.setFieldValue('description', blog.description);
+            formik.setFieldValue('chineseDescription', blog.chineseDescription);
+            formik.setFieldValue('body', blog.body);
+            formik.setFieldValue('chineseBod', blog.chineseBod);
             formik.setFieldValue('categories', blog.categories.map((cat: { id: any; name: any; }) => {
                 return {
                     id: cat.id,
                     label: cat.name,
                     value: cat.id
                 }
-            }))
-            formik.setFieldValue('featuredImg', blog.featuredImg)
+            }));
+            formik.setFieldValue('featuredImg', blog.featuredImg);
 
         }
     }, [isEdit, blog]);
 
 
     const updateBlog = useCallback((values: any) => {
-        httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {id: blog.id, ...values})
-            .then(r => {
-                ToasterSuccess('Successfully updated')
-            })
-            .catch(er => {
-                ToasterError(er.response.data.message);
-            })
+        console.log(values)
+        if(isEdit && blog){
+            httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {id: blog.id, ...values})
+                .then(r => {
+                    ToasterSuccess('Successfully updated')
+                })
+                .catch(er => {
+                    ToasterError(er.response.data.message);
+                })
 
-    },[]);
+        }
+    },[blog]);
 
 
     const handleDraft = useCallback(async (values: any) => {
@@ -198,11 +200,9 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         }
 
         // }
-    },[]);
-
+    },[formik.values]);
 
     const saveBlog = useCallback(async (values: any) => {
-        console.log(values)
         httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs`, values)
             .then(r => {
                 ToasterSuccess('successfully created');
@@ -244,8 +244,10 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
     },[]);
 
     const handleAddition = useCallback((tag: { id: string; text: string; }) => {
-        setTags([...tags, tag]);
-    },[]);
+        setTags(prevState => {
+            return[...prevState, tag];
+        });
+    },[setTags]);
 
     useEffect(() => {
         formik.setFieldValue('tags', tags.map(tag => tag.text));
@@ -275,7 +277,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         <div>
             <Head title={blog && blog.title}/>
             <main className="page-content">
-                <div className="container-fluid">
+                <div className="container">
                     <form onSubmit={formik.handleSubmit} className="row">
                         <div className="col-12">
                             <div className="page-title">

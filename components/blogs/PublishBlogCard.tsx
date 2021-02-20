@@ -1,28 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import moment from "moment";
 import Link from "next/link";
 import {Blog} from '../../types';
-import httpClient from '../../utils/api';
-import {ToasterSuccess, ToasterError} from '../../utils/statusMessage';
-
 interface PublishBlogCardProps {
     blog: Blog;
     authorized: boolean;
+    handleDelete: (id: number)=>void;
 }
 
-const PublishBlogCard: React.FC<PublishBlogCardProps> = ({blog, authorized}) => {
+const PublishBlogCard: React.FC<PublishBlogCardProps> = ({blog, authorized, handleDelete}) => {
 
-    const handleDelete = (id: number) => {
-        httpClient.delete(`/blogs/${id}`)
-            .then(res => {
-                console.log(res);
-                ToasterSuccess('Successfully deleted');
-            })
-            .catch(err => {
-                console.log(err);
-                ToasterError("Couldn't delete ");
-            })
-    }
     return (
         <div className="col-lg-4">
             <div className="published-item">
@@ -42,7 +29,11 @@ const PublishBlogCard: React.FC<PublishBlogCardProps> = ({blog, authorized}) => 
                                 <a className="card-link text-success">Edit</a>
                             </Link>
                         )}
-                        {authorized && (<div onClick={() => handleDelete} className="card-link float-right text-danger">
+                        {authorized && (<div style={{cursor: 'pointer'}} onClick={() => {
+                            if(blog.id){
+                                handleDelete(blog.id)
+                            }
+                            }} className="card-link float-right text-danger">
                                 Delete
                             </div>
                         )}

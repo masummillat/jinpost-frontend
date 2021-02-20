@@ -64,7 +64,7 @@ const UserHeader = () => {
                         </li>
                         <li className="nav-item d-flex justify-content-center align-items-center topic-nav-item">
                             <Dropdown>
-                               <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav} caret className="nav-link"  id="dropdown-split-basic" >
+                               <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav}  className="nav-link"  id="dropdown-split-basic" >
                                     Topics
                                 </Dropdown.Toggle>
 
@@ -107,7 +107,7 @@ const UserHeader = () => {
                                 </a>
 
                                 <Dropdown>
-                                    <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav} caret className="nav-link"  id="dropdown-split-basic" >
+                                    <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav} className="nav-link"  id="dropdown-split-basic" >
                                         {user && user.profileImage ?
                                             <img style={{width: 50, borderRadius: 7}} src={user.profileImage}/> :
                                             <img style={{width: 50, borderRadius: 7}} src="/static/img/profile.jpg"/>}

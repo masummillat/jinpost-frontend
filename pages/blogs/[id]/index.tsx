@@ -314,7 +314,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                                 <ul>
                                     {
                                         authorData &&
-                                        authorData.blogs.map((blog: any, index: any) => (
+                                        authorData.blogs.slice(0,10).map((blog: any, index: any) => (
                                             <li key={index}>
                                                 <Link href={`/blogs/${blog.id}`}>
                                                     <a>

@@ -5,6 +5,7 @@ import {useFormik} from "formik";
 import { useRouter } from 'next/router'
 import {ProfileContext} from "../../context/ProfileContext";
 import Link from 'next/link';
+import {ToasterSuccess} from "../../utils/statusMessage";
 const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>void}) => {
     const profileCtx = useContext(ProfileContext);
     // @ts-ignore
@@ -24,7 +25,10 @@ const UserLoginComponent = ({visible, toggle}: {visible: boolean; toggle: ()=>vo
             password: ''
         },
         onSubmit: values => {
-            handleLogin(values);
+            handleLogin(values).then(r=>{
+                router.push('/');
+                ToasterSuccess('Successfully logged in')
+            });
             toggle();
         },
         validationSchema: loginSchema

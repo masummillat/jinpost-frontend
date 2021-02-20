@@ -24,11 +24,11 @@ const BlogsPage = ({blogsData, tagsData}: { blogsData: any, tagsData: any[] }) =
                             <div className="col-12  ">
                                 <div className="d-flex float-right">
                                     <Link
-                                        href={`/blogs?page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
+                                        href={`/blogs?${router.query.tag ? `tag=${router.query.tag}&`: ''}page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
                                         <a className="mr-5 p-4"> <GrChapterPrevious size={25} /></a>
                                     </Link>
                                     <Link
-                                        href={`/blogs?page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
+                                        href={`/blogs?${router.query.tag ? `tag=${router.query.tag}&`: ''}page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
                                         <a className="p-4"> <GrChapterNext size={25}/></a>
                                     </Link>
                                 </div>
@@ -55,11 +55,11 @@ const BlogsPage = ({blogsData, tagsData}: { blogsData: any, tagsData: any[] }) =
                             <div className="col-12  ">
                                 <div className="d-flex float-right">
                                     <Link
-                                        href={`/blogs?page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
+                                        href={`/blogs?${router.query.tag ? `tag=${router.query.tag}&`: ''}page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
                                         <a className="mr-5 p-4"> <GrChapterPrevious size={25} /></a>
                                     </Link>
                                     <Link
-                                        href={`/blogs?page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
+                                        href={`/blogs?${router.query.tag ? `tag=${router.query.tag}&`: ''}page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
                                         <a className="p-4"> <GrChapterNext size={25}/></a>
                                     </Link>
                                 </div>
@@ -71,7 +71,7 @@ const BlogsPage = ({blogsData, tagsData}: { blogsData: any, tagsData: any[] }) =
                             <h5>Popular in Tags</h5>
                             <ul className="d-flex flex-wrap">
                                 {tags.map((tag, index) => (
-                                    <Link key={index} href={`/blogs?tag=${tag}`}>
+                                    <Link key={index} href={`/blogs?tag=${tag}&page=1&limit=10`}>
                                         <a className="badge badge-primary px-3 py-2 m-1">{tag}</a>
                                     </Link>
                                 ))}

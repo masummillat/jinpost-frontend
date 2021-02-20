@@ -20,37 +20,11 @@ interface HomeProps{
     categoriesData: any
 }
 const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
-    const [blogs, setBlogs] = useState(blogsData.items);
-    const [nextBlogsUrl, setNextBlogsUrl] = useState(blogsData.links.next)
-    const [previousBlogsUrl, setPreviousBlogsUrl] = useState(blogsData.links.previous)
+    const blogs = blogsData.items
+
     const tags = unique(createStringArray(tagsData));
     const categories = categoriesData.items;
 
-    const getNextBlogs = () => {
-        httpClient.get(nextBlogsUrl)
-            .then(res=>{
-                setBlogs(res.data.items);
-                setNextBlogsUrl(res.data.links.next);
-                setPreviousBlogsUrl(res.data.links.previous);
-
-            })
-            .catch(err=>{
-                ToasterError("Couldn't fetch data");
-            })
-    }
-
-    const getPreviousBlogs = () => {
-        httpClient.get(previousBlogsUrl)
-            .then(res=>{
-                setBlogs(res.data.items);
-                setNextBlogsUrl(res.data.links.next);
-                setPreviousBlogsUrl(res.data.links.previous);
-
-            })
-            .catch(err=>{
-                ToasterError("Couldn't fetch data");
-            })
-    }
     return (
         <div>
             <Head
@@ -108,23 +82,15 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                     <div className="col-12">
                         <div className="section-title">
                             <h1>Articles</h1>
-                            <Link href="/blogs">
+                            <Link href="/blogs?page=1&limit=10">
                                 <a className="all">All</a>
                             </Link>
                         </div>
                     </div>
-                    <div className="col-12 mb-4 ">
-                        <div className="d-flex float-right">
-                            <button disabled={previousBlogsUrl.length === 0} onClick={getPreviousBlogs} className="btn btn-info mr-4">Previous</button>
-                            <button disabled={nextBlogsUrl.length === 0} onClick={getNextBlogs} className="btn btn-primary">Next</button>
-                        </div>
-                    </div>
+
                     {blogs.map((blog: any, i: any)=><SampleBlogCard key={i} blog={blog}/>)}
                 </div>
-                <div className="row d-flex float-right">
-                        <button disabled={previousBlogsUrl.length === 0} onClick={getPreviousBlogs} className="btn btn-info mr-4">Previous</button>
-                        <button disabled={nextBlogsUrl.length === 0} onClick={getNextBlogs} className="btn btn-primary">Next</button>
-                </div>
+
                 <div className="row">
                     <div className="col-12">
                         <div className="section-title mt-5">
@@ -133,11 +99,11 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                     </div>
                     <div className="col-12">
                         <div className="popular-topics">
-                            <div>
+                            <div className="row d-flex flex-wrap">
                                 {
                                     categories.map((category: any, index:number)=>(
                                         <Link href={`${process.env.BASE_URL}/categories/${category.id}`} key={index}>
-                                            <a className="badge badge-pill badge-primary px-4 py-2 m-2">
+                                            <a className="col-md-3 text-capitalize text-black-50">
                                                 {category.name}
                                             </a>
                                         </Link>
@@ -153,7 +119,7 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                             <div className="left">
                                 <p>China Business Intelligence</p>
                                 <h1>Discover the popular companies or individuals on our platform</h1>
-                                <Link href={`${process.env.BASE_URL}/blogs`}>
+                                <Link href={`${process.env.BASE_URL}/blogs?page=1&limit=10`}>
                                     <a className="btn btn-white">Discover now</a>
                                 </Link>
                             </div>
@@ -161,7 +127,7 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
 
                                 {
                                     tags.map((tag, index)=>(
-                                        <Link href={`${process.env.BASE_URL}/blogs?tags=${tag}`} key={index}>
+                                        <Link href={`${process.env.BASE_URL}/blogs?page=1&limit=10&tag=${tag}`} key={index}>
                                             <a className="badge badge-light px-4 py-2 m-2">
                                                 {tag}
                                             </a>
@@ -180,7 +146,7 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
 };
 
 export async function getServerSideProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=true`)
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=true&limit=12`)
     const data = await res.json()
 
     const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)

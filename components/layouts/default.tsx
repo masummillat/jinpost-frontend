@@ -21,7 +21,7 @@ const DefaultLayout = ({ children }: {children: React.Component}) => {
        }else {
            setIsAllowed(true);
        }
-   },[router.pathname, profileCtx.isLoggedIn])
+   },[router.pathname, profileCtx.user])
     const ComponentToRender = isAllowed ? children : <UnAuthorized/>;
     return(
         <>

@@ -10,9 +10,13 @@ import { ProfileContext } from "../context/ProfileContext";
 import isAuthenticated from '../utils/isAuthenticated';
 import { UserDto } from '../types';
 import Head from '../components/head';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import httpClient from "../utils/api";
+import {ToasterError, ToasterSuccess} from "../utils/statusMessage"; // Import css
 
 const ProfilePage = ({ profile }: { profile: UserDto }) => {
-
+    const [blogs, setBlogs] = useState(profile.blogs || []);
     const [authorized, setAuthorized] = useState<boolean>(false)
     const router = useRouter();
     const proCtx = useContext(ProfileContext);
@@ -22,7 +26,38 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
             setAuthorized((router.query.domain === profile.domain) &&
                 isAuthenticated() && (proCtx.user && proCtx.user.domain === profile.domain))
         }
-    }, [profile])
+    }, [profile, proCtx]);
+
+    const handleDelete = (id: number) => {
+        confirmAlert({
+            title: 'Confirm to delete',
+            message: 'Are you sure to do this ?',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => {
+                        httpClient.delete(`/blogs/${id}`)
+                            .then(res => {
+                                console.log(res);
+                                ToasterSuccess('Successfully deleted');
+                                setBlogs(prevState => {
+                                    return prevState.filter(blog=>blog.id !== id);
+                                })
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                ToasterError("Couldn't delete ");
+                            })
+                    }
+                },
+                {
+                    label: 'No',
+                    onClick: () => {}
+                }
+            ]
+        });
+
+    }
 
     if (profile.statusCode === 404) {
         return (
@@ -102,11 +137,10 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
                                         <Tab.Pane eventKey="published">
                                             <Row>
                                                 {
-                                                    profile &&
-                                                    profile.blogs &&
-                                                    profile.blogs.filter((b: any) => b.isPublished === true).reverse()
+
+                                                    blogs.filter((b: any) => b.isPublished === true).reverse()
                                                         .map((blog: any, i: number) => (
-                                                            <PublishBlogCard key={i} blog={blog} authorized={authorized} />
+                                                            <PublishBlogCard handleDelete={handleDelete} key={i} blog={blog} authorized={authorized} />
                                                         ))
                                                 }
                                             </Row>
@@ -114,11 +148,10 @@ const ProfilePage = ({ profile }: { profile: UserDto }) => {
                                         <Tab.Pane eventKey="draft">
                                             <Row>
                                                 {
-                                                    profile &&
-                                                    profile.blogs &&
-                                                    profile.blogs.filter((b: any) => b.isPublished === false).reverse()
+
+                                                    blogs.filter((b: any) => b.isPublished === false).reverse()
                                                         .map((blog: any, i: number) => (
-                                                            <PublishBlogCard key={i} blog={blog} authorized={authorized} />
+                                                            <PublishBlogCard handleDelete={handleDelete} key={i} blog={blog} authorized={authorized} />
                                                         ))
                                                 }
                                             </Row>

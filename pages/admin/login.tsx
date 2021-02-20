@@ -1,15 +1,18 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import {MdFace, MdLock} from 'react-icons/md';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router'
 import BlankLayout from "../../components/layouts/blank";
 import Head from "../../components/head";
-import {router} from "next/client";
+import {ProfileContext} from "../../context/ProfileContext";
+import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 
 
 const Login = () => {
-    const router = useRouter()
+    const router = useRouter();
+    const profileCtx = useContext(ProfileContext);
+    const {user, isLoggedIn, handleLogin} = profileCtx;
     const loginSchema = Yup.object().shape({
         email: Yup.string().email('Invalid email').required('Required'),
         password: Yup.string()
@@ -19,6 +22,12 @@ const Login = () => {
 
     });
 
+    useEffect(()=>{
+        if(user && user.role === 'admin'){
+           router.push('/admin/users')
+        }
+    },[user])
+
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -26,7 +35,16 @@ const Login = () => {
         },
         onSubmit: values => {
             console.log(JSON.stringify(values, null, 2));
-           router.push('/admin/users');
+            handleLogin(values).then(res=>{
+                console.log(res)
+                ToasterSuccess('Successfully logged in ')
+                router.push('/admin/users');
+            })
+                .catch(err=>{
+                    console.log(err)
+                    ToasterError(err.message)
+                })
+
         },
         validationSchema:loginSchema,
     });

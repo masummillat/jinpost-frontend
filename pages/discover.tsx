@@ -39,7 +39,7 @@ const DiscoverPage = ({ authorsData, categoriesData, tagsData }: DiscoverPagePro
                             <h2>Discover the popular companies</h2>
                             {
                                 tags.map((tag, index)=>(
-                                    <Link href={`${process.env.BASE_URL}/blogs?tags=${tag}`} key={index}>
+                                    <Link href={`${process.env.BASE_URL}/blogs?tag=${tag}&page=1&limit=10`} key={index}>
                                         <a className="btn-tag">{tag}</a>
                                     </Link>
                                 ))

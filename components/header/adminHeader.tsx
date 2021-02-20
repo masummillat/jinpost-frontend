@@ -8,8 +8,6 @@ const AdminHeader: React.FC = ()=>{
     const toggleToolbar = () => setToolbarOpen(prevState => !prevState);
     // @ts-ignore
     const { user, handleLogout } = profileCtx;
-    console.log(profileCtx);
-    console.log(user);
     const handleToggle = (event: any): void =>{
         // @ts-ignore
         document.getElementById('page-wrapper').classList.toggle('toggled')
@@ -72,7 +70,7 @@ const AdminHeader: React.FC = ()=>{
                                 <div id="postSubMenu" className="sidebar-submenu">
                                     <ul>
                                         <li>
-                                            <Link href="/admin/post">
+                                            <Link href="/admin/posts">
                                                 <a >All Posts</a>
                                             </Link>
                                         </li>

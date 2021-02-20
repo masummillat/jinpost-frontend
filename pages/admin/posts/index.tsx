@@ -1,18 +1,63 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import moment from "moment";
-import AdminLayout from "../../components/layouts/admin";
-import Head from "../../components/head";
-import {Blog} from "../../types";
 import Link from "next/link";
 import {GrChapterNext, GrChapterPrevious} from "react-icons/gr";
 import {useRouter} from "next/router";
+import {Blog} from "../../../types";
+import Head from "../../../components/head";
+import AdminLayout from "../../../components/layouts/admin";
+import {ProfileContext} from "../../../context/ProfileContext";
+import {BsTrash} from "react-icons/bs";
+import {BiEditAlt} from "react-icons/bi";
+import httpClient from "../../../utils/api";
+import {ToasterError, ToasterSuccess} from "../../../utils/statusMessage";
+import {confirmAlert} from "react-confirm-alert";
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 interface IPost {
     blogs: Blog[]
 }
 
-const Post= ({blogs}: IPost) => {
+const Posts= ({blogsData}: any) => {
+    const [blogs, setBlogs] = useState<any>( []);
+    const profileCtx = useContext(ProfileContext);
+    const user = profileCtx.user;
     const router = useRouter();
+
+    useEffect(()=>{
+        setBlogs(blogsData.items)
+    },[blogsData])
+
+    const handleDelete = (id: number | undefined) => {
+           confirmAlert({
+               title: 'Confirm to delete',
+               message: 'Are you sure to do this ?',
+               buttons: [
+                   {
+                       label: 'Yes',
+                       onClick: () => {
+                           httpClient.delete(`/blogs/${id}`)
+                               .then(res => {
+                                   console.log(res);
+                                   ToasterSuccess('Successfully deleted');
+                                   setBlogs((prevState: any[]) => {
+                                       return prevState.filter(blog=>blog.id !== id);
+                                   })
+                               })
+                               .catch(err => {
+
+                                   ToasterError(err.response.data.message);
+                               })
+                       }
+                   },
+                   {
+                       label: 'No',
+                       onClick: () => {}
+                   }
+               ]
+           });
+
+    }
     return (
         <div>
             <Head title="Jinpost admin | Post" />
@@ -27,11 +72,11 @@ const Post= ({blogs}: IPost) => {
                                 <div className="col-12  ">
                                     <div className="d-flex float-right">
                                         <Link
-                                            href={`/admin/post?page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
+                                            href={`/admin/posts?page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
                                             <a className="mr-5 p-4"> <GrChapterPrevious size={25} /></a>
                                         </Link>
                                         <Link
-                                            href={`/admin/post?page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
+                                            href={`/admin/posts?page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
                                             <a className="p-4"> <GrChapterNext size={25}/></a>
                                         </Link>
                                     </div>
@@ -54,16 +99,24 @@ const Post= ({blogs}: IPost) => {
                                             </thead>
                                             <tbody>
                                             {
-                                                blogs.map((blog)=>(
+                                                blogs.map((blog:any)=>(
                                                     <tr key={blog.id}>
                                                         <td>{blog.title}</td>
                                                         <td>{blog.description}</td>
                                                         <td>{blog.author && blog.author.name}</td>
                                                         <td>{moment(blog.publishedDate).format('LLL')}</td>
                                                         <td></td>
-                                                        <td>
-                                                            <a href="#"><i className="far fa-edit"></i></a>
-                                                            <a href="#"><i className="far fa-trash-alt"></i></a>
+                                                        <td className="d-flex justify-content-between">
+                                                            {
+                                                                blog.author && user && blog.author.id === user.id && (
+                                                                    <Link href={`/admin/posts/${blog.id}/edit`}>
+                                                                        <a><BiEditAlt style={{cursor: 'pointer'}} size={25}/></a>
+                                                                    </Link>
+                                                                )
+                                                            }
+                                                            {
+                                                                blog && <BsTrash onClick={()=>handleDelete(blog.id)} style={{cursor: 'pointer'}} size={25}  />
+                                                            }
                                                         </td>
                                                     </tr>
                                                 ))
@@ -82,7 +135,7 @@ const Post= ({blogs}: IPost) => {
 }
 
 
-Post.Layout = AdminLayout;
+Posts.Layout = AdminLayout;
 
 export async function getServerSideProps(context: any) {
     const {query} = context;
@@ -96,8 +149,8 @@ export async function getServerSideProps(context: any) {
 
     return {
         props: {
-            blogs: data.items
+            blogsData: data
         }, // will be passed to the page component as props
     }
 }
-export default Post;
+export default Posts;
