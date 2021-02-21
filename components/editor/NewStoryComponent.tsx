@@ -127,7 +127,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
     }, [isEdit, blog]);
 
 
-    const updateBlog = useCallback((values: any) => {
+    const updateBlog = (values: any) => {
         console.log(values)
         if(isEdit && blog){
             httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {id: blog.id, ...values})
@@ -139,8 +139,38 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
                 })
 
         }
-    },[blog]);
+    };
+    const saveBlog = useCallback(async (values: any) => {
+        httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs`, values)
+            .then(r => {
+                ToasterSuccess('successfully created');
+                formik.resetForm();
+            })
+            .catch(err => {
+                ToasterError(err.response.data.message);
+            });
+    },[]);
 
+
+    const handleSave = useCallback(async (values: any) => {
+
+        if (image) {
+            //    saveblogg with image location
+            imageFormData = new FormData();
+            // @ts-ignore
+            await imageFormData.append('file', image)
+            await httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
+                .then(async result => {
+                    // @ts-ignore
+                    await formik.setFieldValue('featuredImg', result.data.Location);
+
+                    await saveBlog({...values, featuredImg: result.data.Location});
+                })
+        } else {
+            //save blog without image location
+            saveBlog({...values, featuredImg: null});
+        }
+    },[image, saveBlog, formik]);
 
     const handleDraft = useCallback(async (values: any) => {
 
@@ -153,8 +183,8 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
                     .then((res) => {
                         console.log(res)
                         // @ts-ignore
-                        formik.setFieldValue('featuredImg', res.data.url)
-                        updateBlog({...values, featuredImg: res.data.url, isPublished: false});
+                        formik.setFieldValue('featuredImg', res.data.Location)
+                        updateBlog({...values, featuredImg: res.data.Location, isPublished: false});
                     })
                     .catch(err => {
                         console.log(err);
@@ -165,7 +195,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         } else {
             handleSave({...values, isPublished: false});
         }
-    },[]);
+    },[image, updateBlog]);
 
     const handlePublish = useCallback(async () => {
         console.log(formik.errors)
@@ -200,38 +230,10 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         }
 
         // }
-    },[formik.values]);
+    },[handleSave]);
 
-    const saveBlog = useCallback(async (values: any) => {
-        httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs`, values)
-            .then(r => {
-                ToasterSuccess('successfully created');
-                formik.resetForm();
-            })
-            .catch(err => {
-                ToasterError(err.response.data.message);
-            });
-    },[]);
 
-    const handleSave = useCallback(async (values: any) => {
 
-            if (image) {
-                //    saveblogg with image location
-                imageFormData = new FormData();
-                // @ts-ignore
-                await imageFormData.append('file', image)
-                await httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs/image/upload`, imageFormData)
-                    .then(async result => {
-                        // @ts-ignore
-                        await formik.setFieldValue('featuredImg', result.data.Location);
-
-                        await saveBlog({...values, featuredImg: result.data.Location});
-                    })
-            } else {
-                //save blog without image location
-                saveBlog({...values, featuredImg: null});
-            }
-        },[]);
 
     const KeyCodes = {
         comma: 188,
@@ -271,7 +273,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
 
         reader.readAsDataURL(file);
 
-    },[]);
+    },[setImage, setImagePreviewUrl]);
 
     return (
         <div>

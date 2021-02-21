@@ -14,7 +14,8 @@ const authorizedRoutes = [
     '/admin',
     '/admin/team',
     '/admin/users',
-    '/admin/posts'
+    '/admin/posts',
+    '/admin/categories'
 ]
 
 const AdminLayout = ({children}: { children: React.ReactChildren }) => {

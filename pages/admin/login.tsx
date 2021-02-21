@@ -53,7 +53,7 @@ const Login = () => {
             <Head/>
             <div style={{minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <div className="login">
-                    <img src="/static/img/logo.jpg" style={{maxWidth: '150px', padding: '1rem 0'}}/>
+                    <img src="/static/img/logo.png" style={{maxWidth: '150px', padding: '1rem 0'}}/>
                     <form onSubmit={formik.handleSubmit}>
                         <span><MdFace style={{fontSize: 25}}/></span>
                         <input id="firstName"
