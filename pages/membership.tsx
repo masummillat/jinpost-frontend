@@ -1,9 +1,28 @@
 import React from "react";
 import DefaultLayout from "../components/layouts/default";
 import Head from "../components/head";
+import {Field, Form, Formik, useFormik} from "formik";
+import httpClient from "../utils/api";
+import {ToasterError, ToasterSuccess} from "../utils/statusMessage";
 
-const Membership = () => {
+const Membership: React.FC<any> = ({plans}) => {
 
+    const handleSubscription = (values: any) =>{
+        console.log(values)
+        httpClient.post('/subscriptions', {
+            plan:{
+                id: parseInt(values.plan)
+            }
+        })
+            .then(r=>{
+                console.log(r);
+                ToasterSuccess("Successfully bought subscription");
+            })
+            .catch(err=>{
+                console.log(err);
+                ToasterError("Couldn't buy subscription");
+            })
+    }
     return (
         <div>
             <Head
@@ -17,18 +36,54 @@ const Membership = () => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="offset-lg-3 col-lg-3">
-                        <div className="monthly">
-                            <h4>Monthly</h4>
-                            <span>$5</span>
-                        </div>
-                    </div>
-                    <div className="col-lg-3">
-                        <div className="yearly">
-                            <h4>Yearly</h4>
-                            <span>$50</span>
-                        </div>
-                    </div>
+
+                    <Formik
+                        initialValues={{
+                            plan: '',
+                        }}
+                        onSubmit={async (values) => {
+                            await handleSubscription(values);
+                        }}
+                    >
+                        {({ values }) => (
+                            <Form>
+                                <div id="my-radio-group">Plans</div>
+                                <div className="d-flex flex-column" role="group" aria-labelledby="my-radio-group">
+                                    {
+                                        plans.map((plan: any,i: number)=>(
+                                            <label className="d-flex justify-content-around align-items-center">
+                                                <Field type="radio" name="plan" value={plan.id.toString()} />
+                                                <h5>{plan.name}</h5>
+                                                <span>USD {plan.cost}</span>
+                                                <span>{`${plan.month} months`}</span>
+                                                <span>{plan.description}</span>
+                                            </label>
+                                        ))
+                                    }
+                                    <div>Picked: {values.plan}</div>
+                                </div>
+
+                                <button type="submit">Submit</button>
+                            </Form>
+                        )}
+                    </Formik>
+
+
+
+
+
+                    {/*<div className="offset-lg-3 col-lg-3">*/}
+                    {/*    <div className="monthly">*/}
+                    {/*        <h4>Monthly</h4>*/}
+                    {/*        <span>$5</span>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
+                    {/*<div className="col-lg-3">*/}
+                    {/*    <div className="yearly">*/}
+                    {/*        <h4>Yearly</h4>*/}
+                    {/*        <span>$50</span>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                     <div className="offset-lg-3 col-lg-6">
                         <div className="checkout">
                             <h2>
@@ -50,5 +105,16 @@ const Membership = () => {
     );
 }
 
+// @ts-ignore
 Membership.Layout = DefaultLayout;
+
+export async function getServerSideProps() {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/plans`)
+    const plans = await res.json()
+    return {
+        props: {
+            plans,
+        },
+    }
+}
 export default Membership;

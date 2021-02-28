@@ -8,7 +8,7 @@ const BlogCard = ({blog}) => {
         <div className="col-lg-6 mb-3">
             <div className="article-preview-right">
                 <div className="card">
-                    <img src={blog.featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt={blog.title}/>
+                    <img  style={{height: '100%', maxHeight: 150}} src={blog.featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt={blog.title}/>
                     <div className="card-body">
                         <p className="article-preview-title">
                             <Link href={`/blogs/${blog.id}`}>

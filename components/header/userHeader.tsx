@@ -10,6 +10,7 @@ import httpClient from "../../utils/api";
 import {CategoryEntry} from "../../types";
 import {Dropdown, Nav} from "react-bootstrap";
 import {FcMenu} from "react-icons/fc";
+import {AiOutlineSearch} from "react-icons/ai";
 
 
 const UserHeader = () => {
@@ -90,55 +91,62 @@ const UserHeader = () => {
                             </Link>
                         </li>
                     </ul>
-                    {
-                        isLoggedIn ? (
-                            <div className="my-2 my-lg-0" style={{display: 'contents'}}>
-                                <a href="#" className="notification-icon">
-                                    <IoMdNotificationsOutline style={{fontSize: 24}}/>
-                                </a>
+                   <div className="d-flex">
+                         <div className="searchBox mr-4">
+                             <input className="searchInput" type="text" name="" placeholder="Search" />
+                             <button className="searchButton" > <AiOutlineSearch/> </button>
+                         </div>
 
-                                <a onClick={handleWrite} style={{cursor: 'pointer'}}  className="be-writter">
-                                    <GiBookmarklet
-                                        style={{fontSize: 24}}
-                                        className=" pr-2 "/>
-                                        {user && (
-                                            user.role === 'author' || user.role === 'admin')
-                                            ? 'Write' : 'Become a writter'}
-                                </a>
+                       {
+                           isLoggedIn ? (
+                               <div className="my-2 my-lg-0 d-flex" >
+                                   <a href="#" className="notification-icon">
+                                       <IoMdNotificationsOutline style={{fontSize: 24}}/>
+                                   </a>
 
-                                <Dropdown>
-                                    <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav} className="nav-link"  id="dropdown-split-basic" >
-                                        {user && user.profileImage ?
-                                            <img style={{width: 50, borderRadius: 7}} src={user.profileImage}/> :
-                                            <img style={{width: 50, borderRadius: 7}} src="/static/img/profile.jpg"/>}
-                                    </Dropdown.Toggle>
+                                   <a onClick={handleWrite} style={{cursor: 'pointer'}}  className="be-writter d-flex justify-content-center align-items-center">
+                                       <GiBookmarklet
+                                           style={{fontSize: 24}}
+                                           className=" pr-2 "/>
+                                       {user && (
+                                           user.role === 'author' || user.role === 'admin')
+                                           ? 'Write' : 'Become a writter'}
+                                   </a>
 
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item>
-                                            <Link href="/membership"><a>Upgrade</a></Link>
-                                        </Dropdown.Item>
-                                        <Dropdown.Item>
-                                            <Link href="/new-post"><a>Write</a></Link>
-                                        </Dropdown.Item>
-                                        <Dropdown.Item>
-                                            {user && (<Link href={`/${user.domain}`}><a>Profile</a></Link>)}
-                                        </Dropdown.Item>
-                                        <Dropdown.Item>
-                                            <Link href="/account-settings"><a>Account Settings</a></Link>
-                                        </Dropdown.Item>
-                                        <Dropdown.Item>
-                                            <a onClick={handleLogout} className="">Log Out</a>
-                                        </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </div>
-                        ) : (<div className="my-2 my-lg-0">
-                            <Link href="/registration">
-                                <a className="green-text register-item">Register</a>
-                            </Link>
-                            <button onClick={toggle} className="btn btn-primary">Login</button>
-                        </div>)
-                    }
+                                   <Dropdown>
+                                       <Dropdown.Toggle style={{cursor: 'pointer'}} as={Nav} className="nav-link"  id="dropdown-split-basic" >
+                                           {user && user.profileImage ?
+                                               <img style={{width: 50, borderRadius: 7}} src={user.profileImage}/> :
+                                               <img style={{width: 50, borderRadius: 7}} src="/static/img/profile.jpg"/>}
+                                       </Dropdown.Toggle>
+
+                                       <Dropdown.Menu>
+                                           <Dropdown.Item>
+                                               <Link href="/membership"><a>Upgrade</a></Link>
+                                           </Dropdown.Item>
+                                           <Dropdown.Item>
+                                               <Link href="/new-post"><a>Write</a></Link>
+                                           </Dropdown.Item>
+                                           <Dropdown.Item>
+                                               {user && (<Link href={`/${user.domain}`}><a>Profile</a></Link>)}
+                                           </Dropdown.Item>
+                                           <Dropdown.Item>
+                                               <Link href="/account-settings"><a>Account Settings</a></Link>
+                                           </Dropdown.Item>
+                                           <Dropdown.Item>
+                                               <a onClick={handleLogout} className="">Log Out</a>
+                                           </Dropdown.Item>
+                                       </Dropdown.Menu>
+                                   </Dropdown>
+                               </div>
+                           ) : (<div className="my-2 my-lg-0">
+                               <Link href="/registration">
+                                   <a className="green-text register-item">Register</a>
+                               </Link>
+                               <button onClick={toggle} className="btn btn-primary">Login</button>
+                           </div>)
+                       }
+                   </div>
 
                 </div>
             </nav>

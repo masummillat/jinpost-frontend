@@ -36,7 +36,10 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
                             {
                                 blogsData.items.length > 0 && (
                                     <div className="card">
-                                        <img src={ blogsData.items[0].featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
+                                        <img
+                                            style={{height: '100%', maxHeight: 285}}
+                                            src={ blogsData.items[0].featuredImg || '/static/img/pic.jpg'}
+                                            className="card-img-top" alt="..."/>
                                         <div className="card-body">
                                             <Link href={`/blogs/${ blogsData.items[0].id}`}>
                                                 <a className="article-preview-title line-clamp-2">{ blogsData.items[0].title}</a>

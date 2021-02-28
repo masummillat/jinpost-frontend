@@ -1,6 +1,6 @@
-import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
+import React, {ChangeEvent, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {WithContext as ReactTags} from 'react-tag-input';
-import {useFormik} from 'formik';
+import {Field, useFormik} from 'formik';
 import Datetime from 'react-datetime';
 import {RiDraftLine} from 'react-icons/ri'
 import Select from "react-select";
@@ -14,6 +14,7 @@ import {Tabs, Tab} from 'react-bootstrap';
 import ChineseTinyEditor from './ChinesTinyEditor';
 import "react-datetime/css/react-datetime.css";
 import moment from 'moment';
+import {ProfileContext} from "../../context/ProfileContext";
 
 interface ITags {
     id: string;
@@ -65,13 +66,22 @@ export const createStringArray = (values: any[]) => {
 
 const createTags = (values: string[]): ITags[] => {
     return values.map((tag: string) => ({id: tag, text: tag}))
-}
+};
+
+const blogTypesOption = [
+    { value: 'free', label: 'Free' },
+    { value: 'premium', label: 'Premium' },
+]
+
 const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, categories = [], suggestionTags = []}) => {
+    const profileCtx = useContext(ProfileContext);
     const [image, setImage] = useState(null);
     const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
     const [tags, setTags] = useState<ITags[]>([])
     const [tagSuggestions, setTagSuggestions] = useState<ITags[]>(createTags(unique(createStringArray(suggestionTags))));
     let imageFormData;
+
+    const user = profileCtx.user;
 
     const formik = useFormik({
         initialValues: {
@@ -82,8 +92,10 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
             categories: [],
             featuredImg: '',
             body: '',
+            note: '',
             chineseBody: '',
             tags: [],
+            blogType: { value: 'free', label: 'Free' },
             publishedDate: isEdit? blog.publishedDate : new Date(),
         },
         validationSchema: storySchema,
@@ -114,6 +126,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
             formik.setFieldValue('chineseDescription', blog.chineseDescription);
             formik.setFieldValue('body', blog.body);
             formik.setFieldValue('chineseBod', blog.chineseBod);
+            formik.setFieldValue('note', blog.note);
             formik.setFieldValue('categories', blog.categories.map((cat: { id: any; name: any; }) => {
                 return {
                     id: cat.id,
@@ -130,7 +143,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
     const updateBlog = (values: any) => {
         console.log(values)
         if(isEdit && blog){
-            httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {id: blog.id, ...values})
+            httpClient.put(`${process.env.BACKEND_BASE_URL}/blogs/${blog.id}`, {id: blog.id, ...values, type: values.blogType.value})
                 .then(r => {
                     ToasterSuccess('Successfully updated')
                 })
@@ -141,7 +154,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
         }
     };
     const saveBlog = useCallback(async (values: any) => {
-        httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs`, values)
+        httpClient.post(`${process.env.BACKEND_BASE_URL}/blogs`, {...values, type: values.blogType.value })
             .then(r => {
                 ToasterSuccess('successfully created');
                 formik.resetForm();
@@ -345,6 +358,18 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
 
                                             </div>
                                         </Tab>
+                                        {
+                                             user && (user.role === 'admin' || user.type === 'team') && (<Tab eventKey="note" title="Note">
+                                            <textarea
+                                                className="form-control mt-3"
+                                                rows={6}
+                                                name="note"
+                                                placeholder="Write your note here"
+                                                onChange={formik.handleChange}
+                                                value={formik.values.note}
+                                            />
+                                            </Tab>)
+                                        }
 
                                     </Tabs>
 
@@ -430,6 +455,15 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
                                                 initialValue={new Date(formik.values.publishedDate)}
                                                   />
                                             <p className="small text-danger">{formik.errors.publishedDate}</p>
+                                        </div>
+                                        <div className="d-flex flex-column mb-4">
+                                            <label>Blog Type</label>
+                                            <Select options={blogTypesOption}
+                                                    value={formik.values.blogType}
+                                                    onChange={(type) => {
+                                                            formik.setFieldValue('blogType', type)
+                                                        }}
+                                            />
                                         </div>
 
                                         <div className="d-flex flex-column">

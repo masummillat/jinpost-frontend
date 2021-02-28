@@ -90,7 +90,7 @@ const UsersComponent = ({ usersData }: UsersComponentProps) => {
 
 
 export async function getServerSideProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users?role=user`)
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/users`)
     const data = await res.json()
     if (!data) {
         return {

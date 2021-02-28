@@ -105,7 +105,7 @@ const Posts= ({blogsData}: any) => {
                                                         <td>{blog.description}</td>
                                                         <td>{blog.author && blog.author.name}</td>
                                                         <td>{moment(blog.publishedDate).format('LLL')}</td>
-                                                        <td></td>
+                                                        <td>{blog.note}</td>
                                                         <td className="d-flex justify-content-between">
                                                             {
                                                                 blog.author && user && blog.author.id === user.id && (

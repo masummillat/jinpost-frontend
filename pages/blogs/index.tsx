@@ -21,20 +21,6 @@ const BlogsPage = ({blogsData, tagsData}: { blogsData: any, tagsData: any[] }) =
                 <div className="row">
                     <div className="col-lg-7">
                         <div className="row">
-                            <div className="col-12  ">
-                                <div className="d-flex float-right">
-                                    <Link
-                                        href={`/blogs?${router.query.tag ? `tag=${router.query.tag}&`: ''}page=${router.query.page && Number(router.query.page) - 1 || 1}&limit=${router.query.limit || 10}`}>
-                                        <a className="mr-5 p-4"> <GrChapterPrevious size={25} /></a>
-                                    </Link>
-                                    <Link
-                                        href={`/blogs?${router.query.tag ? `tag=${router.query.tag}&`: ''}page=${router.query.page && Number(router.query.page) + 1 || 1}&limit=${router.query.limit || 10}`}>
-                                        <a className="p-4"> <GrChapterNext size={25}/></a>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row">
                             <div className="col-12">
                                 <div className="category-post">
                                     {

@@ -48,6 +48,19 @@ const AdminHeader: React.FC = ()=>{
             // @ts-ignore
             document.getElementById('notificationSubMenu').style.display = 'block'
         }
+    };
+
+    const handlePaymentToggle = (): void =>{
+        // @ts-ignore
+        document.getElementById('userDropdown').classList.toggle('active')
+        // @ts-ignore
+        if(document.getElementById('paymentSubmenu').style.display === 'block'){
+            // @ts-ignore
+            document.getElementById('paymentSubmenu').style.display = 'none';
+        }else{
+            // @ts-ignore
+            document.getElementById('paymentSubmenu').style.display = 'block'
+        }
     }
     return(
         <div>
@@ -127,6 +140,21 @@ const AdminHeader: React.FC = ()=>{
                                 </ul>
                             </div>
                         </li>
+                            <li  id="paymentDropdown"  className="sidebar-dropdown">
+                                <a onClick={handlePaymentToggle} href="#">
+                                    <i className="fas fa-bell"></i>
+                                    <span>Payments</span>
+                                </a>
+                                <div id="paymentSubmenu" className="sidebar-submenu">
+                                    <ul>
+                                        <li>
+                                            <Link href="/admin/payment">
+                                                <a>Payment</a>
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>
