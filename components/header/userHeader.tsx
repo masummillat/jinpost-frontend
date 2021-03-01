@@ -11,6 +11,7 @@ import {CategoryEntry} from "../../types";
 import {Dropdown, Nav} from "react-bootstrap";
 import {FcMenu} from "react-icons/fc";
 import {AiOutlineSearch} from "react-icons/ai";
+import {useFormik} from "formik";
 
 
 const UserHeader = () => {
@@ -42,6 +43,14 @@ const UserHeader = () => {
         }
     }
 
+    const searchForm = useFormik({
+        initialValues: {
+            q: '',
+        },
+        onSubmit: values => {
+            router.push(`/search?q=${values.q}&page=1&limit=10`);
+        },
+    });
     return (
         <header>
             <nav className="container navbar navbar-expand-lg">
@@ -92,10 +101,14 @@ const UserHeader = () => {
                         </li>
                     </ul>
                    <div className="d-flex">
-                         <div className="searchBox mr-4">
-                             <input className="searchInput" type="text" name="" placeholder="Search" />
-                             <button className="searchButton" > <AiOutlineSearch/> </button>
-                         </div>
+                         <form onSubmit={searchForm.handleSubmit} className="searchBox mr-4">
+                             <input onChange={searchForm.handleChange}
+                                    value={searchForm.values.q}
+                                    className="searchInput"
+                                    type="text" name="q"
+                                    placeholder="Search" />
+                             <button className="searchButton" type="submit" > <AiOutlineSearch/> </button>
+                         </form>
 
                        {
                            isLoggedIn ? (
