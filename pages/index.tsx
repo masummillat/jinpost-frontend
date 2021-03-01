@@ -20,7 +20,7 @@ interface HomeProps{
     categoriesData: any
 }
 const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
-    const blogs = blogsData.items
+    const blogs = blogsData.items || [];
 
     const tags = unique(createStringArray(tagsData));
     const categories = categoriesData.items;
@@ -149,7 +149,7 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
 };
 
 export async function getServerSideProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=true&limit=12`)
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=${true}&limit=12`)
     const data = await res.json()
 
     const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)
