@@ -164,7 +164,7 @@ const AdminHeader: React.FC = ()=>{
                     <div className="row">
                         <div className="col-12">
                             <div className="header-right">
-                                <div className="navbar-profile">
+                                <div className="">
                                     <Dropdown isOpen={toolbarOpen} toggle={toggleToolbar}>
                                         <DropdownToggle nav >
                                            <span className="mr-2"> {user?user.name : ''}</span>

@@ -9,7 +9,7 @@ const BlogItemCard = ({blog}:{blog: any}) => {
                     <div className="card-body">
                         <h5 className="card-title">
                             <Link href={`/blogs/${blog && blog.id}`}>
-                                <a>{blog && blog.title}</a>
+                                <a className='line-clamp-2'>{blog && blog.title}</a>
                             </Link>
                         </h5>
                              <p className="card-text">{blog && blog.description}</p>
