@@ -1,10 +1,10 @@
 const path = require('path');
 module.exports = {
   env: {
-    BACKEND_BASE_URL: 'http://localhost:3000',
-    BASE_URL: 'http://localhost:3001',
-    // BACKEND_BASE_URL: 'http://54.251.217.105',
-    // BASE_URL: 'https://jinpost.com',
+    // BACKEND_BASE_URL: 'http://localhost:3000',
+    // BASE_URL: 'http://localhost:3001',
+    BACKEND_BASE_URL: 'http://54.251.217.105',
+    BASE_URL: 'https://jinpost.com',
 
   },
   async redirects() {
