@@ -3,7 +3,7 @@ module.exports = {
   env: {
     // BACKEND_BASE_URL: 'http://localhost:3000',
     // BASE_URL: 'http://localhost:3001',
-    BACKEND_BASE_URL: 'http://54.251.217.105',
+    BACKEND_BASE_URL: 'https://api.jinpost.com',
     BASE_URL: 'https://jinpost.com',
 
   },
