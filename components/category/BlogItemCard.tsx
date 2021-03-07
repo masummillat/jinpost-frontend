@@ -17,7 +17,7 @@ const BlogItemCard = ({blog}:{blog: any}) => {
                     </div>
                 </div>
                 <div className="col-md-3">
-                    <img src={blog && blog.featuredImg || '/static/img/pic.jpg'} className="card-img" alt="..." />
+                    <img style={{height: '100%', maxHeight: 150}} src={blog && blog.featuredImg || '/static/img/pic.jpg'} className="card-img" alt="..." />
                 </div>
             </div>
         </div>

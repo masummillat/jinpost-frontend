@@ -13,7 +13,7 @@ const SampleBlogCard = ({blog}:{blog: any}) => {
                             <img src={blog.author.profileImage || '/static/img/profile.jpg' }/>{blog.author.name}
                         </a>
                     </Link>
-                    <img src={blog.featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
+                    <img style={{height: '100%', maxHeight: 150}} src={blog.featuredImg || '/static/img/pic.jpg'} className="card-img-top" alt="..."/>
                     <small>{moment(blog.publishedDate).format('LL')}</small>
                     <div className="card-body">
                         <p className="article-preview-title">

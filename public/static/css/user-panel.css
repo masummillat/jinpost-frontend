@@ -1,10 +1,10 @@
 @font-face {
     font-family: Merriweather;
-    src: url(../fonts/Merriweather.ttf);
+    src: url('../fonts/Merriweather.ttf');
 }
 @font-face {
     font-family: Roboto;
-    src: url(../fonts/Roboto.ttf);
+    src: url('../fonts/Roboto.ttf');
 }
 html {
     width: 100%;
@@ -168,7 +168,7 @@ header {
     padding: 10px 0;
 }
 .article-preview-left .card .article-preview-title {
-    font-family: GMerriweather;
+    font-family: Merriweather;
     font-size: 30px;
     color: #1C1A1A;
     line-height: 1.1;

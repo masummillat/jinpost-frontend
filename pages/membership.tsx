@@ -1,104 +1,156 @@
-import React from "react";
+import React, {useContext, useState} from "react";
 import DefaultLayout from "../components/layouts/default";
 import Head from "../components/head";
-import {Field, Form, Formik, useFormik} from "formik";
+import {useFormik} from "formik";
 import httpClient from "../utils/api";
 import {ToasterError, ToasterSuccess} from "../utils/statusMessage";
 
-const Membership: React.FC<any> = ({plans}) => {
+import {PayPalButton} from "react-paypal-button-v2";
+import {ProfileContext} from "../context/ProfileContext";
 
-    const handleSubscription = (values: any) =>{
-        console.log(values)
-        httpClient.post('/subscriptions', {
-            plan:{
-                id: parseInt(values.plan)
-            }
-        })
-            .then(r=>{
-                console.log(r);
-                ToasterSuccess("Successfully bought subscription");
-            })
-            .catch(err=>{
-                console.log(err);
-                ToasterError("Couldn't buy subscription");
-            })
+const Membership: React.FC<any> = ({plans}) => {
+    const [selectedPlan, setSelectedPlan] = useState(null);
+    const proCtx = useContext(ProfileContext);
+
+    const formik = useFormik({
+        initialValues: {
+            plan: null,
+        },
+        onSubmit: values => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
+
+    if (!proCtx.isLoggedIn) {
+        return (
+            <div className="d-flex justify-content-center align-items-center my-5">
+                <h1>To get subscription please login</h1>
+            </div>
+        )
     }
     return (
         <div>
             <Head
-            title="Jinpost | join with us"/>
+                title="Jinpost | join with us"/>
             <div className="container">
                 <div className="row">
                     <div className="col-12">
-                        <h2 style={{ fontSize: '32px', textAlign: 'center', marginTop: '2rem' }}>Get unlimited access to
+                        <h2 style={{fontSize: '32px', textAlign: 'center', marginTop: '2rem'}}>Get unlimited access to
                             everything
-                        on Jinpost</h2>
+                            on Jinpost</h2>
                     </div>
                 </div>
                 <div className="row">
+                    <div className="col-md-12">
+                        <form onSubmit={formik.handleSubmit}>
+                            <div className="mb-4">
+                                <h3>Plans</h3>
+                            </div>
 
-                    <Formik
-                        initialValues={{
-                            plan: '',
-                        }}
-                        onSubmit={async (values) => {
-                            await handleSubscription(values);
-                        }}
-                    >
-                        {({ values }) => (
-                            <Form>
-                                <div id="my-radio-group">Plans</div>
-                                <div className="d-flex flex-column" role="group" aria-labelledby="my-radio-group">
-                                    {
-                                        plans.map((plan: any,i: number)=>(
-                                            <label className="d-flex justify-content-around align-items-center">
-                                                <Field type="radio" name="plan" value={plan.id.toString()} />
-                                                <h5>{plan.name}</h5>
-                                                <span>USD {plan.cost}</span>
-                                                <span>{`${plan.month} months`}</span>
-                                                <span>{plan.description}</span>
-                                            </label>
-                                        ))
-                                    }
-                                    <div>Picked: {values.plan}</div>
-                                </div>
+                            <table className="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Plan</th>
+                                    <th scope="col">Cost</th>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Details</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {
+                                    plans.map((plan: any, i: number) => (
+                                        <tr key={i}>
+                                            <td>
+                                                <label onClick={() => {
+                                                    console.log(plan)
+                                                    setSelectedPlan(plan)
+                                                }} className="d-flex  align-items-center">
 
-                                <button type="submit">Submit</button>
-                            </Form>
-                        )}
-                    </Formik>
+                                                    <input
+                                                        className="mx-2"
+                                                        onChange={formik.handleChange}
+                                                        type="radio"
+                                                        name="plan"
+                                                        value={plan.id.toString()}/>
+                                                    <h5>{plan.name}</h5>
+                                                </label>
+                                            </td>
+                                            <td><span>USD {plan.cost}</span></td>
+                                            <td><span>{`${plan.month} months`}</span></td>
+                                            <td><span>{plan.description || 'description'}</span></td>
+                                        </tr>
+                                    ))
+                                }
+                                </tbody>
+                            </table>
+                            {/*<div className="col-md-12">Selected plan: {selectedPlan && plans.find((plan:any )=>plan.id.toString() === formik.values.plan).name}</div>*/}
+                            {
+                                selectedPlan && (
 
-
-
-
-
-                    {/*<div className="offset-lg-3 col-lg-3">*/}
-                    {/*    <div className="monthly">*/}
-                    {/*        <h4>Monthly</h4>*/}
-                    {/*        <span>$5</span>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div className="col-lg-3">*/}
-                    {/*    <div className="yearly">*/}
-                    {/*        <h4>Yearly</h4>*/}
-                    {/*        <span>$50</span>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    <div className="offset-lg-3 col-lg-6">
-                        <div className="checkout">
-                            <h2>
+                                    <div className="col-md-6 justify-content-center mx-auto">
+                                        <div className="checkout">
+                                            <h2>
                                 <span
-                                    style={{ fontSize: '24px' }}
+                                    style={{fontSize: '24px'}}
                                 >Total bill
                             </span><span className="float-right"
-                                    style={{ fontSize: '32px' }}>50 <small>USD</small></span>
-                            </h2>
-                            <p>Pay with</p>
-                            <button disabled type="submit" className="btn">
-                                <img src="/static/img/paypal.png" />
-                            </button>
-                        </div>
+                                         style={{fontSize: '32px'}}>{
+                                                // @ts-ignore
+                                                selectedPlan && selectedPlan.cost || 0} <small>USD</small></span>
+                                            </h2>
+                                            <p>Pay with</p>
+
+                                            <PayPalButton
+                                                key="live"
+                                                createOrder={(data: any, actions: { order: { create: (arg0: { purchase_units: { amount: { currency_code: string; value: string; }; }[]; }) => any; }; }) => {
+
+                                                    return actions.order.create({
+                                                        purchase_units: [{
+                                                            amount: {
+                                                                currency_code: "USD",
+                                                                // @ts-ignore
+                                                                value: selectedPlan.cost
+                                                            }
+                                                        }],
+                                                        // application_context: {
+                                                        //   shipping_preference: "NO_SHIPPING" // default is "GET_FROM_FILE"
+                                                        // }
+                                                    });
+                                                }}
+                                                onApprove={(data: { orderID: any; }, actions: { order: { capture: () => Promise<any>; }; }) => {
+                                                    // Capture the funds from the transaction
+                                                    return actions.order.capture().then(async function (details) {
+                                                        // Show a success message to your buyer
+                                                        console.log(details)
+                                                        await httpClient.post('/subscriptions', {
+                                                            plan: selectedPlan,
+                                                            transactionInfo: details
+                                                        })
+                                                            .then(res => {
+                                                                console.log(res);
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err);
+                                                            });
+                                                        // OPTIONAL: Call your server to save the transaction
+                                                        return fetch("/paypal-transaction-complete", {
+                                                            method: "post",
+                                                            body: JSON.stringify({
+                                                                orderID: data.orderID
+                                                            })
+                                                        });
+                                                    });
+                                                }}
+                                                options={{
+                                                    clientId: "AWiMNCQI2sQr_fou4umMe6EUiE5GEIrtD4vw-fbWfS1D0eIpuc-Pr-XovaNqfwpzDAtBVojNLA0UPy3Q"
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                        </form>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -117,4 +169,5 @@ export async function getServerSideProps() {
         },
     }
 }
+
 export default Membership;

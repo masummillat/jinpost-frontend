@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import {useState} from "react";
 import httpClient from "../utils/api";
 import {ToasterError} from "../utils/statusMessage";
+import jwt_decode from "jwt-decode";
 
 const BlogCard = dynamic(()=>import('../components/blogs/BlogCard') );
 const SampleBlogCard = dynamic(()=>import('../components/blogs/SampleBlogCard'));
@@ -149,7 +150,15 @@ const Home = ({blogsData, tagsData, categoriesData}: HomeProps) => {
 };
 
 export async function getServerSideProps(context: any) {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=${true}&limit=12`)
+    let subscription: boolean  = false;
+    if(context.req.cookies.access_token){
+        const decodedToken = jwt_decode(context.req.cookies.access_token);
+        if (decodedToken){
+            // @ts-ignore
+            subscription = new Date(decodedToken.subscriptions.subscriptionEnd) > new Date()
+        }
+    }
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=${true}&limit=${12}&subscription=${subscription}`)
     const data = await res.json()
 
     const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)

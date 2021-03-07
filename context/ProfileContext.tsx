@@ -1,11 +1,10 @@
 import React, {useEffect} from "react";
 import jwt_decode from "jwt-decode";
-
 import isAuthenticated from "../utils/isAuthenticated";
 import {useState} from "react";
 import httpClient from "../utils/api";
-import {ToasterError, ToasterSuccess} from "../utils/statusMessage";
 import {useRouter} from "next/router";
+import cookie from 'js-cookie';
 
 interface IUser {
     name: string;
@@ -72,6 +71,7 @@ export const ProfileProvider = ({children}: any) =>{
                 .then(async res=>{
                     if (typeof window !== "undefined") {
                        localStorage.setItem('access_token', res.data.access_token);
+                        cookie.set('access_token', res.data.access_token);
                        await setIsLoggedIn(true)
                        await getCurrentUser();
                        return  Promise.resolve(user);
