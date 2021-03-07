@@ -84,7 +84,7 @@ export async function getServerSideProps(context: any) {
        }
    }
     const {page = 1, limit = 10, tag = ''} = query;
-    const blogsDatadRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?subscription=${subscription}&isPublished=${true}&page=${page}&tag=${tag}&limit=${limit}`);
+    const blogsDatadRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?subscription=${true}&isPublished=${true}&page=${page}&tag=${tag}&limit=${limit}`);
     const blogsData = await blogsDatadRes.json()
 
     const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)

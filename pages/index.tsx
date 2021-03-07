@@ -158,7 +158,10 @@ export async function getServerSideProps(context: any) {
             subscription = new Date(decodedToken.subscriptions.subscriptionEnd) > new Date()
         }
     }
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=${true}&limit=${12}&subscription=${subscription}`)
+    console.log('=========================')
+    console.log(subscription)
+    console.log('=========================')
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?isPublished=${true}&limit=${12}&subscription=${true}`)
     const data = await res.json()
 
     const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)
