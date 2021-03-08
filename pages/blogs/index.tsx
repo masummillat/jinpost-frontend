@@ -78,13 +78,14 @@ export async function getServerSideProps(context: any) {
     let subscription: boolean  = false;
    if(context.req.cookies.access_token){
        const decodedToken = jwt_decode(context.req.cookies.access_token);
-       if (decodedToken){
+       // @ts-ignore
+       if (decodedToken && decodedToken.subscriptions){
            // @ts-ignore
            subscription = new Date(decodedToken.subscriptions.subscriptionEnd) > new Date()
        }
    }
     const {page = 1, limit = 10, tag = ''} = query;
-    const blogsDatadRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?subscription=${true}&isPublished=${true}&page=${page}&tag=${tag}&limit=${limit}`);
+    const blogsDatadRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?subscription=${subscription}&isPublished=${true}&page=${page}&tag=${tag}&limit=${limit}`);
     const blogsData = await blogsDatadRes.json()
 
     const tagsRes = await fetch(`${process.env.BACKEND_BASE_URL}/blogs/tags`)

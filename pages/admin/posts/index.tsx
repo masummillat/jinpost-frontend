@@ -139,7 +139,7 @@ Posts.Layout = AdminLayout;
 
 export async function getServerSideProps(context: any) {
     const {query} = context;
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?page=${Number(query.page) || 1 }&limit=${Number(query.limit) || 10}`)
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/blogs?subscription=${true}&page=${Number(query.page) || 1 }&limit=${Number(query.limit) || 10}`)
     const data = await res.json()
     if (!data) {
         return {
