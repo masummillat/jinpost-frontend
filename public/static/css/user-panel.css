@@ -297,7 +297,7 @@ header {
     height: 460px;
     display: grid;
     grid-template-columns: 50% 50%;
-    margin: 2.5rem ;
+    margin: 2.5rem 0;
 }
 .discover-tag .left {
 
