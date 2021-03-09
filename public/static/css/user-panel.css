@@ -801,7 +801,7 @@ footer p {
     background-color: #B3F2CD;
     border-radius: 10px;
     padding: 2rem 1.5rem;
-    margin-top: 2rem;
+    margin: 2rem 0;
 }
 .discover-tags h2 {
     font-size: 48px;

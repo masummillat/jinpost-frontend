@@ -20,6 +20,7 @@ interface IProfile {
     handleLogin: (values: ILoginInput)=>Promise<any>;
     handleLogout: ()=>void;
     setUserData: (values: any) => void;
+    subscription: boolean;
 }
 export const ProfileContext = React.createContext<IProfile>(
     {
@@ -27,11 +28,13 @@ export const ProfileContext = React.createContext<IProfile>(
         handleLogin: (values)=>Promise.resolve(false),
         handleLogout: ()=>{},
         setUserData: values => {},
+        subscription: true
     });
 
 export const ProfileProvider = ({children}: any) =>{
     const [user, setUser] = useState<any>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [subscription, setSubscription] = useState(true);
     const router = useRouter();
     useEffect(()=>{
         setIsLoggedIn(isAuthenticated())
@@ -50,6 +53,13 @@ export const ProfileProvider = ({children}: any) =>{
 
                 if (accessToken !== null) {
                     const decodedToken = jwt_decode(accessToken);
+                        // @ts-ignore
+                        if (decodedToken && decodedToken.subscriptions){
+                            // @ts-ignore
+                            setSubscription(new Date(decodedToken.subscriptions.subscriptionEnd) > new Date())
+                        }else {
+                            setSubscription(false);
+                        }
                     // @ts-ignore
                     fetch(`${process.env.BACKEND_BASE_URL}/users/${decodedToken.id}`)
                         .then(res=>res.json())
@@ -103,7 +113,7 @@ export const ProfileProvider = ({children}: any) =>{
         setUser(values);
     }
     return(
-        <ProfileContext.Provider value={{isLoggedIn, user, setUserData, handleLogin, handleLogout}}>
+        <ProfileContext.Provider value={{isLoggedIn, user, setUserData, handleLogin, handleLogout, subscription}}>
             {children}
         </ProfileContext.Provider>
     );

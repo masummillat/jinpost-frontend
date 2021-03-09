@@ -39,8 +39,8 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
     const [selectedComment, setSelectedComment] = useState<IComment | null>(null);
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const profileCtx = useContext(ProfileContext);
-    const {user, isLoggedIn} = profileCtx;
-
+    const {user, isLoggedIn, subscription} = profileCtx;
+    console.log(subscription)
     useEffect(() => {
         httpClient.get(`/comments?blogId=${blog.id}`)
             .then(res => {
@@ -70,12 +70,12 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
         validationSchema: schema,
         onSubmit: values => {
             if (isEdit && selectedComment) {
-                httpClient.put(`/comments/${ selectedComment.id}`,
-                    {...values, id:  selectedComment.id, blog: {id: blog.id}})
+                httpClient.put(`/comments/${selectedComment.id}`,
+                    {...values, id: selectedComment.id, blog: {id: blog.id}})
                     .then(res => {
                         console.log(res);
                         setComments(prevState => {
-                            const ind = prevState.findIndex(v=>v.id === selectedComment.id);
+                            const ind = prevState.findIndex(v => v.id === selectedComment.id);
                             prevState[ind].message = res.data.message;
                             return prevState;
                         });
@@ -142,8 +142,10 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                     <div className="container">
                         <div className="row">
                             <div className="col-12 d-flex justify-content-between">
-                                <span><FaComments style={{color: '#059770'}} size={25} className="mr-2" />{comments.length}</span>
-                                {!isLoggedIn && (<button className="btn btn-link" onClick={() => setCommentVisible(false)}>Login</button>)}
+                                <span><FaComments style={{color: '#059770'}} size={25}
+                                                  className="mr-2"/>{comments.length}</span>
+                                {!isLoggedIn && (<button className="btn btn-link"
+                                                         onClick={() => setCommentVisible(false)}>Login</button>)}
                             </div>
                         </div>
                         <hr/>
@@ -161,7 +163,8 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                                         onChange={formik.handleChange}
                                         value={formik.values.message}
                                     />
-                                    <small className="text-danger" style={{height: '20px'}}> {formik.touched['message'] && formik.errors['message']}</small>
+                                    <small className="text-danger"
+                                           style={{height: '20px'}}> {formik.touched['message'] && formik.errors['message']}</small>
                                 </div>
                                 <button disabled={!isLoggedIn} className="btn btn-primary"><FiSend
                                     className="mr-2"/> save
@@ -188,7 +191,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                                             </span>
                                             <div className="mb-1 ">{comment.message}</div>
                                             {
-                                                isLoggedIn &&  (comment.author && user) &&   (comment.author.id === user.id) && (
+                                                isLoggedIn && (comment.author && user) && (comment.author.id === user.id) && (
                                                     <div className="d-flex">
                                                         <BsTrash
                                                             className="mr-4 my-2"
@@ -196,7 +199,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                                                             style={{cursor: 'pointer'}}
                                                         />
                                                         {
-                                                            isEdit && selectedComment &&  (selectedComment.id === comment.id) ? (
+                                                            isEdit && selectedComment && (selectedComment.id === comment.id) ? (
                                                                     <div
                                                                         className="d-flex justify-content-center align-items-center "
                                                                         style={{cursor: 'pointer'}}
@@ -228,7 +231,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                             <h1 className="post-title">{blog && (lang === 'chi' ? blog.chineseTitle : blog.title)}</h1>
                             <div className="author d-flex justify-content-between">
                                 <div>
-                                    <img src={ blog && blog.author.profileImage || '/static/img/profile.jpg'}/>
+                                    <img src={blog && blog.author.profileImage || '/static/img/profile.jpg'}/>
                                     <Link href={`/${blog && blog.author && blog.author.domain}`}>
                                         <a>{blog && blog.author && blog.author.name}</a>
                                     </Link> on <span>{moment(blog && blog.createdAt).format('MMMM Do YYYY, h:mm A')}</span>
@@ -252,16 +255,23 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                             <div className="small italic mb-4">
                                 {blog && (lang === 'chi' ? blog.chineseDescription : blog.description)}
                             </div>
-                            <div
-                                dangerouslySetInnerHTML={createMarkup(blog && (lang === 'chi' ? blog.chineseBody : blog.body))}/>
+                            {subscription ? <div
+                                    dangerouslySetInnerHTML={createMarkup(blog && (lang === 'chi' ? blog.chineseBody : blog.body))}/> :
+                                    <div>
+                                        <h3>Please Subscribe to read more. </h3>
+                                        <Link href='/membership'><a>Get membership</a></Link>
+                                    </div>
+
+                            }
                         </div>
                     </div>
                     <div className="offset-lg-1 col-lg-3">
                         <div className="full-post-sidebar">
                             <a href="#"
-                               onClick={()=>setCommentVisible(true)}
+                               onClick={() => setCommentVisible(true)}
                                className="comments d-flex  align-items-center ">
-                                <FaComments style={{color: '#059770'}} size={25} className="mr-2" />{comments.length}{' '} Comments</a>
+                                <FaComments style={{color: '#059770'}} size={25}
+                                            className="mr-2"/>{comments.length}{' '} Comments</a>
                             <div className="social-share">
                                 <h6>Share the article:</h6>
                                 <ul>
@@ -314,7 +324,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                                 <ul>
                                     {
                                         authorData &&
-                                        authorData.blogs.slice(0,10).map((blog: any, index: any) => (
+                                        authorData.blogs.slice(0, 10).map((blog: any, index: any) => (
                                             <li key={index}>
                                                 <Link href={`/blogs/${blog.id}`}>
                                                     <a>

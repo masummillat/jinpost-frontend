@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import AdminLayout from "../../components/layouts/admin";
 import Head from "../../components/head";
 import {useFormik} from "formik";
@@ -8,14 +8,14 @@ import {ToasterError, ToasterSuccess} from "../../utils/statusMessage";
 
 let planSchema = yup.object().shape({
     name: yup.string().required(),
-    description: yup.string().min(3).max(350),
+    description: yup.string().max(350),
     cost: yup.number().required().integer(),
     month: yup.number().required().positive().integer(),
 
 });
 
 const PaymentPage: React.FC<any> = ({plans}) => {
-    console.log(plans)
+    const [plansData, setPlansData] = useState(plans);
     const planFormik = useFormik({
         initialValues: {
             name: '',
@@ -25,10 +25,11 @@ const PaymentPage: React.FC<any> = ({plans}) => {
         },
         validationSchema:planSchema,
         onSubmit: values => {
-            console.log(values)
+
             httpClient.post('/plans', values)
                 .then(r=>{
                     console.log(r);
+                    setPlansData((previousState: any)=>[...previousState, r.data])
                     ToasterSuccess('Successfully created');
                 })
                 .catch(err=>{
@@ -69,7 +70,7 @@ const PaymentPage: React.FC<any> = ({plans}) => {
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    plans.map((plan: any,ind: number)=>(
+                                                    plansData.map((plan: any,ind: number)=>(
                                                         <tr key={ind}>
                                                             <th scope="row">{ind+1}</th>
                                                             <td>{plan.id}</td>
@@ -103,8 +104,7 @@ const PaymentPage: React.FC<any> = ({plans}) => {
                                                        onChange={planFormik.handleChange}
                                                        value={planFormik.values.name}
                                                    />
-                                                       <small id="emailHelp" className="form-text text-muted">We'll
-                                                           never share your email with anyone else.</small>
+                                                       <small className="form-text text-danger">{planFormik.errors['name']}</small>
                                                </div>
                                                <div className="form-group">
                                                    <label htmlFor="cost">Cost</label>
@@ -117,6 +117,8 @@ const PaymentPage: React.FC<any> = ({plans}) => {
                                                        onChange={planFormik.handleChange}
                                                        value={planFormik.values.cost}
                                                    />
+                                                   <small className="form-text text-danger">{planFormik.errors['cost']}</small>
+
                                                </div>
                                                <div className="form-group">
                                                    <label htmlFor="month">Months</label>
@@ -129,6 +131,8 @@ const PaymentPage: React.FC<any> = ({plans}) => {
                                                        onChange={planFormik.handleChange}
                                                        value={planFormik.values.month}
                                                    />
+                                                   <small className="form-text text-danger">{planFormik.errors['month']}</small>
+
                                                </div>
                                                <div className="form-group">
                                                    <label htmlFor="planName">Description</label>
@@ -141,8 +145,8 @@ const PaymentPage: React.FC<any> = ({plans}) => {
                                                        onChange={planFormik.handleChange}
                                                        value={planFormik.values.description}
                                                    />
-                                                   <small id="emailHelp" className="form-text text-muted">We'll
-                                                       never share your email with anyone else.</small>
+                                                   <small className="form-text text-danger">{planFormik.errors['description']}</small>
+
                                                </div>
 
                                                <button type="submit" className="btn btn-primary">Submit</button>

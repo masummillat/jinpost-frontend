@@ -62,7 +62,6 @@ const Membership: React.FC<any> = ({plans}) => {
                                         <tr key={i}>
                                             <td>
                                                 <label onClick={() => {
-                                                    console.log(plan)
                                                     setSelectedPlan(plan)
                                                 }} className="d-flex  align-items-center">
 
@@ -127,7 +126,8 @@ const Membership: React.FC<any> = ({plans}) => {
                                                             transactionInfo: details
                                                         })
                                                             .then(res => {
-                                                                console.log(res);
+                                                                ToasterSuccess('Successfully Subscribed');
+                                                                proCtx.handleLogout();
                                                             })
                                                             .catch(err => {
                                                                 console.log(err);

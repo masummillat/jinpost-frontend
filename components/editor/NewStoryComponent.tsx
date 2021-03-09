@@ -135,7 +135,7 @@ const NewStoryComponent: React.FC<INewStoryComponent> = ({isEdit = false, blog, 
                 }
             }));
             formik.setFieldValue('featuredImg', blog.featuredImg);
-
+            formik.setFieldValue('blogType', blogTypesOption.find(op=>op.value === blog.type));
         }
     }, [isEdit, blog]);
 

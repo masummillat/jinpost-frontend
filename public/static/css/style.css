@@ -1002,7 +1002,8 @@ tbody tr td, tbody tr td a {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: #ebe134;
+    background: transparent;
+    border-color: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
