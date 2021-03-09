@@ -255,7 +255,7 @@ const SingleBlogPage = ({blog, suggestions, authorData}) => {
                             <div className="small italic mb-4">
                                 {blog && (lang === 'chi' ? blog.chineseDescription : blog.description)}
                             </div>
-                            {subscription ? <div
+                            {blog.type=== 'free' || (blog.type==='premium' && subscription)  ? <div
                                     dangerouslySetInnerHTML={createMarkup(blog && (lang === 'chi' ? blog.chineseBody : blog.body))}/> :
                                     <div>
                                         <h3>Please Subscribe to read more. </h3>
