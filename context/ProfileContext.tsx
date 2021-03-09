@@ -34,7 +34,7 @@ export const ProfileContext = React.createContext<IProfile>(
 export const ProfileProvider = ({children}: any) =>{
     const [user, setUser] = useState<any>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [subscription, setSubscription] = useState(true);
+    const [subscription, setSubscription] = useState(false);
     const router = useRouter();
     useEffect(()=>{
         setIsLoggedIn(isAuthenticated())
